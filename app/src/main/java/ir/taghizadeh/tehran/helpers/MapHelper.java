@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -20,8 +21,10 @@ public class MapHelper implements OnMapReadyCallback {
     static final LatLng DOWNTOWN = new LatLng(35.700969, 51.391188);// Our entry point is always downtown
     private GoogleMap googleMap;
     private BitmapDescriptor centerMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+    private FragmentActivity fragmentActivity;
 
     public MapHelper(FragmentActivity fragmentActivity) {
+        this.fragmentActivity = fragmentActivity;
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentActivity.getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
@@ -31,6 +34,7 @@ public class MapHelper implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(fragmentActivity, R.raw.style_json));
         addMarker(DOWNTOWN, "Downtown", "We always start from here", centerMarkerIcon);
         startCamera(DOWNTOWN);
     }
