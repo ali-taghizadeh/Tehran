@@ -5,13 +5,20 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import ir.taghizadeh.tehran.helpers.AuthenticationHelper;
+import ir.taghizadeh.tehran.helpers.MapHelper;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private static final int RC_SIGN_IN = 1;
     AuthenticationHelper mAuthenticationHelper;
+    MapHelper mMapHelper;
     private String mUsername;
 
     @Override
@@ -19,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuthenticationHelper = new AuthenticationHelper(this, RC_SIGN_IN);
+        mMapHelper = new MapHelper(this);
         mUsername = mAuthenticationHelper.getUsername();
     }
 

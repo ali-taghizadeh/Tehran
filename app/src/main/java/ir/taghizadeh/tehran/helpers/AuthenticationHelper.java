@@ -15,13 +15,12 @@ public class AuthenticationHelper {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Activity activity;
-    private int RC_SIGN_IN;
+    private int rc_sign_in;
 
 
     public AuthenticationHelper(Activity activity, int RC_SIGN_IN) {
         this.activity = activity;
-        this.RC_SIGN_IN = RC_SIGN_IN;
-        mUsername = ANONYMOUS;
+        this.rc_sign_in = RC_SIGN_IN;
         mFirebaseAuth = FirebaseAuth.getInstance();
         attachAuthListener();
     }
@@ -43,7 +42,7 @@ public class AuthenticationHelper {
                                             new AuthUI.IdpConfig.GoogleBuilder().build(),
                                             new AuthUI.IdpConfig.EmailBuilder().build()))
                                     .build(),
-                            RC_SIGN_IN);
+                            rc_sign_in);
                 }
             }
         };
