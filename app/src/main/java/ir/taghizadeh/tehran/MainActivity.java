@@ -3,6 +3,7 @@ package ir.taghizadeh.tehran;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -13,10 +14,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import ir.taghizadeh.tehran.helpers.AuthenticationHelper;
 import ir.taghizadeh.tehran.helpers.MapHelper;
+import ir.taghizadeh.tehran.helpers.StatusBarHelper;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 1;
+    StatusBarHelper mStatusBarHelper;
     AuthenticationHelper mAuthenticationHelper;
     MapHelper mMapHelper;
     private String mUsername;
@@ -27,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mAuthenticationHelper = new AuthenticationHelper(this, RC_SIGN_IN);
         mMapHelper = new MapHelper(this);
+        mStatusBarHelper = new StatusBarHelper(this);
         mUsername = mAuthenticationHelper.getUsername();
+
     }
 
     @Override
@@ -42,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAuthenticationHelper.addAuthStateListener();
+//        mAuthenticationHelper.addAuthStateListener();
     }
 
     @Override
