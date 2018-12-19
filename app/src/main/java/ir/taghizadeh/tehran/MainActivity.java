@@ -18,6 +18,7 @@ import ir.taghizadeh.tehran.helpers.StatusBarHelper;
 public class MainActivity extends AppCompatActivity {
 
     private Authentication mAuthentication;
+    private Authentication.UsernameListener mUsernameListener;
     StatusBarHelper mStatusBarHelper;
     MapHelper mMapHelper;
 
@@ -34,14 +35,11 @@ public class MainActivity extends AppCompatActivity {
         mStatusBarHelper = new StatusBarHelper(this);
     }
 
-    public void configureWith(Authentication presenter) {
-        this.mAuthentication = presenter;
-        getUsername();
+    public void configureWith(Authentication authentication) {
+        this.mAuthentication = authentication;
+        authentication.setUsernameListener(username -> text_main_username.setText(username));
     }
 
-    private void getUsername() {
-        text_main_username.setText(mAuthentication.getUsername());
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

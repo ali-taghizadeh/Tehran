@@ -1,9 +1,12 @@
 package ir.taghizadeh.tehran.helpers;
 
 public interface Authentication {
-
-    String getUsername();
+    void setUsernameListener(UsernameListener mUsernameListener);
     void addAuthStateListener();
     void removeAuthStateListener();
     void signOut();
+
+    interface UsernameListener {
+        void onUsernameReady(String username);
+    }
 }
