@@ -20,8 +20,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView"
+    <cn.gavinliu.android.lib.shapedimageview.ShapedImageView
+        android:id="@+id/image_main_add_photo"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginStart="8dp"
@@ -31,10 +31,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view"
-        app:srcCompat="@drawable/oval" />
+        android:src="@drawable/oval"
+        app:shape_mode="circle"
+        app:stroke_color="@color/colorPrimary"
+        app:stroke_width="2dp"/>
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/image_main_icon_add_photo"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
