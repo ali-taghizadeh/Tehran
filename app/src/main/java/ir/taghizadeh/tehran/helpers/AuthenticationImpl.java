@@ -2,23 +2,24 @@ package ir.taghizadeh.tehran.helpers;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Arrays;
 
-public class AuthenticationHelper {
+public class AuthenticationImpl implements Authentication {
 
-    private String mUsername;
     private static final String ANONYMOUS = "anonymous";
-
+    private String mUsername;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Activity activity;
     private int rc_sign_in;
 
 
-    public AuthenticationHelper(Activity activity, int RC_SIGN_IN) {
+    public AuthenticationImpl(Activity activity, int RC_SIGN_IN) {
         this.activity = activity;
         this.rc_sign_in = RC_SIGN_IN;
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -47,16 +48,24 @@ public class AuthenticationHelper {
         };
     }
 
-    public String getUsername(){
+    @Override
+    public String getUsername() {
         return mUsername;
     }
 
-    public void addAuthStateListener(){
+    @Override
+    public void addAuthStateListener() {
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
-    public void removeAuthStateListener(){
+    @Override
+    public void removeAuthStateListener() {
         if (mAuthStateListener != null)
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    public void signOut() {
+        AuthUI.getInstance().signOut(activity);
     }
 }
