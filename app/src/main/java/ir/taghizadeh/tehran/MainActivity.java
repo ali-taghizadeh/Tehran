@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -58,6 +57,20 @@ public class MainActivity extends AppCompatActivity {
     public void configureWith(Authentication authentication) {
         this.mAuthentication = authentication;
         authentication.setUsernameListener(username -> text_main_username.setText(username));
+        authentication.setPhotoURLListener(uri -> {
+            if (uri != null){
+                Glide.with(MainActivity.this)
+                        .load(uri.toString())
+                        .into(image_main_add_photo);
+                image_main_icon_add_photo.setVisibility(View.GONE);
+            }else {
+                Glide.with(MainActivity.this)
+                        .load(getResources().getIdentifier("oval", "drawable", this.getPackageName()))
+                        .into(image_main_add_photo);
+                image_main_icon_add_photo.setVisibility(View.VISIBLE);
+            }
+
+        });
     }
 
     @Override
@@ -74,10 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 while (!urlTask.isSuccessful());
                 Uri downloadUrl = urlTask.getResult();
                 assert downloadUrl != null;
-                Glide.with(this)
-                        .load(downloadUrl.toString())
-                        .into(image_main_add_photo);
-                image_main_icon_add_photo.setVisibility(View.GONE);
+                mAuthentication.updatePhotoURL(downloadUrl);
             });
         }
     }
