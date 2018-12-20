@@ -6,6 +6,8 @@ import ir.taghizadeh.tehran.helpers.Authentication;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.helpers.Map;
 import ir.taghizadeh.tehran.helpers.MapImpl;
+import ir.taghizadeh.tehran.helpers.Storage;
+import ir.taghizadeh.tehran.helpers.StorageImpl;
 import ir.taghizadeh.tehran.helpers.WindowConfig;
 import ir.taghizadeh.tehran.helpers.WindowConfigImpl;
 
@@ -17,7 +19,8 @@ public class DependencyRegistry {
         Authentication authenticationPresenter = new AuthenticationImpl(activity, Constants.RC_SIGN_IN);
         Map mapPresenter = new MapImpl(activity);
         WindowConfig windowConfigPresenter = new WindowConfigImpl(activity);
-        activity.configureWith(authenticationPresenter, mapPresenter, windowConfigPresenter);
+        Storage storagePresenter = new StorageImpl(activity);
+        activity.configureWith(authenticationPresenter, storagePresenter,mapPresenter, windowConfigPresenter);
     }
 
 }

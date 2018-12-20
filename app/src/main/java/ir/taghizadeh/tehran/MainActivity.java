@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -22,14 +22,10 @@ import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.helpers.Authentication;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.helpers.Map;
+import ir.taghizadeh.tehran.helpers.Storage;
 import ir.taghizadeh.tehran.helpers.WindowConfig;
-import ir.taghizadeh.tehran.helpers.WindowConfigImpl;
 
 public class MainActivity extends AppCompatActivity {
-
-    private Authentication mAuthentication;
-    private Map mMap;
-    private WindowConfig mWindowConfig;
 
     @BindView(R.id.text_main_username)
     TextView text_main_username;
@@ -37,11 +33,10 @@ public class MainActivity extends AppCompatActivity {
     ShapedImageView image_main_add_photo;
     @BindView(R.id.image_main_icon_add_photo)
     ImageView image_main_icon_add_photo;
-
-
-    private FirebaseStorage mFirebaseStorage;
-    private StorageReference mChatPhotoStorageReference;
-
+    private Authentication mAuthentication;
+    private Storage mStorage;
+    private Map mMap;
+    private WindowConfig mWindowConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,23 +44,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         DependencyRegistry.register.inject(this);
-        mFirebaseStorage = FirebaseStorage.getInstance();
-        mChatPhotoStorageReference = mFirebaseStorage.getReference().child("user_avatar");
     }
 
-    public void configureWith(Authentication authentication, Map map, WindowConfig windowConfig) {
+    public void configureWith(Authentication authentication, Storage storage, Map map, WindowConfig windowConfig) {
         this.mAuthentication = authentication;
         this.mMap = map;
         this.mWindowConfig = windowConfig;
+        this.mStorage = storage;
         windowConfig.hideStatusBar();
         authentication.setUsernameListener(username -> text_main_username.setText(username));
         authentication.setPhotoURLListener(uri -> {
-            if (uri != null){
+            if (uri != null) {
                 Glide.with(MainActivity.this)
                         .load(uri.toString())
                         .into(image_main_add_photo);
                 image_main_icon_add_photo.setVisibility(View.GONE);
-            }else {
+            } else {
                 Glide.with(MainActivity.this)
                         .load(getResources().getIdentifier("oval", "drawable", this.getPackageName()))
                         .into(image_main_add_photo);
@@ -79,18 +73,12 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_SIGN_IN && resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Signed in canceled", Toast.LENGTH_SHORT).show();
-                finish();
-        }else if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK){
+            Toast.makeText(this, "Signed in canceled", Toast.LENGTH_SHORT).show();
+            finish();
+        } else if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
-            StorageReference userAvatar = mChatPhotoStorageReference.child(selectedImageUri.getLastPathSegment());
-            userAvatar.putFile(selectedImageUri).addOnSuccessListener(this, taskSnapshot -> {
-                Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
-                while (!urlTask.isSuccessful());
-                Uri downloadUrl = urlTask.getResult();
-                assert downloadUrl != null;
-                mAuthentication.updatePhotoURL(downloadUrl);
-            });
+            mStorage.putFile(selectedImageUri, Constants.USER_AVATAR);
+            mStorage.setonFileUploadedSuccessfully(uri -> mAuthentication.updatePhotoURL(uri));
         }
     }
 
@@ -107,12 +95,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.image_main_logout)
-    void logOut(){
+    void logOut() {
         mAuthentication.signOut();
     }
 
     @OnClick(R.id.image_main_add_photo)
-    void addPhoto(){
+    void addPhoto() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/jpeg");
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
