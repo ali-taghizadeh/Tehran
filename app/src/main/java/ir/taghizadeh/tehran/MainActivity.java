@@ -21,14 +21,15 @@ import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.helpers.Authentication;
 import ir.taghizadeh.tehran.helpers.Constants;
-import ir.taghizadeh.tehran.helpers.MapHelper;
-import ir.taghizadeh.tehran.helpers.StatusBarHelper;
+import ir.taghizadeh.tehran.helpers.Map;
+import ir.taghizadeh.tehran.helpers.WindowConfig;
+import ir.taghizadeh.tehran.helpers.WindowConfigImpl;
 
 public class MainActivity extends AppCompatActivity {
 
     private Authentication mAuthentication;
-    StatusBarHelper mStatusBarHelper;
-    MapHelper mMapHelper;
+    private Map mMap;
+    private WindowConfig mWindowConfig;
 
     @BindView(R.id.text_main_username)
     TextView text_main_username;
@@ -48,14 +49,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         DependencyRegistry.register.inject(this);
-        mMapHelper = new MapHelper(this);
-        mStatusBarHelper = new StatusBarHelper(this);
         mFirebaseStorage = FirebaseStorage.getInstance();
         mChatPhotoStorageReference = mFirebaseStorage.getReference().child("user_avatar");
     }
 
-    public void configureWith(Authentication authentication) {
+    public void configureWith(Authentication authentication, Map map, WindowConfig windowConfig) {
         this.mAuthentication = authentication;
+        this.mMap = map;
+        this.mWindowConfig = windowConfig;
+        windowConfig.hideStatusBar();
         authentication.setUsernameListener(username -> text_main_username.setText(username));
         authentication.setPhotoURLListener(uri -> {
             if (uri != null){

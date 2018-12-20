@@ -16,14 +16,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import ir.taghizadeh.tehran.R;
 
-public class MapHelper implements OnMapReadyCallback {
+public class MapImpl implements OnMapReadyCallback, Map {
 
-    static final LatLng DOWNTOWN = new LatLng(35.700969, 51.391188);// Our entry point is always downtown
+
     private GoogleMap googleMap;
     private BitmapDescriptor centerMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
     private FragmentActivity fragmentActivity;
 
-    public MapHelper(FragmentActivity fragmentActivity) {
+    public MapImpl(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentActivity.getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
@@ -35,10 +35,11 @@ public class MapHelper implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(fragmentActivity, R.raw.style_json));
-        addMarker(DOWNTOWN, "Downtown", "We always start from here", centerMarkerIcon);
-        startCamera(DOWNTOWN);
+        addMarker(Constants.DOWNTOWN, "Downtown", "We always start from here", centerMarkerIcon);
+        startCamera(Constants.DOWNTOWN);
     }
 
+    @Override
     public void addMarker(LatLng position, String title, String snippet, BitmapDescriptor bitmapDescriptor) {
         if (googleMap != null) {
             Marker marker = googleMap.addMarker(new MarkerOptions()
@@ -50,12 +51,11 @@ public class MapHelper implements OnMapReadyCallback {
         }
     }
 
+    @Override
     public void startCamera(LatLng position) {
-        //Build camera position
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(position)
                 .zoom(17).build();
-        //Zoom in and animate the camera.
         if (googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }

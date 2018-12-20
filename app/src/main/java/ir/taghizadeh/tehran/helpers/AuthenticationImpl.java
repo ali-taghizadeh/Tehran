@@ -17,6 +17,7 @@ public class AuthenticationImpl implements Authentication {
     private UsernameListener mUsernameListener;
     private Uri mPhotoURL;
     private PhotoURLListener mPhotoURLListener;
+    private FirebaseUser mFirebaseUser;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -28,6 +29,7 @@ public class AuthenticationImpl implements Authentication {
         this.activity = activity;
         this.rc_sign_in = RC_SIGN_IN;
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
         attachAuthListener();
     }
 
@@ -60,9 +62,8 @@ public class AuthenticationImpl implements Authentication {
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setPhotoUri(photoURL)
                 .build();
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null)
-            firebaseUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+        if (mFirebaseUser != null)
+            mFirebaseUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     mPhotoURLListener.onPhotoURLReady(photoURL);
                 }
