@@ -4,26 +4,23 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
-import ir.taghizadeh.tehran.helpers.Authentication;
+import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.helpers.Constants;
-import ir.taghizadeh.tehran.helpers.Map;
-import ir.taghizadeh.tehran.helpers.Storage;
-import ir.taghizadeh.tehran.helpers.WindowConfig;
+import ir.taghizadeh.tehran.dependencies.map.Map;
+import ir.taghizadeh.tehran.dependencies.storage.Storage;
+import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfig;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,9 +48,13 @@ public class MainActivity extends AppCompatActivity {
         this.mMap = map;
         this.mWindowConfig = windowConfig;
         this.mStorage = storage;
-        windowConfig.hideStatusBar();
-        authentication.setUsernameListener(username -> text_main_username.setText(username));
-        authentication.setPhotoURLListener(uri -> {
+        setUpUI();
+    }
+
+    private void setUpUI() {
+        mWindowConfig.hideStatusBar();
+        mAuthentication.setUsernameListener(username -> text_main_username.setText(username));
+        mAuthentication.setPhotoURLListener(uri -> {
             if (uri != null) {
                 Glide.with(MainActivity.this)
                         .load(uri.toString())
@@ -65,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
                         .into(image_main_add_photo);
                 image_main_icon_add_photo.setVisibility(View.VISIBLE);
             }
-
         });
     }
 

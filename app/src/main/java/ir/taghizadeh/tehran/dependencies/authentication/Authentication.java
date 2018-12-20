@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.helpers;
+package ir.taghizadeh.tehran.dependencies.authentication;
 
 import android.net.Uri;
 
@@ -9,11 +9,10 @@ public interface Authentication {
     void signOut();
 
     void setUsernameListener(UsernameListener mUsernameListener);
-    void setPhotoURLListener(PhotoURLListener photoURLListener);
-
-    interface UsernameListener {
+        interface UsernameListener {
         void onUsernameReady(String username);
     }
+    void setPhotoURLListener(PhotoURLListener photoURLListener);
     interface PhotoURLListener {
         void onPhotoURLReady(Uri uri);
     }

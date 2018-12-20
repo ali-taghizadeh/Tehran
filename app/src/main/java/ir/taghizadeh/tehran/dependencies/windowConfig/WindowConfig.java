@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.helpers;
+package ir.taghizadeh.tehran.dependencies.windowConfig;
 
 public interface WindowConfig {
     void hideStatusBar();

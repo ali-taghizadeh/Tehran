@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.helpers;
+package ir.taghizadeh.tehran.dependencies.map;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;

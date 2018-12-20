@@ -1,14 +1,15 @@
-package ir.taghizadeh.tehran.helpers;
+package ir.taghizadeh.tehran.dependencies.windowConfig;
 
 import android.app.Activity;
 import android.view.WindowManager;
 
 public class WindowConfigImpl implements WindowConfig{
-    private Activity activity;
 
+    private Activity activity;
     public WindowConfigImpl(Activity activity) {
         this.activity = activity;
     }
+
     @Override
     public void hideStatusBar() {
         activity.getWindow().setFlags(

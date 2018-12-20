@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.helpers;
+package ir.taghizadeh.tehran.dependencies.storage;
 
 import android.app.Activity;
 import android.net.Uri;

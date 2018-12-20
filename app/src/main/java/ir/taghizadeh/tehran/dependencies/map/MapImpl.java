@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.helpers;
+package ir.taghizadeh.tehran.dependencies.map;
 
 import android.support.v4.app.FragmentActivity;
 
@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import ir.taghizadeh.tehran.R;
+import ir.taghizadeh.tehran.helpers.Constants;
 
 public class MapImpl implements OnMapReadyCallback, Map {
 
