@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran;
+package ir.taghizadeh.tehran.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
+import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.dependencies.glide.Glide;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     ShapedImageView image_main_add_photo;
     @BindView(R.id.image_main_icon_add_photo)
     ImageView image_main_icon_add_photo;
+
     private Authentication mAuthentication;
     private Storage mStorage;
     private Map mMap;
@@ -120,6 +122,6 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.image_main_add_place)
     void addLocation() {
         LatLng latLng = mMap.getCenterLocation();
-        Log.e("location", latLng.latitude + ", " + latLng.longitude);
+        mRootCoordinator.handleAddPlace(latLng);
     }
 }

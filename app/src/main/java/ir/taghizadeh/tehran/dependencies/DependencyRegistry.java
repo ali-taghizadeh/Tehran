@@ -1,6 +1,6 @@
 package ir.taghizadeh.tehran.dependencies;
 
-import ir.taghizadeh.tehran.MainActivity;
+import ir.taghizadeh.tehran.activities.MainActivity;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.dependencies.authentication.AuthenticationImpl;
 import ir.taghizadeh.tehran.dependencies.glide.Glide;
