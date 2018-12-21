@@ -36,7 +36,6 @@ public class MapImpl implements OnMapReadyCallback, Map {
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(fragmentActivity, R.raw.style_json));
-        addMarker(Constants.DOWNTOWN, "Downtown", "We always start from here", centerMarkerIcon);
         startCamera(Constants.DOWNTOWN);
     }
 
@@ -60,5 +59,10 @@ public class MapImpl implements OnMapReadyCallback, Map {
         if (googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
+    }
+
+    @Override
+    public LatLng getCenterLocation() {
+        return googleMap.getCameraPosition().target;
     }
 }
