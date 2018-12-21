@@ -2,6 +2,7 @@ package ir.taghizadeh.tehran.dependencies.authentication;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.util.Log;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,13 +42,19 @@ public class AuthenticationImpl implements Authentication {
                 mPhotoURL = firebaseUser.getPhotoUrl();
                 if (mUsernameListener != null)
                     mUsernameListener.onUsernameReady(mUsername);
-                if (mPhotoURLListener != null)
-                    mPhotoURLListener.onPhotoURLReady(mPhotoURL);
+                if (mPhotoURLListener != null){
+                    try {
+                        Log.e("attachAuthListener", mPhotoURL.toString());
+                    }catch (Exception e){
+                        Log.e("attachAuthListener", e.getMessage());
+                    }
+                    mPhotoURLListener.onPhotoURLReady(mPhotoURL);}
             } else {
                 mUsername = ANONYMOUS;
                 activity.startActivityForResult(
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
+                                .setIsSmartLockEnabled(false)
                                 .setAvailableProviders(Arrays.asList(
                                         new AuthUI.IdpConfig.GoogleBuilder().build(),
                                         new AuthUI.IdpConfig.EmailBuilder().build()))
@@ -65,6 +72,11 @@ public class AuthenticationImpl implements Authentication {
         if (mFirebaseUser != null)
             mFirebaseUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
+                    try {
+                        Log.e("updatePhotoURL", photoURL.toString());
+                    }catch (Exception e){
+                        Log.e("updatePhotoURL", e.getMessage());
+                    }
                     mPhotoURLListener.onPhotoURLReady(photoURL);
                 }
             });
