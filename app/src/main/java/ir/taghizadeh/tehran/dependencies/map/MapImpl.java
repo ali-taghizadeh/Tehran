@@ -52,6 +52,15 @@ public class MapImpl implements OnMapReadyCallback, Map {
     }
 
     @Override
+    public void addMarker(LatLng position) {
+        if (googleMap != null) {
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(position));
+            marker.showInfoWindow();
+        }
+    }
+
+    @Override
     public void startCamera(LatLng position) {
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(position)

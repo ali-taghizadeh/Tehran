@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public interface Map {
     void addMarker(LatLng position, String title, String snippet, BitmapDescriptor bitmapDescriptor);
+    void addMarker(LatLng position);
     void startCamera(LatLng position);
     LatLng getCenterLocation();
 }

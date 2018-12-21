@@ -1,6 +1,7 @@
 package ir.taghizadeh.tehran.dependencies;
 
 import ir.taghizadeh.tehran.activities.AuthenticationActivity;
+import ir.taghizadeh.tehran.activities.DetailsActivity;
 import ir.taghizadeh.tehran.activities.MainActivity;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.dependencies.authentication.AuthenticationImpl;
@@ -27,6 +28,15 @@ public class DependencyRegistry {
     Storage storagePresenter;
     RootCoordinator rootCoordinatorPresenter;
 
+    public void inject(AuthenticationActivity activity) {
+
+        authenticationPresenter = new AuthenticationImpl(activity, Constants.RC_SIGN_IN);
+        glidePresenter = new GlideImpl(activity);
+        windowConfigPresenter = new WindowConfigImpl(activity);
+
+        activity.configureWith(authenticationPresenter, glidePresenter, windowConfigPresenter);
+    }
+
     public void inject(MainActivity activity) {
 
         mapPresenter = new MapImpl(activity);
@@ -39,12 +49,10 @@ public class DependencyRegistry {
                 rootCoordinatorPresenter);
     }
 
-    public void inject(AuthenticationActivity activity) {
+    public void inject(DetailsActivity activity) {
 
-        authenticationPresenter = new AuthenticationImpl(activity, Constants.RC_SIGN_IN);
-        glidePresenter = new GlideImpl(activity);
-        windowConfigPresenter = new WindowConfigImpl(activity);
+        mapPresenter = new MapImpl(activity);
 
-        activity.configureWith(authenticationPresenter, glidePresenter, windowConfigPresenter);
+        activity.configureWith(mapPresenter);
     }
 }
