@@ -5,11 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 
 import ir.taghizadeh.tehran.R;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AuthenticationActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        hideStatusBar();
     }
 }

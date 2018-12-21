@@ -26,7 +26,7 @@ import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfig;
 import ir.taghizadeh.tehran.helpers.Constants;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AuthenticationActivity {
 
     @BindView(R.id.text_main_username)
     TextView text_main_username;
@@ -35,11 +35,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.image_main_icon_add_photo)
     ImageView image_main_icon_add_photo;
 
-    private Authentication mAuthentication;
     private Storage mStorage;
     private Map mMap;
-    private WindowConfig mWindowConfig;
-    private Glide mGlide;
     private RootCoordinator mRootCoordinator;
 
     @Override
@@ -50,36 +47,19 @@ public class MainActivity extends AppCompatActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Authentication authentication,
-                              Storage storage,
+    public void configureWith(Storage storage,
                               Map map,
-                              WindowConfig windowConfig,
-                              Glide glide,
                               RootCoordinator rootCoordinator) {
-
-        this.mAuthentication = authentication;
         this.mMap = map;
-        this.mWindowConfig = windowConfig;
         this.mStorage = storage;
-        this.mGlide = glide;
         this.mRootCoordinator = rootCoordinator;
         setUpUI();
     }
 
     private void setUpUI() {
-        mWindowConfig.hideStatusBar();
-        mAuthentication.setUsernameListener(username -> {
-            text_main_username.setText(username.toUpperCase());
-        });
-        mAuthentication.setPhotoURLListener(uri -> {
-            if (uri != null) {
-                mGlide.loadImage(uri.toString(), image_main_add_photo);
-                image_main_icon_add_photo.setVisibility(View.GONE);
-            } else {
-                mGlide.blankUserPhoto(image_main_add_photo);
-                image_main_icon_add_photo.setVisibility(View.VISIBLE);
-            }
-        });
+        hideStatusBar();
+        setUsername(text_main_username);
+        setPhoto(image_main_add_photo, image_main_icon_add_photo);
     }
 
     @Override
@@ -93,25 +73,13 @@ public class MainActivity extends AppCompatActivity {
         } else if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
             mStorage.putFile(selectedImageUri, Constants.USER_AVATAR);
-            mStorage.setonFileUploadedSuccessfully(uri -> mAuthentication.updatePhotoURL(uri));
+            mStorage.setonFileUploadedSuccessfully(this::updatePhotoURL);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mAuthentication.addAuthStateListener();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mAuthentication.removeAuthStateListener();
     }
 
     @OnClick(R.id.image_main_logout)
     void logOut() {
-        mAuthentication.signOut();
+        signOut();
     }
 
     @OnClick(R.id.image_main_add_photo)
