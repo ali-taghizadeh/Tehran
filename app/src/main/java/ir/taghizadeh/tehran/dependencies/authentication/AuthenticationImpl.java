@@ -2,6 +2,7 @@ package ir.taghizadeh.tehran.dependencies.authentication;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.firebase.ui.auth.AuthUI;
@@ -30,25 +31,20 @@ public class AuthenticationImpl implements Authentication {
         this.activity = activity;
         this.rc_sign_in = RC_SIGN_IN;
         mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
         attachAuthListener();
     }
 
     private void attachAuthListener() {
         mAuthStateListener = firebaseAuth -> {
-            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-            if (firebaseUser != null) {
-                mUsername = firebaseUser.getDisplayName();
-                mPhotoURL = firebaseUser.getPhotoUrl();
+            mFirebaseUser = firebaseAuth.getCurrentUser();
+            if (mFirebaseUser != null) {
+                mUsername = mFirebaseUser.getDisplayName();
+                mPhotoURL = mFirebaseUser.getPhotoUrl();
                 if (mUsernameListener != null)
                     mUsernameListener.onUsernameReady(mUsername);
-                if (mPhotoURLListener != null){
-                    try {
-                        Log.e("attachAuthListener", mPhotoURL.toString());
-                    }catch (Exception e){
-                        Log.e("attachAuthListener", e.getMessage());
-                    }
-                    mPhotoURLListener.onPhotoURLReady(mPhotoURL);}
+                if (mPhotoURLListener != null) {
+                    mPhotoURLListener.onPhotoURLReady(mPhotoURL);
+                }
             } else {
                 mUsername = ANONYMOUS;
                 activity.startActivityForResult(
@@ -72,11 +68,6 @@ public class AuthenticationImpl implements Authentication {
         if (mFirebaseUser != null)
             mFirebaseUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    try {
-                        Log.e("updatePhotoURL", photoURL.toString());
-                    }catch (Exception e){
-                        Log.e("updatePhotoURL", e.getMessage());
-                    }
                     mPhotoURLListener.onPhotoURLReady(photoURL);
                 }
             });

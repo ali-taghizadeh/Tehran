@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,15 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private void setUpUI() {
         mWindowConfig.hideStatusBar();
         mAuthentication.setUsernameListener(username -> {
-            Log.e("username", username);
             text_main_username.setText(username.toUpperCase());
         });
         mAuthentication.setPhotoURLListener(uri -> {
-            try {
-                Log.e("setUp", uri.toString());
-            }catch (Exception e){
-                Log.e("setUp", e.getMessage());
-            }
             if (uri != null) {
                 mGlide.loadImage(uri.toString(), image_main_add_photo);
                 image_main_icon_add_photo.setVisibility(View.GONE);
