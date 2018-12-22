@@ -20,6 +20,12 @@ import ir.taghizadeh.tehran.dependencies.map.Map;
 
 public class DetailsActivity extends AuthenticationActivity {
 
+    @BindView(R.id.image_details_add_photo)
+    ShapedImageView image_details_add_photo;
+    @BindView(R.id.edittext_details_title)
+    TextInputEditText edittext_details_title;
+    @BindView(R.id.edittext_details_description)
+    TextInputEditText edittext_details_description;
     private Map mMap;
     private LatLng mLatLng;
     private String mTitle = "Title";
@@ -27,21 +33,14 @@ public class DetailsActivity extends AuthenticationActivity {
     private Disposable mTitleDisposable;
     private Disposable mDescriptionDisposable;
 
-    @BindView(R.id.image_details_add_photo)
-    ShapedImageView image_details_add_photo;
-    @BindView(R.id.edittext_details_title)
-    TextInputEditText edittext_details_title;
-    @BindView(R.id.edittext_details_description)
-    TextInputEditText edittext_details_description;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         DependencyRegistry.register.inject(this);
-        mTitleDisposable = titleChangeListener();
-        mDescriptionDisposable = descriptionChangeListener();
+        mTitleDisposable = textChangeListener(edittext_details_title);
+        mDescriptionDisposable = textChangeListener(edittext_details_description);
     }
 
     public void configureWith(Map map) {
@@ -63,7 +62,7 @@ public class DetailsActivity extends AuthenticationActivity {
         });
     }
 
-    private void updateMap(){
+    private void updateMap() {
         mMap.clearMap();
         mMap.addMarker(mLatLng, mTitle, mDescription);
     }
@@ -74,8 +73,8 @@ public class DetailsActivity extends AuthenticationActivity {
         return mLatLng;
     }
 
-    private Disposable titleChangeListener() {
-        return RxTextView.textChanges(edittext_details_title)
+    private Disposable textChangeListener(TextInputEditText editText) {
+        return RxTextView.textChanges(editText)
                 .debounce(600, TimeUnit.MILLISECONDS)
                 .filter(changes -> {
                     assert changes != null;
@@ -83,20 +82,10 @@ public class DetailsActivity extends AuthenticationActivity {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(character -> {
-                    mTitle = character.toString();
-                    updateMap();
-                });
-    }
-    private Disposable descriptionChangeListener() {
-        return RxTextView.textChanges(edittext_details_description)
-                .debounce(600, TimeUnit.MILLISECONDS)
-                .filter(changes -> {
-                    assert changes != null;
-                    return true;
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(character -> {
-                    mDescription = character.toString();
+                    if (editText == edittext_details_title)
+                        mTitle = character.toString();
+                    else
+                        mDescription = character.toString();
                     updateMap();
                 });
     }
