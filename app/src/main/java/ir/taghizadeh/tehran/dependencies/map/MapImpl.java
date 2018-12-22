@@ -6,7 +6,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -39,34 +38,30 @@ public class MapImpl implements OnMapReadyCallback, Map {
     }
 
     @Override
-    public void addMarker(LatLng position, String title, String snippet, BitmapDescriptor bitmapDescriptor) {
+    public void addMarker(LatLng position, String title, String snippet) {
         if (googleMap != null) {
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(position)
                     .title(title)
-                    .snippet(snippet)
-                    .icon(bitmapDescriptor));
+                    .snippet(snippet));
             marker.showInfoWindow();
         }
     }
 
     @Override
-    public void addMarker(LatLng position) {
-        if (googleMap != null) {
-            Marker marker = googleMap.addMarker(new MarkerOptions()
-                    .position(position));
-            marker.showInfoWindow();
-        }
-    }
-
-    @Override
-    public void startCamera(LatLng position) {
+    public void startCamera(LatLng position, int zoom) {
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(position)
-                .zoom(17).build();
+                .zoom(zoom).build();
         if (googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
+    }
+
+    @Override
+    public void clearMap() {
+        if (googleMap != null)
+            googleMap.clear();
     }
 
     @Override

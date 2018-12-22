@@ -60,7 +60,7 @@ public class MainActivity extends AuthenticationActivity {
         hideStatusBar();
         setUsername(text_main_username);
         setPhoto(image_main_add_photo, image_main_icon_add_photo);
-        mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN));
+        mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
 
     }
 
