@@ -43,8 +43,8 @@ public class BaseConfigsActivity extends AppCompatActivity {
         mGlide.loadBlank(imageView);
     }
 
-    public void handleAddUserPhoto(){
-        mRootCoordinator.handleAddUserPhoto();
+    public void handleAddPhoto(){
+        mRootCoordinator.handleAddPhoto();
     }
 
     public void handleAddPlace(LatLng latLng){

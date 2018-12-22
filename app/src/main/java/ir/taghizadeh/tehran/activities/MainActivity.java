@@ -81,7 +81,7 @@ public class MainActivity extends AuthenticationActivity {
 
     @OnClick(R.id.image_main_add_photo)
     void addPhoto() {
-        handleAddUserPhoto();
+        handleAddPhoto();
     }
 
     @OnClick(R.id.image_main_add_place)

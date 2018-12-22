@@ -7,4 +7,5 @@ public class Constants {
     public static final int RC_PHOTO_PICKER = 2;
     public static final LatLng DOWNTOWN = new LatLng(35.700969, 51.391188);// Our entry point is always downtown
     public static final String USER_AVATAR = "user_avatar";
+    public static final String PLACES = "places";
 }

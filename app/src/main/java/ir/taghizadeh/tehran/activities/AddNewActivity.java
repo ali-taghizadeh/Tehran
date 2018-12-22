@@ -1,5 +1,7 @@
 package ir.taghizadeh.tehran.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.view.View;
@@ -19,6 +21,8 @@ import io.reactivex.disposables.Disposable;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.map.Map;
+import ir.taghizadeh.tehran.dependencies.storage.Storage;
+import ir.taghizadeh.tehran.helpers.Constants;
 
 public class AddNewActivity extends AuthenticationActivity {
 
@@ -31,9 +35,11 @@ public class AddNewActivity extends AuthenticationActivity {
     @BindView(R.id.edittext_add_new_description)
     TextInputEditText edittext_add_new_description;
     private Map mMap;
+    private Storage mStorage;
     private LatLng mLatLng;
     private String mTitle;
     private String mDescription;
+    private Uri mUri;
     private Disposable mTitleDisposable;
     private Disposable mDescriptionDisposable;
 
@@ -45,8 +51,9 @@ public class AddNewActivity extends AuthenticationActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Map map) {
+    public void configureWith(Map map, Storage storage) {
         this.mMap = map;
+        this.mStorage = storage;
         setUpUI();
     }
 
@@ -92,8 +99,22 @@ public class AddNewActivity extends AuthenticationActivity {
                 });
     }
 
-    @OnClick(R.id.image_add_new_add_photo)
-    void addNewPhoto(){
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+            mStorage.putFile(selectedImageUri, Constants.PLACES);
+            mStorage.setonFileUploadedSuccessfully(uri -> {
+                mUri = uri;
+                loadImage(mUri.toString(), image_add_new_add_photo);
+                image_add_new_icon_add_photo.setVisibility(View.GONE);
+            });
+        }
+    }
 
+    @OnClick(R.id.image_add_new_add_photo)
+    void addNewPhoto() {
+        handleAddPhoto();
     }
 }
