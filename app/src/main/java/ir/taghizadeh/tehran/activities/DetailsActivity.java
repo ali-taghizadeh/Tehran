@@ -30,7 +30,10 @@ public class DetailsActivity extends AuthenticationActivity {
         Bundle bundle = getIntent().getParcelableExtra("bundle");
         LatLng location = bundle.getParcelable("location");
         Log.e("location", location.latitude + ", " + location.longitude);
-        mMap.addMarker(location);
-        mMap.startCamera(location);
+        mMap.setOnMapListener(() -> {
+            mMap.addMarker(location);
+            mMap.startCamera(location);
+        });
+
     }
 }

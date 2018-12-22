@@ -7,7 +7,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -15,14 +14,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import ir.taghizadeh.tehran.R;
-import ir.taghizadeh.tehran.helpers.Constants;
 
 public class MapImpl implements OnMapReadyCallback, Map {
 
 
     private GoogleMap googleMap;
-    private BitmapDescriptor centerMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
     private FragmentActivity fragmentActivity;
+    private MapListener mapListener;
 
     public MapImpl(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
@@ -36,7 +34,8 @@ public class MapImpl implements OnMapReadyCallback, Map {
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(fragmentActivity, R.raw.style_json));
-        startCamera(Constants.DOWNTOWN);
+        if (mapListener != null)
+            mapListener.onMapReady();
     }
 
     @Override
@@ -74,4 +73,10 @@ public class MapImpl implements OnMapReadyCallback, Map {
     public LatLng getCenterLocation() {
         return googleMap.getCameraPosition().target;
     }
+
+    @Override
+    public void setOnMapListener(MapListener mapListener) {
+        this.mapListener = mapListener;
+    }
+
 }

@@ -60,14 +60,14 @@ public class MainActivity extends AuthenticationActivity {
         hideStatusBar();
         setUsername(text_main_username);
         setPhoto(image_main_add_photo, image_main_icon_add_photo);
+        mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN));
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.RC_SIGN_IN && resultCode == RESULT_OK) {
-            mMap.startCamera(Constants.DOWNTOWN);
-        } else if (requestCode == Constants.RC_SIGN_IN && resultCode == RESULT_CANCELED) {
+        if (requestCode == Constants.RC_SIGN_IN && resultCode == RESULT_CANCELED) {
             Toast.makeText(this, "Signed in canceled", Toast.LENGTH_SHORT).show();
             finish();
         } else if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK) {
