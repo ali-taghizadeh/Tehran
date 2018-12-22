@@ -1,5 +1,7 @@
 package ir.taghizadeh.tehran.models;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class NewPlace {
 
     private String mTitle;

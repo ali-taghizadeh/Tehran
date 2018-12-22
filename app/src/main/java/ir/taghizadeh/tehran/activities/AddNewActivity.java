@@ -3,11 +3,15 @@ package ir.taghizadeh.tehran.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.concurrent.TimeUnit;
@@ -23,6 +27,7 @@ import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
+import ir.taghizadeh.tehran.models.NewPlace;
 
 public class AddNewActivity extends AuthenticationActivity {
 
@@ -39,9 +44,13 @@ public class AddNewActivity extends AuthenticationActivity {
     private LatLng mLatLng;
     private String mTitle;
     private String mDescription;
-    private Uri mUri;
+    private String mUri = "";
+    private String mNewPlaceId;
     private Disposable mTitleDisposable;
     private Disposable mDescriptionDisposable;
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,8 @@ public class AddNewActivity extends AuthenticationActivity {
         setContentView(R.layout.activity_add_new);
         ButterKnife.bind(this);
         DependencyRegistry.register.inject(this);
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = mFirebaseDatabase.getReference().child("places");
     }
 
     public void configureWith(Map map, Storage storage) {
@@ -106,7 +117,7 @@ public class AddNewActivity extends AuthenticationActivity {
             Uri selectedImageUri = data.getData();
             mStorage.putFile(selectedImageUri, Constants.PLACES);
             mStorage.setonFileUploadedSuccessfully(uri -> {
-                mUri = uri;
+                mUri = uri.toString();
                 loadImage(mUri.toString(), image_add_new_add_photo);
                 image_add_new_icon_add_photo.setVisibility(View.GONE);
             });
@@ -119,12 +130,23 @@ public class AddNewActivity extends AuthenticationActivity {
     }
 
     @OnClick(R.id.button_add_new_save)
-    void save(){
-        discard();
+    void save() {
+        if (mTitle.equals("")){
+            edittext_add_new_title.setError("Pick a title");
+        }else if (mDescription.equals("")){
+            edittext_add_new_description.setError("Pick a description");
+        }else {
+            NewPlace newPlace = new NewPlace(mTitle, mDescription, mUri);
+            mNewPlaceId = mDatabaseReference.push().getKey();
+            mDatabaseReference.setValue(newPlace).addOnSuccessListener(succeed -> {
+                discard();
+                Log.e("key", mNewPlaceId);
+            });
+        }
     }
 
     @OnClick(R.id.button_add_new_discard)
-    void discard(){
+    void discard() {
         mTitleDisposable.dispose();
         mDescriptionDisposable.dispose();
         finish();
