@@ -117,4 +117,16 @@ public class AddNewActivity extends AuthenticationActivity {
     void addNewPhoto() {
         handleAddPhoto();
     }
+
+    @OnClick(R.id.button_add_new_save)
+    void save(){
+        discard();
+    }
+
+    @OnClick(R.id.button_add_new_discard)
+    void discard(){
+        mTitleDisposable.dispose();
+        mDescriptionDisposable.dispose();
+        finish();
+    }
 }
