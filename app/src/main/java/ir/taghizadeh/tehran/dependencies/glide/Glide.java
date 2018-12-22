@@ -4,5 +4,5 @@ import android.widget.ImageView;
 
 public interface Glide {
     void loadImage(String url, ImageView imageView);
-    void blankUserPhoto(ImageView imageView);
+    void loadBlank(ImageView imageView);
 }

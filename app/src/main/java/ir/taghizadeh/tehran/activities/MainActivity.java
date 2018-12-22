@@ -37,7 +37,6 @@ public class MainActivity extends AuthenticationActivity {
 
     private Storage mStorage;
     private Map mMap;
-    private RootCoordinator mRootCoordinator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +47,9 @@ public class MainActivity extends AuthenticationActivity {
     }
 
     public void configureWith(Storage storage,
-                              Map map,
-                              RootCoordinator rootCoordinator) {
+                              Map map) {
         this.mMap = map;
         this.mStorage = storage;
-        this.mRootCoordinator = rootCoordinator;
         setUpUI();
     }
 
@@ -84,12 +81,12 @@ public class MainActivity extends AuthenticationActivity {
 
     @OnClick(R.id.image_main_add_photo)
     void addPhoto() {
-        mRootCoordinator.handleAddUserPhoto();
+        handleAddUserPhoto();
     }
 
     @OnClick(R.id.image_main_add_place)
     void addLocation() {
         LatLng latLng = mMap.getCenterLocation();
-        mRootCoordinator.handleAddPlace(latLng);
+        handleAddPlace(latLng);
     }
 }

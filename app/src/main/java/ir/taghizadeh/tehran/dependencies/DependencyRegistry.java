@@ -1,7 +1,8 @@
 package ir.taghizadeh.tehran.dependencies;
 
 import ir.taghizadeh.tehran.activities.AuthenticationActivity;
-import ir.taghizadeh.tehran.activities.DetailsActivity;
+import ir.taghizadeh.tehran.activities.AddNewActivity;
+import ir.taghizadeh.tehran.activities.BaseConfigsActivity;
 import ir.taghizadeh.tehran.activities.MainActivity;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.dependencies.authentication.AuthenticationImpl;
@@ -28,31 +29,26 @@ public class DependencyRegistry {
     Storage storagePresenter;
     RootCoordinator rootCoordinatorPresenter;
 
-    public void inject(AuthenticationActivity activity) {
-
-        authenticationPresenter = new AuthenticationImpl(activity, Constants.RC_SIGN_IN);
-        glidePresenter = new GlideImpl(activity);
+    public void inject(BaseConfigsActivity activity) {
         windowConfigPresenter = new WindowConfigImpl(activity);
+        rootCoordinatorPresenter = new RootCoordinatorImpl(activity);
+        glidePresenter = new GlideImpl(activity);
+        activity.configureWith(windowConfigPresenter,rootCoordinatorPresenter, glidePresenter);
+    }
 
-        activity.configureWith(authenticationPresenter, glidePresenter, windowConfigPresenter);
+    public void inject(AuthenticationActivity activity) {
+        authenticationPresenter = new AuthenticationImpl(activity, Constants.RC_SIGN_IN);
+        activity.configureWith(authenticationPresenter);
     }
 
     public void inject(MainActivity activity) {
-
         mapPresenter = new MapImpl(activity);
         storagePresenter = new StorageImpl(activity);
-        rootCoordinatorPresenter = new RootCoordinatorImpl(activity);
-
-        activity.configureWith(
-                storagePresenter,
-                mapPresenter,
-                rootCoordinatorPresenter);
+        activity.configureWith(storagePresenter, mapPresenter);
     }
 
-    public void inject(DetailsActivity activity) {
-
+    public void inject(AddNewActivity activity) {
         mapPresenter = new MapImpl(activity);
-
         activity.configureWith(mapPresenter);
     }
 }

@@ -18,7 +18,7 @@ public class GlideImpl implements Glide {
     }
 
     @Override
-    public void blankUserPhoto(ImageView imageView) {
+    public void loadBlank(ImageView imageView) {
         com.bumptech.glide.Glide.with(activity)
                 .load(activity.getResources().getIdentifier("oval", "drawable", activity.getPackageName()))
                 .into(imageView);

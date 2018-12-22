@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary">
@@ -17,17 +16,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <cn.gavinliu.android.lib.shapedimageview.ShapedImageView
-        android:id="@+id/image_details_add_photo"
+        android:id="@+id/image_add_new_add_photo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:scaleType="centerCrop"
         android:src="@drawable/rect"
         app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/map"
-        app:round_radius="20dp"
+        app:round_radius="10dp"
         app:shape_mode="round_rect"
         app:stroke_color="@color/white"
         app:stroke_width="2dp" />
@@ -40,13 +41,13 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:hint="@string/title"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_details_add_photo">
+        app:layout_constraintTop_toBottomOf="@+id/image_add_new_add_photo">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/edittext_details_title"
+            android:id="@+id/edittext_add_new_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white" />
@@ -54,22 +55,60 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:hint="@string/description"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/edittext_details_description"
+            android:id="@+id/edittext_add_new_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white" />
 
     </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/button_add_new_save"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/save"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+
+    <Button
+        android:id="@+id/button_add_new_save2"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/discard"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintEnd_toStartOf="@+id/button_add_new_save"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+
+    <ImageView
+        android:id="@+id/image_add_new_icon_add_photo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/image_add_new_add_photo"
+        app:layout_constraintEnd_toEndOf="@+id/image_add_new_add_photo"
+        app:layout_constraintStart_toStartOf="@+id/image_add_new_add_photo"
+        app:layout_constraintTop_toTopOf="@+id/image_add_new_add_photo"
+        app:srcCompat="@drawable/ic_photo" />
 
 </android.support.constraint.ConstraintLayout>

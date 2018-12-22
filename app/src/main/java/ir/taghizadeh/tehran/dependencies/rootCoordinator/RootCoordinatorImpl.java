@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import ir.taghizadeh.tehran.activities.DetailsActivity;
+import ir.taghizadeh.tehran.activities.AddNewActivity;
 import ir.taghizadeh.tehran.helpers.Constants;
 
 public class RootCoordinatorImpl implements RootCoordinator{
@@ -26,7 +26,7 @@ public class RootCoordinatorImpl implements RootCoordinator{
 
     @Override
     public void handleAddPlace(LatLng latLng) {
-        Intent intent = new Intent(activity, DetailsActivity.class);
+        Intent intent = new Intent(activity, AddNewActivity.class);
         Bundle args = new Bundle();
         args.putParcelable("location", latLng);
         intent.putExtra("bundle", args);

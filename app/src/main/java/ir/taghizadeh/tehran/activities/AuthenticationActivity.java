@@ -3,22 +3,17 @@ package ir.taghizadeh.tehran.activities;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
-import ir.taghizadeh.tehran.dependencies.glide.Glide;
-import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfig;
 
 @SuppressLint("Registered")
-public class AuthenticationActivity extends AppCompatActivity {
+public class AuthenticationActivity extends BaseConfigsActivity {
 
     private Authentication mAuthentication;
-    private Glide mGlide;
-    private WindowConfig mWindowConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,14 +21,8 @@ public class AuthenticationActivity extends AppCompatActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Authentication authenticationPresenter, Glide glide, WindowConfig windowConfig) {
+    public void configureWith(Authentication authenticationPresenter) {
         this.mAuthentication = authenticationPresenter;
-        this.mGlide = glide;
-        mWindowConfig = windowConfig;
-    }
-
-    public void hideStatusBar(){
-        mWindowConfig.hideStatusBar();
     }
 
     public void setUsername(TextView textView){
@@ -43,10 +32,10 @@ public class AuthenticationActivity extends AppCompatActivity {
     public void setPhoto(ImageView photo, ImageView icon){
         mAuthentication.setPhotoURLListener(uri -> {
             if (uri != null) {
-                mGlide.loadImage(uri.toString(), photo);
+                loadImage(uri.toString(), photo);
                 icon.setVisibility(View.GONE);
             } else {
-                mGlide.blankUserPhoto(photo);
+                loadBlank(photo);
                 icon.setVisibility(View.VISIBLE);
             }
         });
@@ -55,7 +44,6 @@ public class AuthenticationActivity extends AppCompatActivity {
     public void updatePhotoURL(Uri uri){
         mAuthentication.updatePhotoURL(uri);
     }
-
 
     public void signOut(){
         mAuthentication.signOut();
