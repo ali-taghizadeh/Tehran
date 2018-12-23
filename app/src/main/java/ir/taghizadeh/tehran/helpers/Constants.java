@@ -8,4 +8,5 @@ public class Constants {
     public static final LatLng DOWNTOWN = new LatLng(35.700969, 51.391188);// Our entry point is always downtown
     public static final String USER_AVATAR = "user_avatar";
     public static final String PLACES = "places";
+    public static final String PLACES_LOCATION = "places_location";
 }

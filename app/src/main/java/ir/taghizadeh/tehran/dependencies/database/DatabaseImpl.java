@@ -1,5 +1,10 @@
 package ir.taghizadeh.tehran.dependencies.database;
 
+import android.util.Log;
+
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -9,7 +14,9 @@ public class DatabaseImpl implements Database{
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
+    private GeoFire mGeoFire;
     private PushListener mPushListener;
+    private LocationListener mLocationListener;
 
     public DatabaseImpl() {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -28,7 +35,22 @@ public class DatabaseImpl implements Database{
     }
 
     @Override
+    public void pushLocation(String location, String key, LatLng latLng) {
+        mDatabaseReference = mFirebaseDatabase.getReference().child(location);
+        mGeoFire = new GeoFire(mDatabaseReference);
+        mGeoFire.setLocation(key, new GeoLocation(latLng.latitude, latLng.longitude), (key1, error) -> {
+            if (mLocationListener != null)
+                mLocationListener.onSetLocationSuccessfully(key1);
+        });
+    }
+
+    @Override
     public void sePushListener(PushListener pushListener) {
         this.mPushListener = pushListener;
+    }
+
+    @Override
+    public void seLocationListener(LocationListener locationListener) {
+        this.mLocationListener = locationListener;
     }
 }

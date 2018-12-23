@@ -4,13 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.concurrent.TimeUnit;
@@ -46,7 +43,7 @@ public class AddNewActivity extends AuthenticationActivity {
     private String mTitle;
     private String mDescription;
     private String mUri = "";
-    private String mNewPlaceId;
+    private String mNewPlaceLocationKey;
     private Disposable mTitleDisposable;
     private Disposable mDescriptionDisposable;
 
@@ -137,14 +134,17 @@ public class AddNewActivity extends AuthenticationActivity {
             NewPlace newPlace = new NewPlace(getUsername(), mTitle, mDescription, mUri);
             mDatabase.pushNewPlace(newPlace, Constants.PLACES);
             mDatabase.sePushListener(key -> {
-                mNewPlaceId = key;
-                discard();
+                mDatabase.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);
+                mDatabase.seLocationListener(key1 -> {
+                    mNewPlaceLocationKey = key1;
+                    dismiss();
+                });
             });
         }
     }
 
     @OnClick(R.id.button_add_new_discard)
-    void discard() {
+    void dismiss() {
         mTitleDisposable.dispose();
         mDescriptionDisposable.dispose();
         finish();
