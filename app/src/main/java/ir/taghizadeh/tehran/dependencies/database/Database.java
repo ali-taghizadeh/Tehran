@@ -1,0 +1,11 @@
+package ir.taghizadeh.tehran.dependencies.database;
+
+import ir.taghizadeh.tehran.models.NewPlace;
+
+public interface Database {
+    void pushNewPlace(NewPlace newPlace, String location);
+    void sePushListener(PushListener pushListener);
+    interface PushListener {
+        void onPushSuccessfully(String key);
+    }
+}

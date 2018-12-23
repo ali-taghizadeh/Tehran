@@ -6,6 +6,8 @@ import ir.taghizadeh.tehran.activities.BaseConfigsActivity;
 import ir.taghizadeh.tehran.activities.MainActivity;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.dependencies.authentication.AuthenticationImpl;
+import ir.taghizadeh.tehran.dependencies.database.Database;
+import ir.taghizadeh.tehran.dependencies.database.DatabaseImpl;
 import ir.taghizadeh.tehran.dependencies.glide.Glide;
 import ir.taghizadeh.tehran.dependencies.glide.GlideImpl;
 import ir.taghizadeh.tehran.dependencies.map.Map;
@@ -27,6 +29,7 @@ public class DependencyRegistry {
     Map mapPresenter;
     WindowConfig windowConfigPresenter;
     Storage storagePresenter;
+    Database databasePresenter;
     RootCoordinator rootCoordinatorPresenter;
 
     public void inject(BaseConfigsActivity activity) {
@@ -50,6 +53,7 @@ public class DependencyRegistry {
     public void inject(AddNewActivity activity) {
         mapPresenter = new MapImpl(activity);
         storagePresenter = new StorageImpl(activity);
-        activity.configureWith(mapPresenter, storagePresenter);
+        databasePresenter = new DatabaseImpl();
+        activity.configureWith(mapPresenter, storagePresenter, databasePresenter);
     }
 }

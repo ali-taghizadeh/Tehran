@@ -23,6 +23,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
+import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
@@ -40,6 +41,7 @@ public class AddNewActivity extends AuthenticationActivity {
     TextInputEditText edittext_add_new_description;
     private Map mMap;
     private Storage mStorage;
+    private Database mDatabase;
     private LatLng mLatLng;
     private String mTitle;
     private String mDescription;
@@ -48,22 +50,18 @@ public class AddNewActivity extends AuthenticationActivity {
     private Disposable mTitleDisposable;
     private Disposable mDescriptionDisposable;
 
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new);
         ButterKnife.bind(this);
         DependencyRegistry.register.inject(this);
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseDatabase.getReference().child("places");
     }
 
-    public void configureWith(Map map, Storage storage) {
+    public void configureWith(Map map, Storage storage, Database database) {
         this.mMap = map;
         this.mStorage = storage;
+        this.mDatabase = database;
         setUpUI();
     }
 
@@ -137,12 +135,11 @@ public class AddNewActivity extends AuthenticationActivity {
             edittext_add_new_description.setError("Pick a description");
         } else {
             NewPlace newPlace = new NewPlace(getUsername(), mTitle, mDescription, mUri);
-            mDatabaseReference
-                    .push()
-                    .setValue(newPlace, (databaseError, databaseReference) -> {
-                        mNewPlaceId = databaseReference.getKey();
-                        discard();
-                    });
+            mDatabase.pushNewPlace(newPlace, Constants.PLACES);
+            mDatabase.sePushListener(key -> {
+                mNewPlaceId = key;
+                discard();
+            });
         }
     }
 
