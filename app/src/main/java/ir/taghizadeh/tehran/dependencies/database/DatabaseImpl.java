@@ -1,9 +1,8 @@
 package ir.taghizadeh.tehran.dependencies.database;
 
-import android.util.Log;
-
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -15,6 +14,7 @@ public class DatabaseImpl implements Database{
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
     private GeoFire mGeoFire;
+    private GeoQuery mGeoQuery;
     private PushListener mPushListener;
     private LocationListener mLocationListener;
 
@@ -42,6 +42,13 @@ public class DatabaseImpl implements Database{
             if (mLocationListener != null)
                 mLocationListener.onSetLocationSuccessfully(key1);
         });
+    }
+
+    @Override
+    public void queryLocations(String location, LatLng latLng, double distance) {
+        mDatabaseReference = mFirebaseDatabase.getReference().child(location);
+        mGeoFire = new GeoFire(mDatabaseReference);
+        mGeoQuery = mGeoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), distance);
     }
 
     @Override

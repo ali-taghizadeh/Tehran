@@ -15,6 +15,7 @@ import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
+import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
@@ -29,6 +30,7 @@ public class MainActivity extends AuthenticationActivity {
     ImageView image_main_icon_add_photo;
 
     private Storage mStorage;
+    private Database mDatabase;
     private Map mMap;
 
     @Override
@@ -39,10 +41,10 @@ public class MainActivity extends AuthenticationActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Storage storage,
-                              Map map) {
+    public void configureWith(Storage storage, Map map, Database database) {
         this.mMap = map;
         this.mStorage = storage;
+        this.mDatabase = database;
         setUpUI();
     }
 
@@ -51,6 +53,7 @@ public class MainActivity extends AuthenticationActivity {
         attachUsername(text_main_username);
         setPhoto(image_main_add_photo, image_main_icon_add_photo);
         mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
+        mMap.setOnCameraListener(() -> mDatabase.queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), 5));
 
     }
 

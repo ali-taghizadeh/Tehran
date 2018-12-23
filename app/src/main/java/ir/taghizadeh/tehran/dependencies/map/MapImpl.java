@@ -1,7 +1,6 @@
 package ir.taghizadeh.tehran.dependencies.map;
 
 import android.support.v4.app.FragmentActivity;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,6 +19,7 @@ public class MapImpl implements OnMapReadyCallback, Map {
     private GoogleMap googleMap;
     private FragmentActivity fragmentActivity;
     private MapListener mapListener;
+    private CameraListener cameraListener;
 
     public MapImpl(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
@@ -55,6 +55,12 @@ public class MapImpl implements OnMapReadyCallback, Map {
                 .zoom(zoom).build();
         if (googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            googleMap.setOnCameraMoveStartedListener(i -> {
+                if (cameraListener != null){
+                    cameraListener.onCameraMoved();
+                }
+            });
+
         }
     }
 
@@ -72,6 +78,11 @@ public class MapImpl implements OnMapReadyCallback, Map {
     @Override
     public void setOnMapListener(MapListener mapListener) {
         this.mapListener = mapListener;
+    }
+
+    @Override
+    public void setOnCameraListener(CameraListener cameraListener) {
+        this.cameraListener = cameraListener;
     }
 
 }
