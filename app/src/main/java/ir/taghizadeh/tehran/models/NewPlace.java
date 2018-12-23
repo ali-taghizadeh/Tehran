@@ -1,17 +1,25 @@
 package ir.taghizadeh.tehran.models;
 
-import com.google.android.gms.maps.model.LatLng;
-
 public class NewPlace {
 
+    private String mUsername;
     private String mTitle;
     private String mDescription;
     private String mPhotoUrl;
 
-    public NewPlace(String title, String description, String photoUrl) {
+    public NewPlace(String username, String title, String description, String photoUrl) {
+        this.mUsername = username;
         this.mTitle = title;
         this.mDescription = description;
         this.mPhotoUrl = photoUrl;
+    }
+
+    public String getUsername() {
+        return mUsername;
+    }
+
+    public void setUsername(String mUsername) {
+        this.mUsername = mUsername;
     }
 
     public String getTitle() {

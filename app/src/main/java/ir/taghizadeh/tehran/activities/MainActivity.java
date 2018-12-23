@@ -3,9 +3,6 @@ package ir.taghizadeh.tehran.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,12 +15,8 @@ import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
-import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
-import ir.taghizadeh.tehran.dependencies.glide.Glide;
 import ir.taghizadeh.tehran.dependencies.map.Map;
-import ir.taghizadeh.tehran.dependencies.rootCoordinator.RootCoordinator;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
-import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfig;
 import ir.taghizadeh.tehran.helpers.Constants;
 
 public class MainActivity extends AuthenticationActivity {
@@ -55,7 +48,7 @@ public class MainActivity extends AuthenticationActivity {
 
     private void setUpUI() {
         hideStatusBar();
-        setUsername(text_main_username);
+        attachUsername(text_main_username);
         setPhoto(image_main_add_photo, image_main_icon_add_photo);
         mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
 

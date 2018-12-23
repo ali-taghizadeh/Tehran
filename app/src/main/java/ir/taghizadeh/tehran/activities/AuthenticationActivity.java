@@ -14,6 +14,7 @@ import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 public class AuthenticationActivity extends BaseConfigsActivity {
 
     private Authentication mAuthentication;
+    private String mUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +26,16 @@ public class AuthenticationActivity extends BaseConfigsActivity {
         this.mAuthentication = authenticationPresenter;
     }
 
-    public void setUsername(TextView textView){
+    public void addUsernameListener(){
+        mAuthentication.setUsernameListener(username -> mUsername = username);
+    }
+
+    public void attachUsername(TextView textView){
         mAuthentication.setUsernameListener(username -> textView.setText(username.toUpperCase()));
+    }
+
+    public String getUsername(){
+        return mUsername;
     }
 
     public void setPhoto(ImageView photo, ImageView icon){

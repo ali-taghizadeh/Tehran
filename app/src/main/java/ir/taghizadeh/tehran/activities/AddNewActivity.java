@@ -70,6 +70,7 @@ public class AddNewActivity extends AuthenticationActivity {
 
     private void setUpUI() {
         hideStatusBar();
+        addUsernameListener();
         getLatLng();
         attachMap(mLatLng, mTitle, mDescription);
         mTitleDisposable = textChangeListener(edittext_add_new_title);
@@ -118,7 +119,7 @@ public class AddNewActivity extends AuthenticationActivity {
             mStorage.putFile(selectedImageUri, Constants.PLACES);
             mStorage.setonFileUploadedSuccessfully(uri -> {
                 mUri = uri.toString();
-                loadImage(mUri.toString(), image_add_new_add_photo);
+                loadImage(mUri, image_add_new_add_photo);
                 image_add_new_icon_add_photo.setVisibility(View.GONE);
             });
         }
@@ -136,9 +137,9 @@ public class AddNewActivity extends AuthenticationActivity {
         }else if (mDescription.equals("")){
             edittext_add_new_description.setError("Pick a description");
         }else {
-            NewPlace newPlace = new NewPlace(mTitle, mDescription, mUri);
+            NewPlace newPlace = new NewPlace(getUsername(), mTitle, mDescription, mUri);
             mNewPlaceId = mDatabaseReference.push().getKey();
-            mDatabaseReference.setValue(newPlace).addOnSuccessListener(succeed -> {
+            mDatabaseReference.push().setValue(newPlace).addOnSuccessListener(succeed -> {
                 discard();
                 Log.e("key", mNewPlaceId);
             });
