@@ -3,7 +3,6 @@ package ir.taghizadeh.tehran.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.util.Log;
 import android.view.View;
@@ -132,17 +131,18 @@ public class AddNewActivity extends AuthenticationActivity {
 
     @OnClick(R.id.button_add_new_save)
     void save() {
-        if (mTitle.equals("")){
+        if (mTitle.equals("")) {
             edittext_add_new_title.setError("Pick a title");
-        }else if (mDescription.equals("")){
+        } else if (mDescription.equals("")) {
             edittext_add_new_description.setError("Pick a description");
-        }else {
+        } else {
             NewPlace newPlace = new NewPlace(getUsername(), mTitle, mDescription, mUri);
-            mNewPlaceId = mDatabaseReference.push().getKey();
-            mDatabaseReference.push().setValue(newPlace).addOnSuccessListener(succeed -> {
-                discard();
-                Log.e("key", mNewPlaceId);
-            });
+            mDatabaseReference
+                    .push()
+                    .setValue(newPlace, (databaseError, databaseReference) -> {
+                        mNewPlaceId = databaseReference.getKey();
+                        discard();
+                    });
         }
     }
 
