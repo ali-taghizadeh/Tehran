@@ -7,7 +7,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,8 +55,7 @@ public class MainActivity extends AuthenticationActivity {
         attachUsername(text_main_username);
         setPhoto(image_main_add_photo, image_main_icon_add_photo);
         mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
-        mMap.setOnCameraListener(() -> mDatabase.queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), 5));
-
+        mMap.setOnCameraListener(() -> queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), 5));
     }
 
     @Override
@@ -68,6 +69,11 @@ public class MainActivity extends AuthenticationActivity {
             mStorage.putFile(selectedImageUri, Constants.USER_AVATAR);
             mStorage.setonFileUploadedSuccessfully(this::updatePhotoURL);
         }
+    }
+
+    private void queryLocations(String dbLocation, LatLng centerLocation, int distance){
+        mDatabase.queryLocations(dbLocation, centerLocation, distance);
+        mDatabase.setOnDataEnteredListener((dataSnapshot, location) -> mMap.addMarker(location));
     }
 
     @OnClick(R.id.image_main_logout)

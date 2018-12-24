@@ -1,6 +1,8 @@
 package ir.taghizadeh.tehran.dependencies.map;
 
 import android.support.v4.app.FragmentActivity;
+
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,6 +46,15 @@ public class MapImpl implements OnMapReadyCallback, Map {
                     .position(position)
                     .title(title)
                     .snippet(snippet));
+            marker.showInfoWindow();
+        }
+    }
+
+    @Override
+    public void addMarker(GeoLocation position) {
+        if (googleMap != null) {
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(position.latitude, position.longitude)));
             marker.showInfoWindow();
         }
     }
