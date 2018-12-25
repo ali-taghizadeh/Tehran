@@ -2,7 +2,8 @@ package ir.taghizadeh.tehran.dependencies.geoFire;
 
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
+
+import java.util.Map;
 
 public interface GeoFire {
 
@@ -15,22 +16,6 @@ public interface GeoFire {
     }
     void setOnGeoQueryReady(GeoQueryListener geoQueryListener);
     interface GeoQueryListener {
-        void OnGeoQueryReady();
-    }
-    void setOnDataEnteredListener(OnDataEnteredListener onDataEnteredListener);
-    interface OnDataEnteredListener {
-        void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location);
-    }
-    void setOnDataExitedListener(OnDataExitedListener onDataExitedListener);
-    interface OnDataExitedListener {
-        void onDataExited(DataSnapshot dataSnapshot);
-    }
-    void setOnDataMovedListener(OnDataMovedListener onDataMovedListener);
-    interface OnDataMovedListener {
-        void OnDataMoved(DataSnapshot dataSnapshot, GeoLocation location);
-    }
-    void setOnDataChangedListener(OnDataChangedListener onDataChangedListener);
-    interface OnDataChangedListener {
-        void OnDataChanged(DataSnapshot dataSnapshot, GeoLocation location);
+        void OnGeoQueryReady(Map<String, GeoLocation> locationMap);
     }
 }

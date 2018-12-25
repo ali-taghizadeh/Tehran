@@ -2,7 +2,9 @@ package ir.taghizadeh.tehran.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,9 +76,10 @@ public class MainActivity extends AuthenticationActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void queryLocations(String dbLocation, LatLng centerLocation, int distance){
         mGeoFire.queryLocations(dbLocation, centerLocation, distance);
-        mGeoFire.setOnDataEnteredListener((dataSnapshot, location) -> mMap.addMarker(location));
+        mGeoFire.setOnGeoQueryReady(locationMap -> locationMap.forEach((k, v) -> System.out.println((k + ":" + v))));
     }
 
     @OnClick(R.id.image_main_logout)
