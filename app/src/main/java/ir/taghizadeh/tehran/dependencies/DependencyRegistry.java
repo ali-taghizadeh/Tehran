@@ -8,6 +8,8 @@ import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.dependencies.authentication.AuthenticationImpl;
 import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.dependencies.database.DatabaseImpl;
+import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
+import ir.taghizadeh.tehran.dependencies.geoFire.GeoFireImpl;
 import ir.taghizadeh.tehran.dependencies.glide.Glide;
 import ir.taghizadeh.tehran.dependencies.glide.GlideImpl;
 import ir.taghizadeh.tehran.dependencies.map.Map;
@@ -31,6 +33,7 @@ public class DependencyRegistry {
     Storage storagePresenter;
     Database databasePresenter;
     RootCoordinator rootCoordinatorPresenter;
+    GeoFire geoFirePresenter;
 
     public void inject(BaseConfigsActivity activity) {
         windowConfigPresenter = new WindowConfigImpl(activity);
@@ -48,13 +51,15 @@ public class DependencyRegistry {
         mapPresenter = new MapImpl(activity);
         storagePresenter = new StorageImpl(activity);
         databasePresenter = new DatabaseImpl();
-        activity.configureWith(storagePresenter, mapPresenter, databasePresenter);
+        geoFirePresenter = new GeoFireImpl();
+        activity.configureWith(storagePresenter, mapPresenter, databasePresenter, geoFirePresenter);
     }
 
     public void inject(AddNewActivity activity) {
         mapPresenter = new MapImpl(activity);
         storagePresenter = new StorageImpl(activity);
         databasePresenter = new DatabaseImpl();
-        activity.configureWith(mapPresenter, storagePresenter, databasePresenter);
+        geoFirePresenter = new GeoFireImpl();
+        activity.configureWith(mapPresenter, storagePresenter, databasePresenter, geoFirePresenter);
     }
 }

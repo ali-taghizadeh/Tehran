@@ -18,6 +18,7 @@ import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.database.Database;
+import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
@@ -34,6 +35,7 @@ public class MainActivity extends AuthenticationActivity {
     private Storage mStorage;
     private Database mDatabase;
     private Map mMap;
+    private GeoFire mGeoFire;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +45,11 @@ public class MainActivity extends AuthenticationActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Storage storage, Map map, Database database) {
+    public void configureWith(Storage storage, Map map, Database database, GeoFire geoFire) {
         this.mMap = map;
         this.mStorage = storage;
         this.mDatabase = database;
+        this.mGeoFire = geoFire;
         setUpUI();
     }
 
@@ -72,8 +75,8 @@ public class MainActivity extends AuthenticationActivity {
     }
 
     private void queryLocations(String dbLocation, LatLng centerLocation, int distance){
-        mDatabase.queryLocations(dbLocation, centerLocation, distance);
-        mDatabase.setOnDataEnteredListener((dataSnapshot, location) -> mMap.addMarker(location));
+        mGeoFire.queryLocations(dbLocation, centerLocation, distance);
+        mGeoFire.setOnDataEnteredListener((dataSnapshot, location) -> mMap.addMarker(location));
     }
 
     @OnClick(R.id.image_main_logout)

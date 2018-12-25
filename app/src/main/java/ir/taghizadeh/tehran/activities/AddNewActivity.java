@@ -21,6 +21,7 @@ import io.reactivex.disposables.Disposable;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.database.Database;
+import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
@@ -39,6 +40,7 @@ public class AddNewActivity extends AuthenticationActivity {
     private Map mMap;
     private Storage mStorage;
     private Database mDatabase;
+    private GeoFire mGeoFire;
     private LatLng mLatLng;
     private String mTitle;
     private String mDescription;
@@ -55,10 +57,11 @@ public class AddNewActivity extends AuthenticationActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Map map, Storage storage, Database database) {
+    public void configureWith(Map map, Storage storage, Database database, GeoFire geoFire) {
         this.mMap = map;
         this.mStorage = storage;
         this.mDatabase = database;
+        this.mGeoFire = geoFire;
         setUpUI();
     }
 
@@ -134,8 +137,8 @@ public class AddNewActivity extends AuthenticationActivity {
             NewPlace newPlace = new NewPlace(getUsername(), mTitle, mDescription, mUri);
             mDatabase.pushNewPlace(newPlace, Constants.PLACES);
             mDatabase.sePushListener(key -> {
-                mDatabase.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);
-                mDatabase.seLocationListener(key1 -> {
+                mGeoFire.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);
+                mGeoFire.seLocationListener(key1 -> {
                     mNewPlaceLocationKey = key1;
                     dismiss();
                 });
