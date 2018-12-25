@@ -91,7 +91,9 @@ public class MainActivity extends AuthenticationActivity {
             locationMap.forEach((key, geoLocation) -> {
                 mMap.addMarker(geoLocation);
                 mDatabase.getChild(Constants.PLACES, key);
-                mDatabase.setDataSnapshotListener(newPlace -> Log.e("Place Title : ", newPlace.getTitle()));
+                mDatabase.setDataSnapshotListener(newPlace -> {
+
+                });
             });
         });
     }
