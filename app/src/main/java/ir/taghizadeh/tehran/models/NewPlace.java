@@ -1,6 +1,8 @@
 package ir.taghizadeh.tehran.models;
 
 public class NewPlace {
+    public NewPlace() {
+    }
 
     private String mUsername;
     private String mTitle;

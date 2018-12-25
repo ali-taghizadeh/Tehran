@@ -28,6 +28,7 @@ public class GeoFireImpl implements GeoFire {
 
     private Map<String, GeoLocation> mLocations;
 
+
     public GeoFireImpl() {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mLocations = new HashMap<>();
@@ -48,25 +49,30 @@ public class GeoFireImpl implements GeoFire {
         mDatabaseReference = mFirebaseDatabase.getReference().child(location);
         mGeoFire = new com.firebase.geofire.GeoFire(mDatabaseReference);
         mGeoQuery = mGeoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), distance);
-        mGeoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+        mGeoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
             @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                mLocations.put(key, location);
+            public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
+                mLocations.put(dataSnapshot.getKey(), location);
             }
 
             @Override
-            public void onKeyExited(String key) {
-                mLocations.remove(key);
+            public void onDataExited(DataSnapshot dataSnapshot) {
+                mLocations.remove(dataSnapshot.getKey());
             }
 
             @Override
-            public void onKeyMoved(String key, GeoLocation location) {
+            public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
 
+            }
+
+            @Override
+            public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
+                mGeoQueryListener.OnGeoQueryReady(mLocations);
             }
 
             @Override
             public void onGeoQueryReady() {
-                mGeoQueryListener.OnGeoQueryReady(mLocations);
+                if (mGeoQueryListener != null)mGeoQueryListener.OnGeoQueryReady(mLocations);
             }
 
             @Override

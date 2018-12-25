@@ -14,7 +14,7 @@ public interface Map {
     interface MapListener {
         void onMapReady();
     }
-    void setOnCameraListener(CameraListener cameraListener);
+    void setOnCameraMoveListener(CameraListener cameraListener);
     interface CameraListener {
         void onCameraMoved();
     }

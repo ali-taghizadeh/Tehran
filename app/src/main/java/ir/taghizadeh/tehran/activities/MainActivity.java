@@ -5,13 +5,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
+
+import java.util.function.BiConsumer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,6 +26,7 @@ import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
+import ir.taghizadeh.tehran.models.NewPlace;
 
 public class MainActivity extends AuthenticationActivity {
 
@@ -47,6 +50,7 @@ public class MainActivity extends AuthenticationActivity {
         DependencyRegistry.register.inject(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void configureWith(Storage storage, Map map, Database database, GeoFire geoFire) {
         this.mMap = map;
         this.mStorage = storage;
@@ -55,12 +59,15 @@ public class MainActivity extends AuthenticationActivity {
         setUpUI();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setUpUI() {
         hideStatusBar();
         attachUsername(text_main_username);
         setPhoto(image_main_add_photo, image_main_icon_add_photo);
-        mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
-        mMap.setOnCameraListener(() -> queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), 5));
+        mMap.setOnMapListener(() -> {
+            mMap.startCamera(Constants.DOWNTOWN, 17);
+        });
+        mMap.setOnCameraMoveListener(() -> queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), Constants.DEFAULT_DISTANCE));
     }
 
     @Override
@@ -79,7 +86,14 @@ public class MainActivity extends AuthenticationActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void queryLocations(String dbLocation, LatLng centerLocation, int distance){
         mGeoFire.queryLocations(dbLocation, centerLocation, distance);
-        mGeoFire.setOnGeoQueryReady(locationMap -> locationMap.forEach((k, v) -> System.out.println((k + ":" + v))));
+        mGeoFire.setOnGeoQueryReady(locationMap -> {
+            mMap.clearMap();
+            locationMap.forEach((key, geoLocation) -> {
+                mMap.addMarker(geoLocation);
+                mDatabase.getChild(Constants.PLACES, key);
+                mDatabase.setDataSnapshotListener(newPlace -> Log.e("Place Title : ", newPlace.getTitle()));
+            });
+        });
     }
 
     @OnClick(R.id.image_main_logout)

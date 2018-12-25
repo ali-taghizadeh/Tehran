@@ -1,5 +1,6 @@
 package ir.taghizadeh.tehran.dependencies.map;
 
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 
 import com.firebase.geofire.GeoLocation;
@@ -20,6 +21,7 @@ public class MapImpl implements OnMapReadyCallback, Map {
 
     private GoogleMap googleMap;
     private FragmentActivity fragmentActivity;
+
     private MapListener mapListener;
     private CameraListener cameraListener;
 
@@ -67,7 +69,7 @@ public class MapImpl implements OnMapReadyCallback, Map {
         if (googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             googleMap.setOnCameraMoveStartedListener(i -> {
-                if (cameraListener != null){
+                if (cameraListener != null) {
                     cameraListener.onCameraMoved();
                 }
             });
@@ -92,7 +94,7 @@ public class MapImpl implements OnMapReadyCallback, Map {
     }
 
     @Override
-    public void setOnCameraListener(CameraListener cameraListener) {
+    public void setOnCameraMoveListener(CameraListener cameraListener) {
         this.cameraListener = cameraListener;
     }
 
