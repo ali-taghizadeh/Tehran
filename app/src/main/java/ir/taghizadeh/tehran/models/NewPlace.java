@@ -1,5 +1,7 @@
 package ir.taghizadeh.tehran.models;
 
+import java.util.List;
+
 public class NewPlace {
     public NewPlace() {
     }
@@ -11,15 +13,18 @@ public class NewPlace {
     private String mUserPhotoUrl;
     private int mLikes;
     private int mDislikes;
+    private List<Comments> mComments;
 
-    public NewPlace(String username, String title, String description, String photoUrl, String userPhotoUrl, int likes, int dislikes) {
+    public NewPlace(String username, String title, String description, String photoUrl, String userPhotoUrl, int likes, int dislikes, List<Comments> comments) {
         this.mUsername = username;
         this.mTitle = title;
         this.mDescription = description;
         this.mPhotoUrl = photoUrl;
-        mUserPhotoUrl = userPhotoUrl;
-        mLikes = likes;
-        mDislikes = dislikes;
+        this.mUserPhotoUrl = userPhotoUrl;
+        this.mLikes = likes;
+        this.mDislikes = dislikes;
+        this.mComments = comments;
+
     }
 
     public String getUsername() {
@@ -54,27 +59,35 @@ public class NewPlace {
         this.mPhotoUrl = mPhotoUrl;
     }
 
-    public String getmUserPhotoUrl() {
+    public String getUserPhotoUrl() {
         return mUserPhotoUrl;
     }
 
-    public void setmUserPhotoUrl(String mUserPhotoUrl) {
+    public void setUserPhotoUrl(String mUserPhotoUrl) {
         this.mUserPhotoUrl = mUserPhotoUrl;
     }
 
-    public int getmLikes() {
+    public int getLikes() {
         return mLikes;
     }
 
-    public void setmLikes(int mLikes) {
+    public void setLikes(int mLikes) {
         this.mLikes = mLikes;
     }
 
-    public int getmDislikes() {
+    public int getDislikes() {
         return mDislikes;
     }
 
-    public void setmDislikes(int mDislikes) {
+    public void setmislikes(int mDislikes) {
         this.mDislikes = mDislikes;
+    }
+
+    public List<Comments> getComments() {
+        return mComments;
+    }
+
+    public void setComments(List<Comments> mComments) {
+        this.mComments = mComments;
     }
 }

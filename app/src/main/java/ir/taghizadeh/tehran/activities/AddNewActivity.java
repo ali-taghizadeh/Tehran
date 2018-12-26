@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -25,6 +27,7 @@ import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
+import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
 public class AddNewActivity extends AuthenticationActivity {
@@ -135,8 +138,7 @@ public class AddNewActivity extends AuthenticationActivity {
         } else if (mDescription.equals("")) {
             edittext_add_new_description.setError("Pick a description");
         } else {
-            NewPlace newPlace = new NewPlace(getUsername(), mTitle, mDescription, mPhotoUri, getUserPhoto(), 0, 0);
-            mDatabase.pushNewPlace(newPlace, Constants.PLACES);
+            mDatabase.pushNewPlace(createNewPlace(), Constants.PLACES);
             mDatabase.sePushListener(key -> {
                 mGeoFire.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);
                 mGeoFire.seLocationListener(key1 -> {
@@ -145,6 +147,13 @@ public class AddNewActivity extends AuthenticationActivity {
                 });
             });
         }
+    }
+
+    private NewPlace createNewPlace() {
+        Comments comments = new Comments(getUsername(), getUserPhoto(), mDescription);
+        List<Comments> commentsList = new ArrayList<>();
+        commentsList.add(comments);
+        return new NewPlace(getUsername(), mTitle, mDescription, mPhotoUri, getUserPhoto(), 0, 0, commentsList);
     }
 
     @OnClick(R.id.button_add_new_discard)
