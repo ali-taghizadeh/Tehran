@@ -1,7 +1,5 @@
 package ir.taghizadeh.tehran.dependencies.database;
 
-import com.google.firebase.database.DataSnapshot;
-
 import ir.taghizadeh.tehran.models.NewPlace;
 
 public interface Database {

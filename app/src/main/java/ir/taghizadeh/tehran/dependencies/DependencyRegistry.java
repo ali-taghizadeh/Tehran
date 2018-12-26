@@ -4,6 +4,7 @@ import ir.taghizadeh.tehran.activities.AuthenticationActivity;
 import ir.taghizadeh.tehran.activities.AddNewActivity;
 import ir.taghizadeh.tehran.activities.BaseConfigsActivity;
 import ir.taghizadeh.tehran.activities.MainActivity;
+import ir.taghizadeh.tehran.activities.lists.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.dependencies.authentication.AuthenticationImpl;
 import ir.taghizadeh.tehran.dependencies.database.Database;
@@ -34,11 +35,13 @@ public class DependencyRegistry {
     Database databasePresenter;
     RootCoordinator rootCoordinatorPresenter;
     GeoFire geoFirePresenter;
+    BaseConfigsActivity mActivity;
 
     public void inject(BaseConfigsActivity activity) {
-        windowConfigPresenter = new WindowConfigImpl(activity);
-        rootCoordinatorPresenter = new RootCoordinatorImpl(activity);
-        glidePresenter = new GlideImpl(activity);
+        this.mActivity = activity;
+        windowConfigPresenter = new WindowConfigImpl(mActivity);
+        rootCoordinatorPresenter = new RootCoordinatorImpl(mActivity);
+        glidePresenter = new GlideImpl(mActivity);
         activity.configureWith(windowConfigPresenter,rootCoordinatorPresenter, glidePresenter);
     }
 
@@ -61,5 +64,10 @@ public class DependencyRegistry {
         databasePresenter = new DatabaseImpl();
         geoFirePresenter = new GeoFireImpl();
         activity.configureWith(mapPresenter, storagePresenter, databasePresenter, geoFirePresenter);
+    }
+
+    public void inject(PlacesAdapter placesAdapter){
+        glidePresenter = new GlideImpl(mActivity);
+        placesAdapter.configureWith(glidePresenter);
     }
 }

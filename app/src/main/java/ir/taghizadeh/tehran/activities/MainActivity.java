@@ -5,15 +5,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.function.BiConsumer;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +27,7 @@ import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
+import ir.taghizadeh.tehran.activities.lists.PlacesAdapter;
 import ir.taghizadeh.tehran.models.NewPlace;
 
 public class MainActivity extends AuthenticationActivity {
@@ -36,11 +38,14 @@ public class MainActivity extends AuthenticationActivity {
     ShapedImageView image_main_add_photo;
     @BindView(R.id.image_main_icon_add_photo)
     ImageView image_main_icon_add_photo;
+    @BindView(R.id.recyclerView_main)
+    RecyclerView recyclerView_main;
 
     private Storage mStorage;
     private Database mDatabase;
     private Map mMap;
     private GeoFire mGeoFire;
+    private List<NewPlace> mNewPlacesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +69,26 @@ public class MainActivity extends AuthenticationActivity {
         hideStatusBar();
         attachUsername(text_main_username);
         setPhoto(image_main_add_photo, image_main_icon_add_photo);
+        initializeList();
         mMap.setOnMapListener(() -> {
             mMap.startCamera(Constants.DOWNTOWN, 17);
         });
         mMap.setOnCameraMoveListener(() -> queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), Constants.DEFAULT_DISTANCE));
+    }
+
+    private void initializeList() {
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView_main.setLayoutManager(manager);
+        PlacesAdapter adapter = new PlacesAdapter(mNewPlacesList);
+        recyclerView_main.setAdapter(adapter);
+    }
+
+    private void updateList(List<NewPlace> newPlaces) {
+        this.mNewPlacesList = newPlaces;
+        PlacesAdapter adapter = (PlacesAdapter) recyclerView_main.getAdapter();
+        assert adapter != null;
+        adapter.newPlaces  = this.mNewPlacesList;
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -88,11 +109,13 @@ public class MainActivity extends AuthenticationActivity {
         mGeoFire.queryLocations(dbLocation, centerLocation, distance);
         mGeoFire.setOnGeoQueryReady(locationMap -> {
             mMap.clearMap();
+            mNewPlacesList.clear();
             locationMap.forEach((key, geoLocation) -> {
                 mMap.addMarker(geoLocation);
                 mDatabase.getChild(Constants.PLACES, key);
                 mDatabase.setDataSnapshotListener(newPlace -> {
-
+                mNewPlacesList.add(newPlace);
+                    updateList(mNewPlacesList);
                 });
             });
         });
