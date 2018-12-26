@@ -68,6 +68,7 @@ public class AddNewActivity extends AuthenticationActivity {
     private void setUpUI() {
         hideStatusBar();
         addUsernameListener();
+        addUserPhotoUriListener();
         getLatLng();
         attachMap(mLatLng, mTitle, mDescription);
         mTitleDisposable = textChangeListener(edittext_add_new_title);

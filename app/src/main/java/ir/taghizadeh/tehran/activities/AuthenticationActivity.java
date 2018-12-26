@@ -31,6 +31,10 @@ public class AuthenticationActivity extends BaseConfigsActivity {
         mAuthentication.setUsernameListener(username -> mUsername = username);
     }
 
+    public void addUserPhotoUriListener(){
+        mAuthentication.setPhotoURLListener(uri -> mUserPhotoUrl = uri.toString());
+    }
+
     public void attachUsername(TextView textView){
         mAuthentication.setUsernameListener(username -> textView.setText(username.toUpperCase()));
     }

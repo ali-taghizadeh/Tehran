@@ -53,4 +53,28 @@ public class NewPlace {
     public void setPhotoUrl(String mPhotoUrl) {
         this.mPhotoUrl = mPhotoUrl;
     }
+
+    public String getmUserPhotoUrl() {
+        return mUserPhotoUrl;
+    }
+
+    public void setmUserPhotoUrl(String mUserPhotoUrl) {
+        this.mUserPhotoUrl = mUserPhotoUrl;
+    }
+
+    public int getmLikes() {
+        return mLikes;
+    }
+
+    public void setmLikes(int mLikes) {
+        this.mLikes = mLikes;
+    }
+
+    public int getmDislikes() {
+        return mDislikes;
+    }
+
+    public void setmDislikes(int mDislikes) {
+        this.mDislikes = mDislikes;
+    }
 }
