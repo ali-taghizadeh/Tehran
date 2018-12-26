@@ -49,6 +49,7 @@ public class GeoFireImpl implements GeoFire {
         mDatabaseReference = mFirebaseDatabase.getReference().child(location);
         mGeoFire = new com.firebase.geofire.GeoFire(mDatabaseReference);
         mGeoQuery = mGeoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), distance);
+        mLocations.clear();
         mGeoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
             @Override
             public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {

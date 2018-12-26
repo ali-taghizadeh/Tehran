@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,13 +24,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
+import ir.taghizadeh.tehran.activities.lists.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
-import ir.taghizadeh.tehran.activities.lists.PlacesAdapter;
 import ir.taghizadeh.tehran.models.NewPlace;
 
 public class MainActivity extends AuthenticationActivity {
@@ -88,10 +89,12 @@ public class MainActivity extends AuthenticationActivity {
     }
 
     private void updateList(List<NewPlace> newPlaces) {
+        if (newPlaces.isEmpty()) recyclerView_main.setVisibility(View.GONE);
+        else recyclerView_main.setVisibility(View.VISIBLE);
         this.mNewPlacesList = newPlaces;
         PlacesAdapter adapter = (PlacesAdapter) recyclerView_main.getAdapter();
         assert adapter != null;
-        adapter.newPlaces  = this.mNewPlacesList;
+        adapter.newPlaces = this.mNewPlacesList;
         adapter.notifyDataSetChanged();
     }
 
@@ -109,19 +112,21 @@ public class MainActivity extends AuthenticationActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void queryLocations(String dbLocation, LatLng centerLocation, int distance){
+    private void queryLocations(String dbLocation, LatLng centerLocation, int distance) {
         mGeoFire.queryLocations(dbLocation, centerLocation, distance);
         mGeoFire.setOnGeoQueryReady(locationMap -> {
             mMap.clearMap();
             mNewPlacesList.clear();
+            if (!locationMap.isEmpty())
             locationMap.forEach((key, geoLocation) -> {
                 mMap.addMarker(geoLocation);
                 mDatabase.getChild(Constants.PLACES, key);
                 mDatabase.setDataSnapshotListener(newPlace -> {
-                mNewPlacesList.add(newPlace);
+                    mNewPlacesList.add(newPlace);
                     updateList(mNewPlacesList);
                 });
             });
+            else updateList(mNewPlacesList);
         });
     }
 

@@ -2,6 +2,7 @@ package ir.taghizadeh.tehran.activities.lists;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,8 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull PlacesListViewHolder holder, int index) {
-        NewPlace newPlace = newPlaces.get(index);
-        holder.configureWith(newPlace, mGlide);
+            NewPlace newPlace = newPlaces.get(index);
+            holder.configureWith(newPlace, mGlide);
     }
 
     @Override
