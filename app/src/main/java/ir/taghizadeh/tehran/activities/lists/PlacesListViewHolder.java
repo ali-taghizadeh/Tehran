@@ -26,7 +26,7 @@ class PlacesListViewHolder extends RecyclerView.ViewHolder {
     void configureWith(NewPlace newPlace, Glide mGlide) {
         text_item_place_title.setText(newPlace.getTitle());
         text_item_place_description.setText(newPlace.getDescription());
-        text_item_place_author.setText(newPlace.getUsername());
+        text_item_place_author.setText(newPlace.getUsername().toUpperCase());
         if (newPlace.getPhotoUrl() != null){
             mGlide.loadImage(newPlace.getPhotoUrl(), image_item_place_photo);
         }

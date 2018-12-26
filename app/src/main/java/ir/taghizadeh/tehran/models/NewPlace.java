@@ -8,12 +8,18 @@ public class NewPlace {
     private String mTitle;
     private String mDescription;
     private String mPhotoUrl;
+    private String mUserPhotoUrl;
+    private int mLikes;
+    private int mDislikes;
 
-    public NewPlace(String username, String title, String description, String photoUrl) {
+    public NewPlace(String username, String title, String description, String photoUrl, String userPhotoUrl, int likes, int dislikes) {
         this.mUsername = username;
         this.mTitle = title;
         this.mDescription = description;
         this.mPhotoUrl = photoUrl;
+        mUserPhotoUrl = userPhotoUrl;
+        mLikes = likes;
+        mDislikes = dislikes;
     }
 
     public String getUsername() {

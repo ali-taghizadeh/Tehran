@@ -44,7 +44,7 @@ public class AddNewActivity extends AuthenticationActivity {
     private LatLng mLatLng;
     private String mTitle;
     private String mDescription;
-    private String mUri = "";
+    private String mPhotoUri = "";
     private String mNewPlaceLocationKey;
     private Disposable mTitleDisposable;
     private Disposable mDescriptionDisposable;
@@ -115,8 +115,8 @@ public class AddNewActivity extends AuthenticationActivity {
             Uri selectedImageUri = data.getData();
             mStorage.putFile(selectedImageUri, Constants.PLACES);
             mStorage.setonFileUploadedSuccessfully(uri -> {
-                mUri = uri.toString();
-                loadImage(mUri, image_add_new_add_photo);
+                mPhotoUri = uri.toString();
+                loadImage(mPhotoUri, image_add_new_add_photo);
                 image_add_new_icon_add_photo.setVisibility(View.GONE);
             });
         }
@@ -134,7 +134,7 @@ public class AddNewActivity extends AuthenticationActivity {
         } else if (mDescription.equals("")) {
             edittext_add_new_description.setError("Pick a description");
         } else {
-            NewPlace newPlace = new NewPlace(getUsername(), mTitle, mDescription, mUri);
+            NewPlace newPlace = new NewPlace(getUsername(), mTitle, mDescription, mPhotoUri, getUserPhoto(), 0, 0);
             mDatabase.pushNewPlace(newPlace, Constants.PLACES);
             mDatabase.sePushListener(key -> {
                 mGeoFire.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);

@@ -15,6 +15,7 @@ public class AuthenticationActivity extends BaseConfigsActivity {
 
     private Authentication mAuthentication;
     private String mUsername;
+    private String mUserPhotoUrl = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +39,15 @@ public class AuthenticationActivity extends BaseConfigsActivity {
         return mUsername;
     }
 
+    public String getUserPhoto(){
+        return mUserPhotoUrl;
+    }
+
     public void setPhoto(ImageView photo, ImageView icon){
         mAuthentication.setPhotoURLListener(uri -> {
             if (uri != null) {
-                loadImage(uri.toString(), photo);
+                mUserPhotoUrl = uri.toString();
+                loadImage(mUserPhotoUrl, photo);
                 icon.setVisibility(View.GONE);
             } else {
                 loadBlank(photo);
