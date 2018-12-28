@@ -48,7 +48,6 @@ public class AddNewActivity extends AuthenticationActivity {
     private String mTitle;
     private String mDescription;
     private String mPhotoUri = "";
-    private String mNewPlaceLocationKey;
     private Disposable mTitleDisposable;
     private Disposable mDescriptionDisposable;
 
@@ -142,7 +141,6 @@ public class AddNewActivity extends AuthenticationActivity {
             mDatabase.sePushListener(key -> {
                 mGeoFire.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);
                 mGeoFire.seLocationListener(key1 -> {
-                    mNewPlaceLocationKey = key1;
                     dismiss();
                 });
             });

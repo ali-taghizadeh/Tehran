@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,7 +24,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
-import ir.taghizadeh.tehran.activities.lists.OnPlaceItemClickListener;
 import ir.taghizadeh.tehran.activities.lists.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.database.Database;
@@ -91,7 +89,7 @@ public class MainActivity extends AuthenticationActivity {
     }
 
     private void itemTapped(NewPlace newPlace) {
-        Log.e("tapped", newPlace.getTitle());
+        handlePlaceDetails(newPlace);
     }
 
     private void updateList(List<NewPlace> newPlaces) {

@@ -1,6 +1,8 @@
 package ir.taghizadeh.tehran.models;
 
-public class Comments {
+import java.io.Serializable;
+
+public class Comments implements Serializable {
 
     public Comments() {
     }

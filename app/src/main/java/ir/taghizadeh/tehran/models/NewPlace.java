@@ -1,8 +1,9 @@
 package ir.taghizadeh.tehran.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class NewPlace {
+public class NewPlace implements Serializable {
     public NewPlace() {
     }
 

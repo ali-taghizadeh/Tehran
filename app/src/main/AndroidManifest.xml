@@ -32,6 +32,8 @@
         </activity>
         <activity android:name=".activities.AddNewActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.PlaceDetails"
+            android:theme="@style/AppTheme.NoActionBar" />
 
     </application>
 

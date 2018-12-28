@@ -11,6 +11,7 @@ import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.glide.Glide;
 import ir.taghizadeh.tehran.dependencies.rootCoordinator.RootCoordinator;
 import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfig;
+import ir.taghizadeh.tehran.models.NewPlace;
 
 @SuppressLint("Registered")
 public class BaseConfigsActivity extends AppCompatActivity {
@@ -49,5 +50,9 @@ public class BaseConfigsActivity extends AppCompatActivity {
 
     public void handleAddPlace(LatLng latLng){
         mRootCoordinator.handleAddPlace(latLng);
+    }
+
+    public void handlePlaceDetails(NewPlace newPlace){
+        mRootCoordinator.handlePlaceDetails(newPlace);
     }
 }
