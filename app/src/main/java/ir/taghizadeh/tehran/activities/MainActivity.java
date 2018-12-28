@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
+import ir.taghizadeh.tehran.activities.lists.OnPlaceItemClickListener;
 import ir.taghizadeh.tehran.activities.lists.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.database.Database;
@@ -86,8 +86,12 @@ public class MainActivity extends AuthenticationActivity {
         recyclerView_main.setLayoutManager(manager);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView_main);
-        PlacesAdapter adapter = new PlacesAdapter(mNewPlacesList);
+        PlacesAdapter adapter = new PlacesAdapter(mNewPlacesList, this::itemTapped);
         recyclerView_main.setAdapter(adapter);
+    }
+
+    private void itemTapped(NewPlace newPlace) {
+        Log.e("tapped", newPlace.getTitle());
     }
 
     private void updateList(List<NewPlace> newPlaces) {
@@ -127,7 +131,8 @@ public class MainActivity extends AuthenticationActivity {
                 locationMap.forEach((key, geoLocation) -> {
                     mMap.addMarker(geoLocation);
                     mDatabase.getChild(Constants.PLACES, key);
-                });else updateList(mNewPlacesList);
+                });
+            else updateList(mNewPlacesList);
         });
     }
 

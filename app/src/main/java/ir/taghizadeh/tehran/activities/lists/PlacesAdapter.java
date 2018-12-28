@@ -2,7 +2,6 @@ package ir.taghizadeh.tehran.activities.lists;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,11 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
 
     public List<NewPlace> newPlaces;
     private Glide mGlide;
+    OnPlaceItemClickListener itemClickListener;
 
-    public PlacesAdapter(List<NewPlace> newPlaces) {
+    public PlacesAdapter(List<NewPlace> newPlaces, OnPlaceItemClickListener onPlaceItemClickListener) {
         this.newPlaces = newPlaces;
+        this.itemClickListener = onPlaceItemClickListener;
         DependencyRegistry.register.inject(this);
     }
 
@@ -29,13 +30,14 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
     @Override
     public PlacesListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_place, parent, false);
-        view.getContext();
-        return new PlacesListViewHolder(view);
+        final PlacesListViewHolder viewHolder = new PlacesListViewHolder(view);
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull PlacesListViewHolder holder, int index) {
             NewPlace newPlace = newPlaces.get(index);
+            holder.itemView.setOnClickListener(v -> itemClickListener.onItemClick(newPlace));
             holder.configureWith(newPlace, mGlide);
     }
 

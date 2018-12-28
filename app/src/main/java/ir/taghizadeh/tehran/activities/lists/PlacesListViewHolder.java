@@ -40,4 +40,5 @@ class PlacesListViewHolder extends RecyclerView.ViewHolder {
         if ((newPlace.getPhotoUrl() != null && !newPlace.getPhotoUrl().equals("")))
             mGlide.loadImage(newPlace.getPhotoUrl(), image_item_place_photo);
     }
+
 }
