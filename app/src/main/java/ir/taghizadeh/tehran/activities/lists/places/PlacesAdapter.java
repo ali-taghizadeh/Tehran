@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.activities.lists;
+package ir.taghizadeh.tehran.activities.lists.places;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

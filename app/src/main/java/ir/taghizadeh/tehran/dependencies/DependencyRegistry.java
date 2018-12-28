@@ -4,7 +4,8 @@ import ir.taghizadeh.tehran.activities.AuthenticationActivity;
 import ir.taghizadeh.tehran.activities.AddNewActivity;
 import ir.taghizadeh.tehran.activities.BaseConfigsActivity;
 import ir.taghizadeh.tehran.activities.MainActivity;
-import ir.taghizadeh.tehran.activities.lists.PlacesAdapter;
+import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
+import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 import ir.taghizadeh.tehran.dependencies.authentication.AuthenticationImpl;
 import ir.taghizadeh.tehran.dependencies.database.Database;
@@ -69,5 +70,10 @@ public class DependencyRegistry {
     public void inject(PlacesAdapter placesAdapter){
         glidePresenter = new GlideImpl(mActivity);
         placesAdapter.configureWith(glidePresenter);
+    }
+
+    public void inject(CommentsAdapter commentsAdapter){
+        glidePresenter = new GlideImpl(mActivity);
+        commentsAdapter.configureWith(glidePresenter);
     }
 }

@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.activities.lists;
+package ir.taghizadeh.tehran.activities.lists.places;
 
 import ir.taghizadeh.tehran.models.NewPlace;
 

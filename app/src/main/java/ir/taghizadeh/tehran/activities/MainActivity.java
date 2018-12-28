@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
-import ir.taghizadeh.tehran.activities.lists.PlacesAdapter;
+import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
