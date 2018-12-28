@@ -9,11 +9,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -117,16 +119,15 @@ public class MainActivity extends AuthenticationActivity {
         mGeoFire.setOnGeoQueryReady(locationMap -> {
             mMap.clearMap();
             mNewPlacesList.clear();
-            if (!locationMap.isEmpty())
-            locationMap.forEach((key, geoLocation) -> {
-                mMap.addMarker(geoLocation);
-                mDatabase.getChild(Constants.PLACES, key);
-                mDatabase.setDataSnapshotListener(newPlace -> {
-                    mNewPlacesList.add(newPlace);
-                    updateList(mNewPlacesList);
-                });
+            mDatabase.setDataSnapshotListener(newPlace -> {
+                mNewPlacesList.add(newPlace);
+                updateList(mNewPlacesList);
             });
-            else updateList(mNewPlacesList);
+            if (!locationMap.isEmpty())
+                locationMap.forEach((key, geoLocation) -> {
+                    mMap.addMarker(geoLocation);
+                    mDatabase.getChild(Constants.PLACES, key);
+                });else updateList(mNewPlacesList);
         });
     }
 
