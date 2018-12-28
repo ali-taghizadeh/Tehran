@@ -3,12 +3,11 @@ package ir.taghizadeh.tehran.dependencies.rootCoordinator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import ir.taghizadeh.tehran.activities.AddNewActivity;
-import ir.taghizadeh.tehran.activities.PlaceDetails;
+import ir.taghizadeh.tehran.activities.PlaceDetailsActivity;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
@@ -37,7 +36,7 @@ public class RootCoordinatorImpl implements RootCoordinator{
     }
     @Override
     public void handlePlaceDetails(NewPlace newPlace) {
-        Intent intent = new Intent(activity, PlaceDetails.class);
+        Intent intent = new Intent(activity, PlaceDetailsActivity.class);
         intent.putExtra("newPlace", newPlace);
         activity.startActivity(intent);
     }

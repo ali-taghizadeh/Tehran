@@ -1,22 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <View
+        android:id="@+id/view2"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_place_details_photo" />
+
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/text_place_details_dislikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/image_place_details_dislike"
+        app:layout_constraintStart_toEndOf="@+id/image_place_details_dislike" />
+
+    <TextView
+        android:id="@+id/text_place_details_likes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/image_place_details_like"
+        app:layout_constraintStart_toEndOf="@+id/image_place_details_like" />
+
+    <ImageView
+        android:id="@+id/image_place_details_dislike"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:tint="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toBottomOf="@+id/image_place_details_like"
+        app:layout_constraintStart_toEndOf="@+id/text_place_details_likes"
+        app:srcCompat="@drawable/ic_thumb_down" />
+
+    <ImageView
+        android:id="@+id/image_place_details_like"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:tint="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toBottomOf="@+id/text_place_details_author"
+        app:layout_constraintStart_toEndOf="@+id/text_place_details_author"
+        app:layout_constraintTop_toTopOf="@+id/text_place_details_author"
+        app:srcCompat="@drawable/ic_thumb_up" />
+
+    <cn.gavinliu.android.lib.shapedimageview.ShapedImageView
+        android:id="@+id/image_place_details_user_photo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_place_details_photo"
+        app:shape_mode="circle"
+        app:stroke_color="@color/white"
+        app:stroke_width="2dp" />
+
+    <ImageView
+        android:id="@+id/image_place_details_photo"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_place_details_direction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/image_place_details_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_place_details_photo"
+        app:srcCompat="@android:drawable/ic_menu_directions" />
+
+    <TextView
+        android:id="@+id/text_place_details_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@color/grey"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/text_place_details_description"
+        app:layout_constraintStart_toStartOf="@+id/image_place_details_photo" />
+
+    <TextView
+        android:id="@+id/text_place_details_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/grey"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/image_place_details_photo"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/text_place_details_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/image_place_details_user_photo"
+        app:layout_constraintStart_toEndOf="@+id/image_place_details_user_photo"
+        app:layout_constraintTop_toTopOf="@+id/image_place_details_user_photo" />
+
 </android.support.constraint.ConstraintLayout>

@@ -121,16 +121,16 @@ public class MainActivity extends AuthenticationActivity {
         mGeoFire.setOnGeoQueryReady(locationMap -> {
             mMap.clearMap();
             mNewPlacesList.clear();
-            mDatabase.setDataSnapshotListener(newPlace -> {
-                mNewPlacesList.add(newPlace);
-                updateList(mNewPlacesList);
-            });
             if (!locationMap.isEmpty())
                 locationMap.forEach((key, geoLocation) -> {
                     mMap.addMarker(geoLocation);
                     mDatabase.getChild(Constants.PLACES, key);
                 });
             else updateList(mNewPlacesList);
+            mDatabase.setDataSnapshotListener(newPlace -> {
+                mNewPlacesList.add(newPlace);
+                updateList(mNewPlacesList);
+            });
         });
     }
 
