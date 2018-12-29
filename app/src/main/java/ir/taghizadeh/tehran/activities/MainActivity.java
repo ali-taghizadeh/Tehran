@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
+import ir.taghizadeh.tehran.activities.lists.places.OnPlaceItemClickListener;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.database.Database;
@@ -49,6 +50,7 @@ public class MainActivity extends AuthenticationActivity {
     private Map mMap;
     private GeoFire mGeoFire;
     private List<NewPlace> mNewPlacesList = new ArrayList<>();
+    private List<String> mKeys = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +75,7 @@ public class MainActivity extends AuthenticationActivity {
         attachUsername(text_main_username);
         setPhoto(image_main_add_photo, image_main_icon_add_photo);
         initializeList();
-        mMap.setOnMapListener(() -> {
-            mMap.startCamera(Constants.DOWNTOWN, 17);
-        });
+        mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
         mMap.setOnCameraMoveListener(() -> queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), Constants.DEFAULT_DISTANCE));
     }
 
@@ -84,12 +84,11 @@ public class MainActivity extends AuthenticationActivity {
         recyclerView_main.setLayoutManager(manager);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView_main);
-        PlacesAdapter adapter = new PlacesAdapter(mNewPlacesList, this::itemTapped);
+        PlacesAdapter adapter = new PlacesAdapter(mNewPlacesList, (newPlace, position) -> {
+            String key = mKeys.get(position);
+            handlePlaceDetails(newPlace, key);
+        });
         recyclerView_main.setAdapter(adapter);
-    }
-
-    private void itemTapped(NewPlace newPlace) {
-        handlePlaceDetails(newPlace);
     }
 
     private void updateList(List<NewPlace> newPlaces) {
@@ -121,8 +120,10 @@ public class MainActivity extends AuthenticationActivity {
         mGeoFire.setOnGeoQueryReady(locationMap -> {
             mMap.clearMap();
             mNewPlacesList.clear();
+            mKeys.clear();
             if (!locationMap.isEmpty())
                 locationMap.forEach((key, geoLocation) -> {
+                    mKeys.add(key);
                     mMap.addMarker(geoLocation);
                     mDatabase.getChild(Constants.PLACES, key);
                 });

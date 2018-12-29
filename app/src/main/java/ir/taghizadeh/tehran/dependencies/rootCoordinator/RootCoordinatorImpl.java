@@ -35,8 +35,9 @@ public class RootCoordinatorImpl implements RootCoordinator{
         activity.startActivity(intent);
     }
     @Override
-    public void handlePlaceDetails(NewPlace newPlace) {
+    public void handlePlaceDetails(NewPlace newPlace, String key) {
         Intent intent = new Intent(activity, PlaceDetailsActivity.class);
+        intent.putExtra("key", key);
         intent.putExtra("newPlace", newPlace);
         activity.startActivity(intent);
     }

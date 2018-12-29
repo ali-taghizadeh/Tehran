@@ -7,5 +7,5 @@ import ir.taghizadeh.tehran.models.NewPlace;
 public interface RootCoordinator {
     void handleAddPhoto();
     void handleAddPlace(LatLng latLng);
-    void handlePlaceDetails(NewPlace newPlace);
+    void handlePlaceDetails(NewPlace newPlace, String key);
 }

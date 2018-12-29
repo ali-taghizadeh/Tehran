@@ -5,14 +5,12 @@ import android.util.Log;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryDataEventListener;
-import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class GeoFireImpl implements GeoFire {
@@ -31,7 +29,7 @@ public class GeoFireImpl implements GeoFire {
 
     public GeoFireImpl() {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mLocations = new HashMap<>();
+        mLocations = new LinkedHashMap<>();
     }
 
     @Override

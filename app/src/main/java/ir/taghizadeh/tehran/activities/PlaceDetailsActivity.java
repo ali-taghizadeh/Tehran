@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,7 +16,6 @@ import butterknife.ButterKnife;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
-import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
@@ -46,6 +46,7 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
 
     private NewPlace mNewPlace;
     private List<Comments> mCommentsList = new ArrayList<>();
+    private String mKey;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         setContentView(R.layout.activity_place_details);
         ButterKnife.bind(this);
         mNewPlace = (NewPlace) getIntent().getSerializableExtra("newPlace");
+        mKey = getIntent().getExtras().getString("key");
         mCommentsList = mNewPlace.getComments();
         hideStatusBar();
         attachUI();

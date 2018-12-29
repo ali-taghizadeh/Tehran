@@ -52,7 +52,7 @@ public class BaseConfigsActivity extends AppCompatActivity {
         mRootCoordinator.handleAddPlace(latLng);
     }
 
-    public void handlePlaceDetails(NewPlace newPlace){
-        mRootCoordinator.handlePlaceDetails(newPlace);
+    public void handlePlaceDetails(NewPlace newPlace, String key){
+        mRootCoordinator.handlePlaceDetails(newPlace, key);
     }
 }

@@ -37,7 +37,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull PlacesListViewHolder holder, int index) {
             NewPlace newPlace = newPlaces.get(index);
-            holder.itemView.setOnClickListener(v -> itemClickListener.onItemClick(newPlace));
+            holder.itemView.setOnClickListener(v -> itemClickListener.onItemClick(newPlace, index));
             holder.configureWith(newPlace, mGlide);
     }
 
