@@ -33,7 +33,7 @@ public class BaseConfigsActivity extends AppCompatActivity {
     }
 
     public void hideStatusBar(){
-        mWindowConfig.hideStatusBar();
+        mWindowConfig.setFullScreen();
     }
 
     public void loadImage(String url, ImageView imageView){
@@ -52,7 +52,11 @@ public class BaseConfigsActivity extends AppCompatActivity {
         mRootCoordinator.handleAddPlace(latLng);
     }
 
-    public void handlePlaceDetails(NewPlace newPlace, String key){
-        mRootCoordinator.handlePlaceDetails(newPlace, key);
+    public void handlePlaceDetails(NewPlace newPlace, String key, double latitude, double longitude){
+        mRootCoordinator.handlePlaceDetails(newPlace, key, latitude, longitude);
+    }
+
+    public void handleGetDirection(double latitude, double longitude){
+        mRootCoordinator.handleGetDirection(latitude, longitude);
     }
 }

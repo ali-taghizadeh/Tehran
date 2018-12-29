@@ -1,5 +1,7 @@
 package ir.taghizadeh.tehran.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
@@ -59,6 +61,8 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     private NewPlace mNewPlace;
     private List<Comments> mCommentsList = new ArrayList<>();
     private String mKey;
+    private double mLatitude;
+    private double mLongitude;
     private Database mDatabase;
 
     @Override
@@ -68,6 +72,8 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         ButterKnife.bind(this);
         mNewPlace = (NewPlace) getIntent().getSerializableExtra("newPlace");
         mKey = getIntent().getExtras().getString("key");
+        mLatitude = getIntent().getExtras().getDouble("latitude");
+        mLongitude = getIntent().getExtras().getDouble("longitude");
         DependencyRegistry.register.inject(this);
     }
 
@@ -133,6 +139,11 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         int dislikes = mNewPlace.getDislikes() + 1;
         mDatabase.dislike(dislikes, Constants.PLACES, mKey);
         text_place_details_dislikes.setText(String.valueOf(dislikes));
+    }
+
+    @OnClick(R.id.fab_place_details_direction)
+    void getDirection(){
+        handleGetDirection(mLatitude, mLongitude);
     }
 
     private void updateList(List<Comments> comments) {

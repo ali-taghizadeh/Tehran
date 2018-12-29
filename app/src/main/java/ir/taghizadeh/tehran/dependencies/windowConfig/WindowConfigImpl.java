@@ -11,10 +11,10 @@ public class WindowConfigImpl implements WindowConfig{
     }
 
     @Override
-    public void hideStatusBar() {
+    public void setFullScreen() {
         activity.getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
     }
 }

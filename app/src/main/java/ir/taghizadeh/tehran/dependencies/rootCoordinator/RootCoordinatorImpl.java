@@ -2,6 +2,7 @@ package ir.taghizadeh.tehran.dependencies.rootCoordinator;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -35,10 +36,20 @@ public class RootCoordinatorImpl implements RootCoordinator{
         activity.startActivity(intent);
     }
     @Override
-    public void handlePlaceDetails(NewPlace newPlace, String key) {
+    public void handlePlaceDetails(NewPlace newPlace, String key, double latitude, double longitude) {
         Intent intent = new Intent(activity, PlaceDetailsActivity.class);
         intent.putExtra("key", key);
         intent.putExtra("newPlace", newPlace);
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
         activity.startActivity(intent);
+    }
+
+    @Override
+    public void handleGetDirection(double latitude, double longitude) {
+        Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%s, %s", latitude, longitude));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        activity.startActivity(mapIntent);
     }
 }

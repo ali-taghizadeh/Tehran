@@ -11,7 +11,7 @@ import ir.taghizadeh.tehran.models.NewPlace;
 
 class PlacesListViewHolder extends RecyclerView.ViewHolder {
 
-    private ImageView image_item_place_photo;
+    private ShapedImageView image_item_place_photo;
     private ShapedImageView image_item_user_photo;
     private TextView text_item_place_title;
     private TextView text_item_place_description;

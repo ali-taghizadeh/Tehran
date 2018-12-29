@@ -2,9 +2,7 @@ package ir.taghizadeh.tehran.activities;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -14,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,6 +50,7 @@ public class MainActivity extends AuthenticationActivity {
     private GeoFire mGeoFire;
     private List<NewPlace> mNewPlacesList = new ArrayList<>();
     private List<String> mKeys = new ArrayList<>();
+    private List<GeoLocation> mGeoLocations = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,6 @@ public class MainActivity extends AuthenticationActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void configureWith(Storage storage, Map map, Database database, GeoFire geoFire) {
         this.mMap = map;
         this.mStorage = storage;
@@ -68,7 +68,6 @@ public class MainActivity extends AuthenticationActivity {
         setUpUI();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setUpUI() {
         hideStatusBar();
         attachUsername(text_main_username);
@@ -85,7 +84,8 @@ public class MainActivity extends AuthenticationActivity {
         snapHelper.attachToRecyclerView(recyclerView_main);
         PlacesAdapter adapter = new PlacesAdapter(mNewPlacesList, (newPlace, position) -> {
             String key = mKeys.get(position);
-            handlePlaceDetails(newPlace, key);
+            GeoLocation geoLocation = mGeoLocations.get(position);
+            handlePlaceDetails(newPlace, key, geoLocation.latitude, geoLocation.longitude);
         });
         recyclerView_main.setAdapter(adapter);
     }
@@ -113,20 +113,25 @@ public class MainActivity extends AuthenticationActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void queryLocations(String dbLocation, LatLng centerLocation, int distance) {
         mGeoFire.queryLocations(dbLocation, centerLocation, distance);
         mGeoFire.setOnGeoQueryReady(locationMap -> {
             mMap.clearMap();
             mNewPlacesList.clear();
             mKeys.clear();
-            if (!locationMap.isEmpty())
-                locationMap.forEach((key, geoLocation) -> {
-                    mKeys.add(key);
-                    mMap.addMarker(geoLocation);
-                    mDatabase.getChild(Constants.PLACES, key);
-                });
-            else updateList(mNewPlacesList);
+            mGeoLocations.clear();
+            if (!locationMap.isEmpty()) {
+                Iterator it = locationMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    java.util.Map.Entry pair = (java.util.Map.Entry) it.next();
+                    mKeys.add(pair.getKey().toString());
+                    mGeoLocations.add((GeoLocation) pair.getValue());
+                    mMap.addMarker((GeoLocation) pair.getValue());
+                    mDatabase.getChild(Constants.PLACES, pair.getKey().toString());
+                    System.out.println(pair.getKey() + " = " + pair.getValue());
+                    it.remove();
+                }
+            } else updateList(mNewPlacesList);
             mDatabase.setPlacesDataSnapshotListener(newPlace -> {
                 mNewPlacesList.add(newPlace);
                 updateList(mNewPlacesList);
