@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -137,7 +135,7 @@ public class AddNewActivity extends AuthenticationActivity {
             edittext_add_new_description.setError("Pick a description");
         } else {
             mDatabase.pushNewPlace(createNewPlace(), Constants.PLACES);
-            mDatabase.sePushListener(key -> {
+            mDatabase.setPushListener(key -> {
                 mGeoFire.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);
                 mGeoFire.seLocationListener(key1 -> {
                     dismiss();

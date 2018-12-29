@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -62,7 +63,6 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         ButterKnife.bind(this);
         mNewPlace = (NewPlace) getIntent().getSerializableExtra("newPlace");
         mKey = getIntent().getExtras().getString("key");
-//        mCommentsList = mNewPlace.getComments();
         DependencyRegistry.register.inject(this);
     }
 
@@ -97,6 +97,24 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         if (!edittext_place_details_comment.getText().toString().equals("")){
             Comments comments = new Comments(getUsername(), getUserPhoto(), edittext_place_details_comment.getText().toString());
             mDatabase.addComment(comments, Constants.PLACES_COMMENTS, mKey);
+            mDatabase.setPushListener(key -> {
+                edittext_place_details_comment.setText("");
+                mDatabase.getChild(Constants.PLACES_COMMENTS, mKey);
+                mDatabase.setCommentsDataSnapshotListener(commentsList -> {
+                    mCommentsList = commentsList;
+                    updateList(mCommentsList);
+                });
+            });
         }else edittext_place_details_comment.setError("Write your comment first");
+    }
+
+    private void updateList(List<Comments> comments) {
+        if (comments.isEmpty()) recyclerView_place_details.setVisibility(View.GONE);
+        else recyclerView_place_details.setVisibility(View.VISIBLE);
+        this.mCommentsList = comments;
+        CommentsAdapter adapter = (CommentsAdapter) recyclerView_place_details.getAdapter();
+        assert adapter != null;
+        adapter.comments = this.mCommentsList;
+        adapter.notifyDataSetChanged();
     }
 }

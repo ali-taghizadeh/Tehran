@@ -1,5 +1,7 @@
 package ir.taghizadeh.tehran.dependencies.database;
 
+import java.util.List;
+
 import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
@@ -8,14 +10,19 @@ public interface Database {
     void getChild(String dbLocation, String key);
     void addComment(Comments comments, String dbLocation, String key);
 
-    void sePushListener(PushListener pushListener);
+    void setPushListener(PushListener pushListener);
     interface PushListener {
         void onPushSuccessfully(String key);
     }
 
-    void setDataSnapshotListener(DataSnapshotListener dataSnapshotListener);
-    interface DataSnapshotListener {
-        void onSnapshotReady(NewPlace newPlace);
+    void setPlacesDataSnapshotListener(PlacesDataSnapshotListener dataSnapshotListener);
+    interface PlacesDataSnapshotListener {
+        void onPlacesSnapshotReady(NewPlace newPlace);
+    }
+
+    void setCommentsDataSnapshotListener(CommentsDataSnapshotListener commentsDataSnapshotListener);
+    interface CommentsDataSnapshotListener {
+        void onCommentsSnapshotReady(List<Comments> commentsList);
     }
 
 }

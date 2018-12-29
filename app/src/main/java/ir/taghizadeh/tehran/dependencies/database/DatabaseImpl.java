@@ -1,7 +1,6 @@
 package ir.taghizadeh.tehran.dependencies.database;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,8 +22,10 @@ public class DatabaseImpl implements Database {
     private DatabaseReference mDatabaseReference;
 
     private PushListener mPushListener;
-    private DataSnapshotListener mDataSnapshotListener;
+    private PlacesDataSnapshotListener mPlacesDataSnapshotListener;
+    private CommentsDataSnapshotListener mCommentsDataSnapshotListener;
     private NewPlace mNewPlace;
+    private List<Comments> mCommentsList;
 
     public DatabaseImpl() {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -50,9 +51,18 @@ public class DatabaseImpl implements Database {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    mNewPlace = dataSnapshot.getValue(NewPlace.class);
-                    if (mDataSnapshotListener != null) {
-                        mDataSnapshotListener.onSnapshotReady(mNewPlace);
+                    if (dbLocation.equals(Constants.PLACES)) {
+                        mNewPlace = dataSnapshot.getValue(NewPlace.class);
+                        if (mPlacesDataSnapshotListener != null) {
+                            mPlacesDataSnapshotListener.onPlacesSnapshotReady(mNewPlace);
+                        }
+                    } else if (dbLocation.equals(Constants.PLACES_COMMENTS)) {
+                        mCommentsList = new ArrayList<>();
+                        for(DataSnapshot res : dataSnapshot.getChildren())
+                            mCommentsList.add(res.getValue(Comments.class));
+                        if (mCommentsDataSnapshotListener != null) {
+                            mCommentsDataSnapshotListener.onCommentsSnapshotReady(mCommentsList);
+                        }
                     }
                 }
             }
@@ -77,13 +87,18 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
-    public void sePushListener(PushListener pushListener) {
+    public void setPushListener(PushListener pushListener) {
         this.mPushListener = pushListener;
     }
 
     @Override
-    public void setDataSnapshotListener(DataSnapshotListener dataSnapshotListener) {
-        mDataSnapshotListener = dataSnapshotListener;
+    public void setPlacesDataSnapshotListener(PlacesDataSnapshotListener dataSnapshotListener) {
+        mPlacesDataSnapshotListener = dataSnapshotListener;
+    }
+
+    @Override
+    public void setCommentsDataSnapshotListener(CommentsDataSnapshotListener commentsDataSnapshotListener) {
+        this.mCommentsDataSnapshotListener = commentsDataSnapshotListener;
     }
 
 }

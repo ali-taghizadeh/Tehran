@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
-import ir.taghizadeh.tehran.activities.lists.places.OnPlaceItemClickListener;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.database.Database;
@@ -128,7 +127,7 @@ public class MainActivity extends AuthenticationActivity {
                     mDatabase.getChild(Constants.PLACES, key);
                 });
             else updateList(mNewPlacesList);
-            mDatabase.setDataSnapshotListener(newPlace -> {
+            mDatabase.setPlacesDataSnapshotListener(newPlace -> {
                 mNewPlacesList.add(newPlace);
                 updateList(mNewPlacesList);
             });
