@@ -96,7 +96,7 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     void addComment(){
         if (!edittext_place_details_comment.getText().toString().equals("")){
             Comments comments = new Comments(getUsername(), getUserPhoto(), edittext_place_details_comment.getText().toString());
-            mDatabase.addComment(comments, Constants.PLACES, mKey);
+            mDatabase.addComment(comments, Constants.PLACES_COMMENTS, mKey);
         }else edittext_place_details_comment.setError("Write your comment first");
     }
 }
