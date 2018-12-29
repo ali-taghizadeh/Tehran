@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -71,6 +72,7 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         hideStatusBar();
         attachUI();
         initializeList();
+        attachComments();
     }
 
     private void attachUI() {
@@ -92,6 +94,16 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         recyclerView_place_details.setAdapter(adapter);
     }
 
+
+    private void attachComments() {
+        mDatabase.getChild(Constants.PLACES_COMMENTS, mKey);
+        mDatabase.setCommentsDataSnapshotListener(commentsList -> {
+            mCommentsList = commentsList;
+            Collections.reverse(mCommentsList);
+            updateList(mCommentsList);
+        });
+    }
+
     @OnClick(R.id.image_place_details_send)
     void addComment(){
         if (!edittext_place_details_comment.getText().toString().equals("")){
@@ -99,11 +111,7 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
             mDatabase.addComment(comments, Constants.PLACES_COMMENTS, mKey);
             mDatabase.setPushListener(key -> {
                 edittext_place_details_comment.setText("");
-                mDatabase.getChild(Constants.PLACES_COMMENTS, mKey);
-                mDatabase.setCommentsDataSnapshotListener(commentsList -> {
-                    mCommentsList = commentsList;
-                    updateList(mCommentsList);
-                });
+                attachComments();
             });
         }else edittext_place_details_comment.setError("Write your comment first");
     }
