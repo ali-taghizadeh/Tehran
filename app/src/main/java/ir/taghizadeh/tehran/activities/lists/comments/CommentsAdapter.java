@@ -12,7 +12,6 @@ import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.glide.Glide;
 import ir.taghizadeh.tehran.models.Comments;
-import ir.taghizadeh.tehran.models.NewPlace;
 
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsListViewHolder> {

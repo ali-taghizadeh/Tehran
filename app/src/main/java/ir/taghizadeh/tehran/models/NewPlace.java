@@ -1,7 +1,6 @@
 package ir.taghizadeh.tehran.models;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class NewPlace implements Serializable {
     public NewPlace() {
@@ -14,9 +13,8 @@ public class NewPlace implements Serializable {
     private String mUserPhotoUrl;
     private int mLikes;
     private int mDislikes;
-    private List<Comments> mComments;
 
-    public NewPlace(String username, String title, String description, String photoUrl, String userPhotoUrl, int likes, int dislikes, List<Comments> comments) {
+    public NewPlace(String username, String title, String description, String photoUrl, String userPhotoUrl, int likes, int dislikes) {
         this.mUsername = username;
         this.mTitle = title;
         this.mDescription = description;
@@ -24,7 +22,6 @@ public class NewPlace implements Serializable {
         this.mUserPhotoUrl = userPhotoUrl;
         this.mLikes = likes;
         this.mDislikes = dislikes;
-        this.mComments = comments;
 
     }
 
@@ -84,11 +81,4 @@ public class NewPlace implements Serializable {
         this.mDislikes = mDislikes;
     }
 
-    public List<Comments> getComments() {
-        return mComments;
-    }
-
-    public void setComments(List<Comments> mComments) {
-        this.mComments = mComments;
-    }
 }

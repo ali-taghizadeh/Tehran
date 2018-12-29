@@ -4,6 +4,7 @@ import ir.taghizadeh.tehran.activities.AuthenticationActivity;
 import ir.taghizadeh.tehran.activities.AddNewActivity;
 import ir.taghizadeh.tehran.activities.BaseConfigsActivity;
 import ir.taghizadeh.tehran.activities.MainActivity;
+import ir.taghizadeh.tehran.activities.PlaceDetailsActivity;
 import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
@@ -65,6 +66,11 @@ public class DependencyRegistry {
         databasePresenter = new DatabaseImpl();
         geoFirePresenter = new GeoFireImpl();
         activity.configureWith(mapPresenter, storagePresenter, databasePresenter, geoFirePresenter);
+    }
+
+    public void inject(PlaceDetailsActivity activity) {
+        databasePresenter = new DatabaseImpl();
+        activity.configureWith(databasePresenter);
     }
 
     public void inject(PlacesAdapter placesAdapter){

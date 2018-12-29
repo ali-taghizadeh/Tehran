@@ -1,6 +1,7 @@
 package ir.taghizadeh.tehran.dependencies.database;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -9,6 +10,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ir.taghizadeh.tehran.helpers.Constants;
+import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
 public class DatabaseImpl implements Database {
@@ -52,9 +58,22 @@ public class DatabaseImpl implements Database {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                throw databaseError.toException();
             }
         });
+    }
+
+    @Override
+    public void addComment(Comments comments, String dbLocation, String key) {
+        mDatabaseReference = mFirebaseDatabase.getReference().child(dbLocation).child(key);
+        mDatabaseReference
+                .push()
+                .setValue(comments, (databaseError, databaseReference) -> {
+                    if (mPushListener != null) {
+                        mPushListener.onPushSuccessfully(databaseReference.getKey());
+                    }
+                });
     }
 
     @Override

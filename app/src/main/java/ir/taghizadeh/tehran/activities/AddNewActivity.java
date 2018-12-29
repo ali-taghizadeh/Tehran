@@ -27,7 +27,6 @@ import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
-import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
 public class AddNewActivity extends AuthenticationActivity {
@@ -148,10 +147,7 @@ public class AddNewActivity extends AuthenticationActivity {
     }
 
     private NewPlace createNewPlace() {
-        Comments comments = new Comments(getUsername(), getUserPhoto(), mDescription);
-        List<Comments> commentsList = new ArrayList<>();
-        commentsList.add(comments);
-        return new NewPlace(getUsername(), mTitle, mDescription, mPhotoUri, getUserPhoto(), 0, 0, commentsList);
+        return new NewPlace(getUsername(), mTitle, mDescription, mPhotoUri, getUserPhoto(), 0, 0);
     }
 
     @OnClick(R.id.button_add_new_discard)

@@ -2,9 +2,9 @@ package ir.taghizadeh.tehran.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,9 +13,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
+import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
+import ir.taghizadeh.tehran.dependencies.database.Database;
+import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
@@ -43,10 +47,13 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     FloatingActionButton fab_place_details_direction;
     @BindView(R.id.recyclerView_place_details)
     RecyclerView recyclerView_place_details;
+    @BindView(R.id.edittext_place_details_comment)
+    TextInputEditText edittext_place_details_comment;
 
     private NewPlace mNewPlace;
     private List<Comments> mCommentsList = new ArrayList<>();
     private String mKey;
+    private Database mDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,12 +62,20 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         ButterKnife.bind(this);
         mNewPlace = (NewPlace) getIntent().getSerializableExtra("newPlace");
         mKey = getIntent().getExtras().getString("key");
-        mCommentsList = mNewPlace.getComments();
+//        mCommentsList = mNewPlace.getComments();
+        DependencyRegistry.register.inject(this);
+    }
+
+    public void configureWith(Database databasePresenter) {
+        this.mDatabase = databasePresenter;
         hideStatusBar();
         attachUI();
+        initializeList();
     }
 
     private void attachUI() {
+        addUsernameListener();
+        addUserPhotoUriListener();
         text_place_details_title.setText(mNewPlace.getTitle().toUpperCase());
         text_place_details_description.setText(mNewPlace.getDescription());
         text_place_details_author.setText(mNewPlace.getUsername().toUpperCase());
@@ -68,7 +83,6 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         text_place_details_dislikes.setText(String.valueOf(mNewPlace.getDislikes()));
         if (!mNewPlace.getPhotoUrl().equals(""))loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
         loadImage(mNewPlace.getUserPhotoUrl(), image_place_details_user_photo);
-        initializeList();
     }
 
     private void initializeList() {
@@ -76,5 +90,13 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         recyclerView_place_details.setLayoutManager(manager);
         CommentsAdapter adapter = new CommentsAdapter(mCommentsList);
         recyclerView_place_details.setAdapter(adapter);
+    }
+
+    @OnClick(R.id.image_place_details_send)
+    void addComment(){
+        if (!edittext_place_details_comment.getText().toString().equals("")){
+            Comments comments = new Comments(getUsername(), getUserPhoto(), edittext_place_details_comment.getText().toString());
+            mDatabase.addComment(comments, Constants.PLACES, mKey);
+        }else edittext_place_details_comment.setError("Write your comment first");
     }
 }
