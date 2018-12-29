@@ -128,6 +128,13 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         text_place_details_likes.setText(String.valueOf(likes));
     }
 
+    @OnClick(R.id.image_place_details_dislike)
+    void dislike(){
+        int dislikes = mNewPlace.getDislikes() + 1;
+        mDatabase.dislike(dislikes, Constants.PLACES, mKey);
+        text_place_details_dislikes.setText(String.valueOf(dislikes));
+    }
+
     private void updateList(List<Comments> comments) {
         if (comments.isEmpty()) {
             recyclerView_place_details.setVisibility(View.GONE);

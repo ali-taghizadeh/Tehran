@@ -11,5 +11,6 @@ public class Constants {
     public static final String PLACES_LOCATION = "places_location";
     public static final String PLACES_COMMENTS = "places_comments";
     public static final String LIKES = "likes";
+    public static final String DISLIKES = "dislikes";
     public static final int DEFAULT_DISTANCE = 1;
 }

@@ -77,7 +77,7 @@ public class NewPlace implements Serializable {
         return mDislikes;
     }
 
-    public void setmislikes(int mDislikes) {
+    public void setDislikes(int mDislikes) {
         this.mDislikes = mDislikes;
     }
 

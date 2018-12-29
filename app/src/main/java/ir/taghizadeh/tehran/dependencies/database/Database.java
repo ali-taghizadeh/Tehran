@@ -10,6 +10,7 @@ public interface Database {
     void getChild(String dbLocation, String key);
     void addComment(Comments comments, String dbLocation, String key);
     void like(int like, String dbLocation, String key);
+    void dislike(int dislike, String dbLocation, String key);
 
     void setPushListener(PushListener pushListener);
     interface PushListener {
