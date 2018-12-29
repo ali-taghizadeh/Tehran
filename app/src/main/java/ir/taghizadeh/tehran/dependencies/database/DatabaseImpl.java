@@ -87,6 +87,12 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
+    public void like(int like, String dbLocation, String key) {
+        mDatabaseReference = mFirebaseDatabase.getReference().child(dbLocation).child(key).child(Constants.LIKES);
+        mDatabaseReference.setValue(like);
+    }
+
+    @Override
     public void setPushListener(PushListener pushListener) {
         this.mPushListener = pushListener;
     }

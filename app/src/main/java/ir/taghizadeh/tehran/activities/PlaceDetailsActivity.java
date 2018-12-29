@@ -51,6 +51,10 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     RecyclerView recyclerView_place_details;
     @BindView(R.id.edittext_place_details_comment)
     TextInputEditText edittext_place_details_comment;
+    @BindView(R.id.image_place_details_empty_list)
+    ImageView image_place_details_empty_list;
+    @BindView(R.id.text_place_details_empty_list)
+    TextView text_place_details_empty_list;
 
     private NewPlace mNewPlace;
     private List<Comments> mCommentsList = new ArrayList<>();
@@ -83,7 +87,8 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         text_place_details_author.setText(mNewPlace.getUsername().toUpperCase());
         text_place_details_likes.setText(String.valueOf(mNewPlace.getLikes()));
         text_place_details_dislikes.setText(String.valueOf(mNewPlace.getDislikes()));
-        if (!mNewPlace.getPhotoUrl().equals(""))loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
+        if (!mNewPlace.getPhotoUrl().equals(""))
+            loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
         loadImage(mNewPlace.getUserPhotoUrl(), image_place_details_user_photo);
     }
 
@@ -105,20 +110,34 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     }
 
     @OnClick(R.id.image_place_details_send)
-    void addComment(){
-        if (!edittext_place_details_comment.getText().toString().equals("")){
+    void addComment() {
+        if (!edittext_place_details_comment.getText().toString().equals("")) {
             Comments comments = new Comments(getUsername(), getUserPhoto(), edittext_place_details_comment.getText().toString());
             mDatabase.addComment(comments, Constants.PLACES_COMMENTS, mKey);
             mDatabase.setPushListener(key -> {
                 edittext_place_details_comment.setText("");
                 attachComments();
             });
-        }else edittext_place_details_comment.setError("Write your comment first");
+        } else edittext_place_details_comment.setError("Write your comment first");
+    }
+
+    @OnClick(R.id.image_place_details_like)
+    void like(){
+        int likes = mNewPlace.getLikes() + 1;
+        mDatabase.like(likes, Constants.PLACES, mKey);
+        text_place_details_likes.setText(String.valueOf(likes));
     }
 
     private void updateList(List<Comments> comments) {
-        if (comments.isEmpty()) recyclerView_place_details.setVisibility(View.GONE);
-        else recyclerView_place_details.setVisibility(View.VISIBLE);
+        if (comments.isEmpty()) {
+            recyclerView_place_details.setVisibility(View.GONE);
+            image_place_details_empty_list.setVisibility(View.VISIBLE);
+            text_place_details_empty_list.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView_place_details.setVisibility(View.VISIBLE);
+            image_place_details_empty_list.setVisibility(View.GONE);
+            text_place_details_empty_list.setVisibility(View.GONE);
+        }
         this.mCommentsList = comments;
         CommentsAdapter adapter = (CommentsAdapter) recyclerView_place_details.getAdapter();
         assert adapter != null;
