@@ -27,17 +27,14 @@ public class AuthenticationImpl implements Authentication {
     private Activity activity;
 
     // region CONSTRUCTOR
-
     public AuthenticationImpl(Activity activity) {
         this.activity = activity;
         mFirebaseAuth = FirebaseAuth.getInstance();
         attachAuthListener();
     }
-
     // endregion
 
     //  region USER PHOTO
-
     @Override
     public void updatePhotoURL(Uri photoURL) {
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -61,11 +58,9 @@ public class AuthenticationImpl implements Authentication {
     public void removePhotoURLListener() {
         mPhotoURLListener = null;
     }
-
 //  endregion
 
     //  region USERNAME
-
     @Override
     public void setUsernameListener(UsernameListener mUsernameListener) {
         this.mUsernameListener = mUsernameListener;
@@ -75,11 +70,9 @@ public class AuthenticationImpl implements Authentication {
     public void removeUsernameListener() {
         mUsernameListener = null;
     }
-
 //  endregion
 
     //  region AUTHENTICATION
-
     @Override
     public void attachAuthListener() {
         mAuthStateListener = firebaseAuth -> {
@@ -121,7 +114,6 @@ public class AuthenticationImpl implements Authentication {
     public void signOut() {
         AuthUI.getInstance().signOut(activity);
     }
-
     // endregion
 
 }
