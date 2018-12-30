@@ -23,32 +23,28 @@ import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.dependencies.storage.StorageImpl;
 import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfig;
 import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfigImpl;
-import ir.taghizadeh.tehran.helpers.Constants;
 
 public class DependencyRegistry {
 
     public static DependencyRegistry register = new DependencyRegistry();
 
-    Authentication authenticationPresenter;
-    Glide glidePresenter;
+    private Glide glidePresenter;
     Map mapPresenter;
-    WindowConfig windowConfigPresenter;
     Storage storagePresenter;
     Database databasePresenter;
-    RootCoordinator rootCoordinatorPresenter;
     GeoFire geoFirePresenter;
     BaseConfigsActivity mActivity;
 
     public void inject(BaseConfigsActivity activity) {
         this.mActivity = activity;
-        windowConfigPresenter = new WindowConfigImpl(mActivity);
-        rootCoordinatorPresenter = new RootCoordinatorImpl(mActivity);
+        WindowConfig windowConfigPresenter = new WindowConfigImpl(mActivity);
+        RootCoordinator rootCoordinatorPresenter = new RootCoordinatorImpl(mActivity);
         glidePresenter = new GlideImpl(mActivity);
-        activity.configureWith(windowConfigPresenter,rootCoordinatorPresenter, glidePresenter);
+        mActivity.configureWith(windowConfigPresenter, rootCoordinatorPresenter, glidePresenter);
     }
 
     public void inject(AuthenticationActivity activity) {
-        authenticationPresenter = new AuthenticationImpl(activity);
+        Authentication authenticationPresenter = new AuthenticationImpl(activity);
         activity.configureWith(authenticationPresenter);
     }
 
@@ -74,12 +70,10 @@ public class DependencyRegistry {
     }
 
     public void inject(PlacesAdapter placesAdapter){
-        glidePresenter = new GlideImpl(mActivity);
         placesAdapter.configureWith(glidePresenter);
     }
 
     public void inject(CommentsAdapter commentsAdapter){
-        glidePresenter = new GlideImpl(mActivity);
         commentsAdapter.configureWith(glidePresenter);
     }
 }
