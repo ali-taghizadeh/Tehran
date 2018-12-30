@@ -103,7 +103,7 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
 
 
     private void attachComments() {
-        mDatabase.getChild(Constants.PLACES_COMMENTS, mKey);
+        mDatabase.query(Constants.PLACES_COMMENTS, mKey);
         mDatabase.setCommentsDataSnapshotListener(commentsList -> {
             mCommentsList = commentsList;
             Collections.reverse(mCommentsList);
@@ -115,7 +115,7 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     void addComment() {
         if (!edittext_place_details_comment.getText().toString().equals("")) {
             Comments comments = new Comments(getUsername(), getUserPhoto(), edittext_place_details_comment.getText().toString());
-            mDatabase.addComment(comments, Constants.PLACES_COMMENTS, mKey);
+            mDatabase.pushComment(comments, Constants.PLACES_COMMENTS, mKey);
             mDatabase.setPushListener(key -> {
                 edittext_place_details_comment.setText("");
                 attachComments();
@@ -126,14 +126,14 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     @OnClick(R.id.image_place_details_like)
     void like(){
         int likes = mNewPlace.getLikes() + 1;
-        mDatabase.like(likes, Constants.PLACES, mKey);
+        mDatabase.pushLike(likes, Constants.PLACES, mKey);
         text_place_details_likes.setText(String.valueOf(likes));
     }
 
     @OnClick(R.id.image_place_details_dislike)
     void dislike(){
         int dislikes = mNewPlace.getDislikes() + 1;
-        mDatabase.dislike(dislikes, Constants.PLACES, mKey);
+        mDatabase.pushDislike(dislikes, Constants.PLACES, mKey);
         text_place_details_dislikes.setText(String.valueOf(dislikes));
     }
 

@@ -3,6 +3,7 @@ package ir.taghizadeh.tehran.dependencies;
 import ir.taghizadeh.tehran.activities.AuthenticationActivity;
 import ir.taghizadeh.tehran.activities.AddNewActivity;
 import ir.taghizadeh.tehran.activities.BaseConfigsActivity;
+import ir.taghizadeh.tehran.activities.DatabaseActivity;
 import ir.taghizadeh.tehran.activities.MainActivity;
 import ir.taghizadeh.tehran.activities.PlaceDetailsActivity;
 import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
@@ -46,6 +47,11 @@ public class DependencyRegistry {
     public void inject(AuthenticationActivity activity) {
         Authentication authenticationPresenter = new AuthenticationImpl(activity);
         activity.configureWith(authenticationPresenter);
+    }
+
+    public void inject(DatabaseActivity activity) {
+        databasePresenter = new DatabaseImpl();
+        activity.configureWith(databasePresenter);
     }
 
     public void inject(MainActivity activity) {

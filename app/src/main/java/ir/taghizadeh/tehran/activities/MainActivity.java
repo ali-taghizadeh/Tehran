@@ -129,7 +129,7 @@ public class MainActivity extends AuthenticationActivity {
                     mKeys.add(pair.getKey().toString());
                     mGeoLocations.add((GeoLocation) pair.getValue());
                     mMap.addMarker((GeoLocation) pair.getValue());
-                    mDatabase.getChild(Constants.PLACES, pair.getKey().toString());
+                    mDatabase.query(Constants.PLACES, pair.getKey().toString());
                     System.out.println(pair.getKey() + " = " + pair.getValue());
                     it.remove();
                 }

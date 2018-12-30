@@ -135,9 +135,7 @@ public class AddNewActivity extends AuthenticationActivity {
             mDatabase.pushNewPlace(createNewPlace(), Constants.PLACES);
             mDatabase.setPushListener(key -> {
                 mGeoFire.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);
-                mGeoFire.seLocationListener(key1 -> {
-                    dismiss();
-                });
+                mGeoFire.seLocationListener(key1 -> dismiss());
             });
         }
     }

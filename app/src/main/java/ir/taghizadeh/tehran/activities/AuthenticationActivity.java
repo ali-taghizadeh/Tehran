@@ -33,7 +33,7 @@ public class AuthenticationActivity extends BaseConfigsActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAuthentication.addAuthStateListener();
+        addAuthStateListener();
         addUsernameListener();
         addUserPhotoURLListener();
     }
@@ -41,7 +41,7 @@ public class AuthenticationActivity extends BaseConfigsActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mAuthentication.removeAuthStateListener();
+        removeAuthStateListener();
         removeUsernameListener();
         removeUserPhotoURLListener();
     }
@@ -111,6 +111,14 @@ public class AuthenticationActivity extends BaseConfigsActivity {
     // endregion
 
     // region AUTHENTICATION
+    public void addAuthStateListener(){
+        mAuthentication.addAuthStateListener();
+    }
+
+    public void removeAuthStateListener(){
+        mAuthentication.removeAuthStateListener();
+    }
+
     public void signOut() {
         mAuthentication.signOut();
     }
