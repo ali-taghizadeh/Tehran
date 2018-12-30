@@ -48,7 +48,7 @@ public class DependencyRegistry {
     }
 
     public void inject(AuthenticationActivity activity) {
-        authenticationPresenter = new AuthenticationImpl(activity, Constants.RC_SIGN_IN);
+        authenticationPresenter = new AuthenticationImpl(activity);
         activity.configureWith(authenticationPresenter);
     }
 

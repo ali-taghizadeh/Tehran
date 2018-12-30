@@ -1,7 +1,5 @@
 package ir.taghizadeh.tehran.activities;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
@@ -86,8 +84,6 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     }
 
     private void attachUI() {
-        addUsernameListener();
-        addUserPhotoUriListener();
         text_place_details_title.setText(mNewPlace.getTitle().toUpperCase());
         text_place_details_description.setText(mNewPlace.getDescription());
         text_place_details_author.setText(mNewPlace.getUsername().toUpperCase());

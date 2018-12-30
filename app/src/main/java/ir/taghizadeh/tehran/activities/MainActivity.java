@@ -71,7 +71,7 @@ public class MainActivity extends AuthenticationActivity {
     private void setUpUI() {
         hideStatusBar();
         attachUsername(text_main_username);
-        setPhoto(image_main_add_photo, image_main_icon_add_photo);
+        attachUserPhoto(image_main_add_photo, image_main_icon_add_photo);
         initializeList();
         mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
         mMap.setOnCameraMoveListener(() -> queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), Constants.DEFAULT_DISTANCE));
@@ -83,9 +83,11 @@ public class MainActivity extends AuthenticationActivity {
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView_main);
         PlacesAdapter adapter = new PlacesAdapter(mNewPlacesList, (newPlace, position) -> {
-            String key = mKeys.get(position);
-            GeoLocation geoLocation = mGeoLocations.get(position);
-            handlePlaceDetails(newPlace, key, geoLocation.latitude, geoLocation.longitude);
+            if (mKeys != null) {
+                String key = mKeys.get(position);
+                GeoLocation geoLocation = mGeoLocations.get(position);
+                handlePlaceDetails(newPlace, key, geoLocation.latitude, geoLocation.longitude);
+            }
         });
         recyclerView_main.setAdapter(adapter);
     }
