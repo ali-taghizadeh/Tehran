@@ -3,6 +3,7 @@ package ir.taghizadeh.tehran.activities;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
@@ -16,6 +17,7 @@ public class DatabaseActivity extends AuthenticationActivity{
     private Database mDatabase;
     private String mPushedKey;
     private NewPlace mNewPlace;
+    private List<NewPlace> mNewPlacesList = new ArrayList<>();
     private List<Comments> mCommentsList;
 
     // region LIFECYCLE
@@ -80,7 +82,10 @@ public class DatabaseActivity extends AuthenticationActivity{
     }
 
     public void addPlacesDataSnapshotListener() {
-        mDatabase.setPlacesDataSnapshotListener(newPlace -> mNewPlace = newPlace);
+        mDatabase.setPlacesDataSnapshotListener(newPlace -> {
+            mNewPlace = newPlace;
+            mNewPlacesList.add(newPlace);
+        });
     }
 
     public void addCommentsDataSnapshotListener() {
@@ -96,4 +101,12 @@ public class DatabaseActivity extends AuthenticationActivity{
     }
     // endregion
 
+
+    public List<NewPlace> getNewPlacesList() {
+        return mNewPlacesList;
+    }
+
+    public void clearNewPlacesList(){
+        mNewPlacesList.clear();
+    }
 }

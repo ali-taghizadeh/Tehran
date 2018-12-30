@@ -57,9 +57,8 @@ public class DependencyRegistry {
     public void inject(MainActivity activity) {
         mapPresenter = new MapImpl(activity);
         storagePresenter = new StorageImpl(activity);
-        databasePresenter = new DatabaseImpl();
         geoFirePresenter = new GeoFireImpl();
-        activity.configureWith(storagePresenter, mapPresenter, databasePresenter, geoFirePresenter);
+        activity.configureWith(storagePresenter, mapPresenter, geoFirePresenter);
     }
 
     public void inject(AddNewActivity activity) {
