@@ -27,15 +27,15 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/oval"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view"
-        android:scaleType="centerCrop"
-        android:src="@drawable/oval"
         app:shape_mode="circle"
         app:stroke_color="@color/colorPrimary"
-        app:stroke_width="2dp"/>
+        app:stroke_width="2dp" />
 
     <ImageView
         android:id="@+id/image_main_icon_add_photo"
@@ -99,7 +99,7 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress_main"
@@ -107,11 +107,13 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginBottom="16dp"
+        android:indeterminateTint="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/image_main_add_place"
         app:layout_constraintEnd_toEndOf="@+id/image_main_add_place"
         app:layout_constraintStart_toStartOf="@+id/image_main_add_place"
         app:layout_constraintTop_toTopOf="@+id/image_main_add_place"
-        android:visibility="gone"/>
+        tools:targetApi="lollipop" />
 
 
 </android.support.constraint.ConstraintLayout>

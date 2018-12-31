@@ -16,7 +16,6 @@ public class DatabaseActivity extends AuthenticationActivity{
 
     private Database mDatabase;
     private String mPushedKey;
-    private NewPlace mNewPlace;
     private List<NewPlace> mNewPlacesList = new ArrayList<>();
     private List<Comments> mCommentsList;
 
@@ -83,7 +82,6 @@ public class DatabaseActivity extends AuthenticationActivity{
 
     public void addPlacesDataSnapshotListener() {
         mDatabase.setPlacesDataSnapshotListener(newPlace -> {
-            mNewPlace = newPlace;
             mNewPlacesList.add(newPlace);
         });
     }

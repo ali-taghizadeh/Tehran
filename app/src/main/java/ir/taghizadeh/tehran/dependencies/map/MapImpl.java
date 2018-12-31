@@ -1,5 +1,6 @@
 package ir.taghizadeh.tehran.dependencies.map;
 
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 
@@ -58,6 +59,7 @@ public class MapImpl implements OnMapReadyCallback, Map {
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(position.latitude, position.longitude)));
             marker.showInfoWindow();
+            ObjectAnimator.ofFloat(marker, "alpha", 0f, 1f).setDuration(200).start();
         }
     }
 

@@ -17,10 +17,9 @@
 
         <cn.gavinliu.android.lib.shapedimageview.ShapedImageView
             android:id="@+id/image_item_user_photo"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -28,7 +27,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_item_place_description"
             app:shape_mode="circle"
             app:stroke_color="@color/colorPrimary"
-            app:stroke_width="2dp" />
+            app:stroke_width="1dp" />
 
         <cn.gavinliu.android.lib.shapedimageview.ShapedImageView
             android:id="@+id/image_item_place_photo"
@@ -38,7 +37,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/gradient"
+            android:src="@drawable/rect"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="h,1:1"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +54,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/image_item_place_photo"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,21 +62,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Description"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:textSize="10sp"
             app:layout_constraintBottom_toTopOf="@+id/image_item_user_photo"
             app:layout_constraintStart_toEndOf="@+id/image_item_place_photo"
             app:layout_constraintTop_toBottomOf="@+id/text_item_place_title" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginStart="8dp"
             android:tint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/image_item_user_photo"
@@ -92,17 +88,20 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="0"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView"
-            app:layout_constraintStart_toEndOf="@+id/imageView" />
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/imageView" />
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="24dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
             android:tint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/text_item_place_likes"
             app:layout_constraintStart_toEndOf="@+id/text_item_place_likes"
+            app:layout_constraintTop_toTopOf="@+id/text_item_place_likes"
             app:srcCompat="@drawable/ic_thumb_down" />
 
         <TextView
@@ -111,8 +110,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="25"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-            app:layout_constraintStart_toEndOf="@+id/imageView2" />
+            app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintTop_toTopOf="@+id/imageView2" />
 
     </android.support.constraint.ConstraintLayout>
 

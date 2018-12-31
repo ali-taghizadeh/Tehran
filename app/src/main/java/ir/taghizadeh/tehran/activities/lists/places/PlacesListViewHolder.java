@@ -29,7 +29,7 @@ class PlacesListViewHolder extends RecyclerView.ViewHolder {
     }
 
     void configureWith(NewPlace newPlace, Glide mGlide) {
-        text_item_place_title.setText(newPlace.getTitle());
+        text_item_place_title.setText(newPlace.getTitle().toUpperCase());
         text_item_place_description.setText(newPlace.getDescription());
         text_item_place_likes.setText(String.valueOf(newPlace.getLikes()));
         text_item_place_dislikes.setText(String.valueOf(newPlace.getDislikes()));

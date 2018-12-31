@@ -26,18 +26,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
-import io.reactivex.Notification;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
-import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
@@ -60,7 +54,6 @@ public class MainActivity extends DatabaseActivity {
     private Storage mStorage;
     private Map mMap;
     private GeoFire mGeoFire;
-    private List<NewPlace> mNewPlacesList = new ArrayList<>();
     private List<String> mKeys = new ArrayList<>();
     private List<GeoLocation> mGeoLocations = new ArrayList<>();
     private CompositeDisposable compositeDisposable;
@@ -94,12 +87,9 @@ public class MainActivity extends DatabaseActivity {
         recyclerView_main.setLayoutManager(manager);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView_main);
-        PlacesAdapter adapter = new PlacesAdapter(mNewPlacesList, (newPlace, position) -> {
-            if (mKeys != null) {
-                String key = mKeys.get(position);
-                GeoLocation geoLocation = mGeoLocations.get(position);
-                handlePlaceDetails(newPlace, key, geoLocation.latitude, geoLocation.longitude);
-            }
+        PlacesAdapter adapter = new PlacesAdapter(getNewPlacesList(), (newPlace, position) -> {
+            if (mKeys != null)
+                handlePlaceDetails(newPlace, mKeys.get(position), mGeoLocations.get(position).latitude, mGeoLocations.get(position).longitude);
         });
         recyclerView_main.setAdapter(adapter);
     }
@@ -120,11 +110,10 @@ public class MainActivity extends DatabaseActivity {
     private void queryLocations(String dbLocation, LatLng centerLocation, int distance) {
         mGeoFire.queryLocations(dbLocation, centerLocation, distance);
         mGeoFire.setOnGeoQueryReady(locationMap -> {
+            dispose();
             mMap.clearMap();
             clearNewPlacesList();
-            dispose();
-            mNewPlacesList.clear();
-            updateList(mNewPlacesList);
+            updateList(getNewPlacesList());
             mKeys.clear();
             mGeoLocations.clear();
             if (!locationMap.isEmpty()) {
@@ -137,15 +126,30 @@ public class MainActivity extends DatabaseActivity {
                     it.remove();
                 }
             }
-            handleList();
+            update();
         });
     }
 
-    private void handleList() {
+    @OnClick(R.id.image_main_logout)
+    void logOut() {
+        signOut();
+    }
+
+    @OnClick(R.id.image_main_add_photo)
+    void addPhoto() {
+        handleAddPhoto();
+    }
+
+    @OnClick(R.id.image_main_add_place)
+    void addLocation() {
+        LatLng latLng = mMap.getCenterLocation();
+        handleAddPlace(latLng);
+    }
+
+    private void update() {
         Observable.interval(200, TimeUnit.MILLISECONDS)
                 .take(mGeoLocations.size())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
                 .doOnSubscribe(disposable -> {
                     progress_main.setVisibility(View.VISIBLE);
                     getCompositeDisposable().add(disposable);
@@ -163,42 +167,25 @@ public class MainActivity extends DatabaseActivity {
                 .subscribe();
     }
 
+    private void updateList(List<NewPlace> newPlaces) {
+        PlacesAdapter adapter = (PlacesAdapter) recyclerView_main.getAdapter();
+        assert adapter != null;
+        adapter.newPlaces = newPlaces;
+        adapter.notifyDataSetChanged();
+    }
+
     private CompositeDisposable getCompositeDisposable() {
-        if (compositeDisposable == null || compositeDisposable.isDisposed()) {
-            compositeDisposable = new CompositeDisposable();
-        }
+        if (compositeDisposable == null || compositeDisposable.isDisposed()) compositeDisposable = new CompositeDisposable();
         return compositeDisposable;
     }
 
     private void dispose() {
-        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
-            compositeDisposable.clear();
-        }
+        if (compositeDisposable != null && !compositeDisposable.isDisposed()) compositeDisposable.clear();
     }
 
-    private void updateList(List<NewPlace> newPlaces) {
-        if (newPlaces.isEmpty()) recyclerView_main.setVisibility(View.GONE);
-        else recyclerView_main.setVisibility(View.VISIBLE);
-        this.mNewPlacesList = newPlaces;
-        PlacesAdapter adapter = (PlacesAdapter) recyclerView_main.getAdapter();
-        assert adapter != null;
-        adapter.newPlaces = this.mNewPlacesList;
-        recyclerView_main.setAdapter(adapter);
-    }
-
-    @OnClick(R.id.image_main_logout)
-    void logOut() {
-        signOut();
-    }
-
-    @OnClick(R.id.image_main_add_photo)
-    void addPhoto() {
-        handleAddPhoto();
-    }
-
-    @OnClick(R.id.image_main_add_place)
-    void addLocation() {
-        LatLng latLng = mMap.getCenterLocation();
-        handleAddPlace(latLng);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dispose();
     }
 }
