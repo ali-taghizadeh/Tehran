@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
@@ -17,7 +18,7 @@ public class DatabaseActivity extends AuthenticationActivity{
     private Database mDatabase;
     private String mPushedKey;
     private List<NewPlace> mNewPlacesList = new ArrayList<>();
-    private List<Comments> mCommentsList;
+    private List<Comments> mCommentsList =  new ArrayList<>();
 
     // region LIFECYCLE
     @Override
@@ -99,7 +100,7 @@ public class DatabaseActivity extends AuthenticationActivity{
     }
     // endregion
 
-
+    // region GETTERS
     public List<NewPlace> getNewPlacesList() {
         return mNewPlacesList;
     }
@@ -108,7 +109,12 @@ public class DatabaseActivity extends AuthenticationActivity{
         return mPushedKey;
     }
 
+    public List<Comments> getCommentsList() {
+        return mCommentsList;
+    }
+
     public void clearNewPlacesList(){
         mNewPlacesList.clear();
     }
+    // endregion
 }

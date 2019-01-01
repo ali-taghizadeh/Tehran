@@ -3,29 +3,32 @@ package ir.taghizadeh.tehran.activities;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
-import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
-import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class PlaceDetailsActivity extends AuthenticationActivity {
+public class PlaceDetailsActivity extends DatabaseActivity {
 
     @BindView(R.id.text_place_details_title)
     TextView text_place_details_title;
@@ -55,29 +58,29 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
     ImageView image_place_details_empty_list;
     @BindView(R.id.text_place_details_empty_list)
     TextView text_place_details_empty_list;
+    @BindView(R.id.progress_place_details)
+    ProgressBar progress_place_details;
 
     private NewPlace mNewPlace;
-    private List<Comments> mCommentsList = new ArrayList<>();
     private String mKey;
     private double mLatitude;
     private double mLongitude;
-    private Database mDatabase;
+    private CompositeDisposable compositeDisposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_details);
         ButterKnife.bind(this);
+        configureWith();
+    }
+
+    private void configureWith() {
         mNewPlace = (NewPlace) getIntent().getSerializableExtra("newPlace");
         mKey = getIntent().getExtras().getString("key");
         mLatitude = getIntent().getExtras().getDouble("latitude");
         mLongitude = getIntent().getExtras().getDouble("longitude");
-        DependencyRegistry.register.inject(this);
-    }
-
-    public void configureWith(Database databasePresenter) {
-        this.mDatabase = databasePresenter;
-        hideStatusBar();
+        setFullScreen();
         attachUI();
         initializeList();
         attachComments();
@@ -91,49 +94,71 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         text_place_details_dislikes.setText(String.valueOf(mNewPlace.getDislikes()));
         if (!mNewPlace.getPhotoUrl().equals(""))
             loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
+        if (!mNewPlace.getUserPhotoUrl().equals(""))
         loadImage(mNewPlace.getUserPhotoUrl(), image_place_details_user_photo);
     }
 
     private void initializeList() {
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        recyclerView_place_details.setLayoutManager(manager);
-        CommentsAdapter adapter = new CommentsAdapter(mCommentsList);
+        handleVerticalList(recyclerView_place_details);
+        CommentsAdapter adapter = new CommentsAdapter(new ArrayList<>());
         recyclerView_place_details.setAdapter(adapter);
     }
 
-
     private void attachComments() {
-        mDatabase.query(Constants.PLACES_COMMENTS, mKey);
-        mDatabase.setCommentsDataSnapshotListener(commentsList -> {
-            mCommentsList = commentsList;
-            Collections.reverse(mCommentsList);
-            updateList(mCommentsList);
-        });
+        query(Constants.PLACES_COMMENTS, mKey);
+        Observable.interval(1, TimeUnit.SECONDS)
+                .take(2)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> {
+                    getCompositeDisposable().add(disposable);
+                    progress_place_details.setVisibility(View.VISIBLE);
+                    recyclerView_place_details.setVisibility(View.GONE);
+                    edittext_place_details_comment.setText("");
+                })
+                .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
+                .doOnComplete(() -> {
+                    progress_place_details.setVisibility(View.GONE);
+                    recyclerView_place_details.setVisibility(View.VISIBLE);
+                    if (getCommentsList().isEmpty()){
+                        image_place_details_empty_list.setVisibility(View.VISIBLE);
+                        text_place_details_empty_list.setVisibility(View.VISIBLE);
+                    }else {
+                        updateList();
+                    }
+                    dispose();
+                })
+                .subscribe();
+    }
+
+    private void updateList() {
+        recyclerView_place_details.scheduleLayoutAnimation();
+        CommentsAdapter adapter = (CommentsAdapter) recyclerView_place_details.getAdapter();
+        assert adapter != null;
+        Collections.reverse(getCommentsList());
+        adapter.comments = getCommentsList();
+        adapter.notifyDataSetChanged();
     }
 
     @OnClick(R.id.image_place_details_send)
     void addComment() {
-        if (!edittext_place_details_comment.getText().toString().equals("")) {
+        if (isInputValid(edittext_place_details_comment.getText().toString(), edittext_place_details_comment, "Write your comment first")){
             Comments comments = new Comments(getUsername(), getUserPhoto(), edittext_place_details_comment.getText().toString());
-            mDatabase.pushComment(comments, Constants.PLACES_COMMENTS, mKey);
-            mDatabase.setPushListener(key -> {
-                edittext_place_details_comment.setText("");
-                attachComments();
-            });
-        } else edittext_place_details_comment.setError("Write your comment first");
+            pushComment(comments, Constants.PLACES_COMMENTS, mKey);
+            attachComments();
+        }
     }
 
     @OnClick(R.id.image_place_details_like)
     void like(){
         int likes = mNewPlace.getLikes() + 1;
-        mDatabase.pushLike(likes, Constants.PLACES, mKey);
+        pushLike(likes, Constants.PLACES, mKey);
         text_place_details_likes.setText(String.valueOf(likes));
     }
 
     @OnClick(R.id.image_place_details_dislike)
     void dislike(){
         int dislikes = mNewPlace.getDislikes() + 1;
-        mDatabase.pushDislike(dislikes, Constants.PLACES, mKey);
+        pushDislike(dislikes, Constants.PLACES, mKey);
         text_place_details_dislikes.setText(String.valueOf(dislikes));
     }
 
@@ -142,20 +167,20 @@ public class PlaceDetailsActivity extends AuthenticationActivity {
         handleGetDirection(mLatitude, mLongitude);
     }
 
-    private void updateList(List<Comments> comments) {
-        if (comments.isEmpty()) {
-            recyclerView_place_details.setVisibility(View.GONE);
-            image_place_details_empty_list.setVisibility(View.VISIBLE);
-            text_place_details_empty_list.setVisibility(View.VISIBLE);
-        } else {
-            recyclerView_place_details.setVisibility(View.VISIBLE);
-            image_place_details_empty_list.setVisibility(View.GONE);
-            text_place_details_empty_list.setVisibility(View.GONE);
-        }
-        this.mCommentsList = comments;
-        CommentsAdapter adapter = (CommentsAdapter) recyclerView_place_details.getAdapter();
-        assert adapter != null;
-        adapter.comments = this.mCommentsList;
-        adapter.notifyDataSetChanged();
+    private CompositeDisposable getCompositeDisposable() {
+        if (compositeDisposable == null || compositeDisposable.isDisposed())
+            compositeDisposable = new CompositeDisposable();
+        return compositeDisposable;
+    }
+
+    private void dispose() {
+        if (compositeDisposable != null && !compositeDisposable.isDisposed())
+            compositeDisposable.clear();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dispose();
     }
 }

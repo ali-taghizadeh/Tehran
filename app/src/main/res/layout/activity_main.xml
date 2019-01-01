@@ -100,7 +100,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layoutAnimation="@anim/layout_animation_fall_down"/>
+        android:layoutAnimation="@anim/layout_animation_rise"/>
 
     <ProgressBar
         android:id="@+id/progress_main"

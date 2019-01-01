@@ -34,7 +34,7 @@ public class BaseConfigsActivity extends AppCompatActivity {
         this.mGlide = glidePresenter;
     }
 
-    public void hideStatusBar(){
+    public void setFullScreen(){
         mWindowConfig.setFullScreen();
     }
 
@@ -52,6 +52,10 @@ public class BaseConfigsActivity extends AppCompatActivity {
 
     public void handleHorizontalList(RecyclerView recyclerView){
         mWindowConfig.handleHorizontalList(recyclerView);
+    }
+
+    public void handleVerticalList(RecyclerView recyclerView){
+        mWindowConfig.handleVerticalList(recyclerView);
     }
 
     public void handleAddPhoto(){

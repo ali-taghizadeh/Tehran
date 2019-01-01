@@ -68,11 +68,6 @@ public class DependencyRegistry {
         activity.configureWith(mapPresenter, storagePresenter, geoFirePresenter);
     }
 
-    public void inject(PlaceDetailsActivity activity) {
-        databasePresenter = new DatabaseImpl();
-        activity.configureWith(databasePresenter);
-    }
-
     public void inject(PlacesAdapter placesAdapter){
         placesAdapter.configureWith(glidePresenter);
     }

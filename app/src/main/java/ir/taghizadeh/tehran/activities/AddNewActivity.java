@@ -72,7 +72,7 @@ public class AddNewActivity extends DatabaseActivity {
     }
 
     private void setUpUI() {
-        hideStatusBar();
+        setFullScreen();
         getLatLng();
         attachMap(mLatLng, mTitle, mDescription);
         mTitleDisposable = updateMarker(edittext_add_new_title);

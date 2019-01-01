@@ -21,6 +21,7 @@ public class WindowConfigImpl implements WindowConfig {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
+        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     @Override
@@ -28,6 +29,12 @@ public class WindowConfigImpl implements WindowConfig {
         LinearLayoutManager manager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(manager);
         new PagerSnapHelper().attachToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void handleVerticalList(RecyclerView recyclerView) {
+        LinearLayoutManager manager = new LinearLayoutManager(activity);
+        recyclerView.setLayoutManager(manager);
     }
 
     @Override

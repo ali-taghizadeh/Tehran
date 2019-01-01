@@ -71,7 +71,7 @@ public class MainActivity extends DatabaseActivity {
     }
 
     private void setUpUI() {
-        hideStatusBar();
+        setFullScreen();
         attachUsername(text_main_username);
         attachUserPhoto(image_main_add_photo, image_main_icon_add_photo);
         initializeList();
