@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;

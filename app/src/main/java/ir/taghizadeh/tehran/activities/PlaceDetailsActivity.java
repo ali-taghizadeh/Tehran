@@ -113,6 +113,8 @@ public class PlaceDetailsActivity extends DatabaseActivity {
                     getCompositeDisposable().add(disposable);
                     progress_place_details.setVisibility(View.VISIBLE);
                     recyclerView_place_details.setVisibility(View.GONE);
+                    image_place_details_empty_list.setVisibility(View.GONE);
+                    text_place_details_empty_list.setVisibility(View.GONE);
                     edittext_place_details_comment.setText("");
                 })
                 .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
