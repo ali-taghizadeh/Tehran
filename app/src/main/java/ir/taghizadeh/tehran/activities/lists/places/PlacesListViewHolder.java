@@ -1,7 +1,6 @@
 package ir.taghizadeh.tehran.activities.lists.places;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
@@ -33,9 +32,12 @@ class PlacesListViewHolder extends RecyclerView.ViewHolder {
         text_item_place_description.setText(newPlace.getDescription());
         text_item_place_likes.setText(String.valueOf(newPlace.getLikes()));
         text_item_place_dislikes.setText(String.valueOf(newPlace.getDislikes()));
-        mGlide.loadImage(newPlace.getUserPhotoUrl(), image_item_user_photo);
         if ((newPlace.getPhotoUrl() != null && !newPlace.getPhotoUrl().equals("")))
             mGlide.loadImage(newPlace.getPhotoUrl(), image_item_place_photo);
+        else mGlide.loadFromResources(image_item_place_photo, "rect");
+        if ((newPlace.getUserPhotoUrl() != null && !newPlace.getUserPhotoUrl().equals("")))
+            mGlide.loadImage(newPlace.getUserPhotoUrl(), image_item_user_photo);
+        else mGlide.loadFromResources(image_item_user_photo, "oval");
     }
 
 }

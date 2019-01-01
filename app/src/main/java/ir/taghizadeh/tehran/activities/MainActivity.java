@@ -113,7 +113,6 @@ public class MainActivity extends DatabaseActivity {
             dispose();
             mMap.clearMap();
             clearNewPlacesList();
-            updateList(getNewPlacesList());
             mKeys.clear();
             mGeoLocations.clear();
             if (!locationMap.isEmpty()) {
@@ -159,15 +158,19 @@ public class MainActivity extends DatabaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(input -> mMap.addMarker(mGeoLocations.get(input.intValue())))
                 .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
-                .doOnSubscribe(disposable -> getCompositeDisposable().add(disposable))
+                .doOnSubscribe(disposable -> {
+                    updateList(new ArrayList<>());
+                    getCompositeDisposable().add(disposable);
+                })
                 .doOnComplete(() -> {
-                    dispose();
                     updateList(getNewPlacesList());
+                    dispose();
                 })
                 .subscribe();
     }
 
     private void updateList(List<NewPlace> newPlaces) {
+        recyclerView_main.scheduleLayoutAnimation();
         PlacesAdapter adapter = (PlacesAdapter) recyclerView_main.getAdapter();
         assert adapter != null;
         adapter.newPlaces = newPlaces;
@@ -175,12 +178,14 @@ public class MainActivity extends DatabaseActivity {
     }
 
     private CompositeDisposable getCompositeDisposable() {
-        if (compositeDisposable == null || compositeDisposable.isDisposed()) compositeDisposable = new CompositeDisposable();
+        if (compositeDisposable == null || compositeDisposable.isDisposed())
+            compositeDisposable = new CompositeDisposable();
         return compositeDisposable;
     }
 
     private void dispose() {
-        if (compositeDisposable != null && !compositeDisposable.isDisposed()) compositeDisposable.clear();
+        if (compositeDisposable != null && !compositeDisposable.isDisposed())
+            compositeDisposable.clear();
     }
 
     @Override

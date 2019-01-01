@@ -91,7 +91,7 @@ public class AuthenticationActivity extends BaseConfigsActivity {
             loadImage(mUserPhotoUrl, userPhotoImage);
             userPhotoIcon.setVisibility(View.GONE);
         } else {
-            loadBlank(userPhotoImage);
+            loadFromResources(userPhotoImage, "oval");
             userPhotoIcon.setVisibility(View.VISIBLE);
         }
     }

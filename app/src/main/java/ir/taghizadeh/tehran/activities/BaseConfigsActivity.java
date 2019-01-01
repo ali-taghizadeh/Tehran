@@ -40,8 +40,8 @@ public class BaseConfigsActivity extends AppCompatActivity {
         mGlide.loadImage(url, imageView);
     }
 
-    public void loadBlank(ImageView imageView){
-        mGlide.loadBlank(imageView);
+    public void loadFromResources(ImageView imageView, String resid){
+        mGlide.loadFromResources(imageView, resid);
     }
 
     public void handleAddPhoto(){

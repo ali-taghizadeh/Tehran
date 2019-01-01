@@ -24,6 +24,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
         this.newPlaces = newPlaces;
         this.itemClickListener = onPlaceItemClickListener;
         DependencyRegistry.register.inject(this);
+        setHasStableIds(true);
     }
 
     @NonNull
@@ -44,6 +45,11 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
     @Override
     public int getItemCount() {
         return newPlaces.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     public void configureWith(Glide glidePresenter) {
