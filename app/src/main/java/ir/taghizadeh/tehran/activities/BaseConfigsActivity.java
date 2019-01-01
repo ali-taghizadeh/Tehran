@@ -3,6 +3,7 @@ package ir.taghizadeh.tehran.activities;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -42,6 +43,10 @@ public class BaseConfigsActivity extends AppCompatActivity {
 
     public void loadFromResources(ImageView imageView, String resid){
         mGlide.loadFromResources(imageView, resid);
+    }
+
+    public void handleHorizontalList(RecyclerView recyclerView){
+        mWindowConfig.handleHorizontalList(recyclerView);
     }
 
     public void handleAddPhoto(){

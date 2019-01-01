@@ -3,10 +3,7 @@ package ir.taghizadeh.tehran.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -83,10 +80,7 @@ public class MainActivity extends DatabaseActivity {
     }
 
     private void initializeList() {
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView_main.setLayoutManager(manager);
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(recyclerView_main);
+        handleHorizontalList(recyclerView_main);
         PlacesAdapter adapter = new PlacesAdapter(getNewPlacesList(), (newPlace, position) -> {
             if (mKeys != null)
                 handlePlaceDetails(newPlace, mKeys.get(position), mGeoLocations.get(position).latitude, mGeoLocations.get(position).longitude);
@@ -141,8 +135,7 @@ public class MainActivity extends DatabaseActivity {
 
     @OnClick(R.id.image_main_add_place)
     void addLocation() {
-        LatLng latLng = mMap.getCenterLocation();
-        handleAddPlace(latLng);
+        handleAddPlace(mMap.getCenterLocation());
     }
 
     private void update() {
@@ -186,6 +179,7 @@ public class MainActivity extends DatabaseActivity {
     private void dispose() {
         if (compositeDisposable != null && !compositeDisposable.isDisposed())
             compositeDisposable.clear();
+        progress_main.setVisibility(View.GONE);
     }
 
     @Override

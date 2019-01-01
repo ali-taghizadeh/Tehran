@@ -18,7 +18,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
 
     public List<NewPlace> newPlaces;
     private Glide mGlide;
-    OnPlaceItemClickListener itemClickListener;
+    private OnPlaceItemClickListener itemClickListener;
 
     public PlacesAdapter(List<NewPlace> newPlaces, OnPlaceItemClickListener onPlaceItemClickListener) {
         this.newPlaces = newPlaces;
