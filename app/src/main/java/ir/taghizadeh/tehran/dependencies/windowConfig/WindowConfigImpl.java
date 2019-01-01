@@ -5,10 +5,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.WindowManager;
+import android.widget.EditText;
 
-public class WindowConfigImpl implements WindowConfig{
+public class WindowConfigImpl implements WindowConfig {
 
     private Activity activity;
+
     public WindowConfigImpl(Activity activity) {
         this.activity = activity;
     }
@@ -26,5 +28,14 @@ public class WindowConfigImpl implements WindowConfig{
         LinearLayoutManager manager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(manager);
         new PagerSnapHelper().attachToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public boolean isInputValid(String input, EditText editText, String error) {
+        if (input.equals("")) {
+            editText.setError(error);
+            return false;
+        }
+        return true;
     }
 }

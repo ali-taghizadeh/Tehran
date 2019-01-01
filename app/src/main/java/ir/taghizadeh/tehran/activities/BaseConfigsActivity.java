@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -43,6 +44,10 @@ public class BaseConfigsActivity extends AppCompatActivity {
 
     public void loadFromResources(ImageView imageView, String resid){
         mGlide.loadFromResources(imageView, resid);
+    }
+
+    boolean isInputValid(String input, EditText editText, String error){
+        return mWindowConfig.isInputValid(input, editText, error);
     }
 
     public void handleHorizontalList(RecyclerView recyclerView){

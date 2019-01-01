@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -42,6 +43,8 @@ public class AddNewActivity extends DatabaseActivity {
     TextInputEditText edittext_add_new_description;
     @BindView(R.id.progress_add_new)
     ProgressBar progress_add_new;
+    @BindView(R.id.button_add_new_save)
+    Button button_add_new_save;
     private Map mMap;
     private Storage mStorage;
     private GeoFire mGeoFire;
@@ -72,8 +75,8 @@ public class AddNewActivity extends DatabaseActivity {
         hideStatusBar();
         getLatLng();
         attachMap(mLatLng, mTitle, mDescription);
-        mTitleDisposable = textChangeListener(edittext_add_new_title);
-        mDescriptionDisposable = textChangeListener(edittext_add_new_description);
+        mTitleDisposable = updateMarker(edittext_add_new_title);
+        mDescriptionDisposable = updateMarker(edittext_add_new_description);
     }
 
     private void attachMap(LatLng latLng, String title, String description) {
@@ -83,17 +86,12 @@ public class AddNewActivity extends DatabaseActivity {
         });
     }
 
-    private void updateMap() {
-        mMap.clearMap();
-        mMap.addMarker(mLatLng, mTitle, mDescription);
-    }
-
     private void getLatLng() {
         Bundle bundle = getIntent().getParcelableExtra("bundle");
         mLatLng = bundle.getParcelable("location");
     }
 
-    private Disposable textChangeListener(TextInputEditText editText) {
+    private Disposable updateMarker(TextInputEditText editText) {
         return RxTextView.textChanges(editText)
                 .debounce(600, TimeUnit.MILLISECONDS)
                 .filter(changes -> {
@@ -106,7 +104,8 @@ public class AddNewActivity extends DatabaseActivity {
                         mTitle = character.toString();
                     else
                         mDescription = character.toString();
-                    updateMap();
+                    mMap.clearMap();
+                    mMap.addMarker(mLatLng, mTitle, mDescription);
                 });
     }
 
@@ -131,22 +130,21 @@ public class AddNewActivity extends DatabaseActivity {
 
     @OnClick(R.id.button_add_new_save)
     void save() {
-        if (mTitle.equals("")) {
-            edittext_add_new_title.setError("Pick a title");
-        } else if (mDescription.equals("")) {
-            edittext_add_new_description.setError("Pick a description");
-        } else {
+        if (isInputValid(mTitle, edittext_add_new_title, "Pick a title") &&
+                isInputValid(mDescription, edittext_add_new_description, "Pick a description")) {
             pushNewPlace(createNewPlace(), Constants.PLACES);
             handleSave();
         }
     }
+
     private void handleSave() {
         Observable.interval(1, TimeUnit.SECONDS)
                 .take(2)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> {
-                    progress_add_new.setVisibility(View.VISIBLE);
                     getCompositeDisposable().add(disposable);
+                    button_add_new_save.setText("");
+                    progress_add_new.setVisibility(View.VISIBLE);
                 })
                 .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
                 .doOnComplete(() -> {
@@ -166,10 +164,9 @@ public class AddNewActivity extends DatabaseActivity {
 
     @OnClick(R.id.button_add_new_discard)
     void dismiss() {
-        mTitleDisposable.dispose();
-        mDescriptionDisposable.dispose();
         finish();
     }
+
     private CompositeDisposable getCompositeDisposable() {
         if (compositeDisposable == null || compositeDisposable.isDisposed())
             compositeDisposable = new CompositeDisposable();
@@ -179,6 +176,15 @@ public class AddNewActivity extends DatabaseActivity {
     private void dispose() {
         if (compositeDisposable != null && !compositeDisposable.isDisposed())
             compositeDisposable.clear();
+        if (mTitleDisposable != null && !mTitleDisposable.isDisposed()) mTitleDisposable.dispose();
+        if (mDescriptionDisposable != null && !mDescriptionDisposable.isDisposed())
+            mDescriptionDisposable.dispose();
         progress_add_new.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dispose();
     }
 }
