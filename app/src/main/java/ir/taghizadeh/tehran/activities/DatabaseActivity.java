@@ -104,6 +104,10 @@ public class DatabaseActivity extends AuthenticationActivity{
         return mNewPlacesList;
     }
 
+    public String getPushedKey() {
+        return mPushedKey;
+    }
+
     public void clearNewPlacesList(){
         mNewPlacesList.clear();
     }

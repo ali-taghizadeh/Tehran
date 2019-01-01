@@ -119,7 +119,7 @@ public class MainActivity extends DatabaseActivity {
                     it.remove();
                 }
             }
-            update();
+            refreshPage();
         });
     }
 
@@ -138,7 +138,7 @@ public class MainActivity extends DatabaseActivity {
         handleAddPlace(mMap.getCenterLocation());
     }
 
-    private void update() {
+    private void refreshPage() {
         Observable.interval(200, TimeUnit.MILLISECONDS)
                 .take(mGeoLocations.size())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.rxbinding2.widget.RxTextView;
@@ -16,18 +18,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
-import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class AddNewActivity extends AuthenticationActivity {
+public class AddNewActivity extends DatabaseActivity {
 
     @BindView(R.id.image_add_new_add_photo)
     ShapedImageView image_add_new_add_photo;
@@ -37,9 +40,10 @@ public class AddNewActivity extends AuthenticationActivity {
     TextInputEditText edittext_add_new_title;
     @BindView(R.id.edittext_add_new_description)
     TextInputEditText edittext_add_new_description;
+    @BindView(R.id.progress_add_new)
+    ProgressBar progress_add_new;
     private Map mMap;
     private Storage mStorage;
-    private Database mDatabase;
     private GeoFire mGeoFire;
     private LatLng mLatLng;
     private String mTitle;
@@ -47,6 +51,7 @@ public class AddNewActivity extends AuthenticationActivity {
     private String mPhotoUri = "";
     private Disposable mTitleDisposable;
     private Disposable mDescriptionDisposable;
+    private CompositeDisposable compositeDisposable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,10 +61,9 @@ public class AddNewActivity extends AuthenticationActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Map map, Storage storage, Database database, GeoFire geoFire) {
+    public void configureWith(Map map, Storage storage, GeoFire geoFire) {
         this.mMap = map;
         this.mStorage = storage;
-        this.mDatabase = database;
         this.mGeoFire = geoFire;
         setUpUI();
     }
@@ -132,12 +136,28 @@ public class AddNewActivity extends AuthenticationActivity {
         } else if (mDescription.equals("")) {
             edittext_add_new_description.setError("Pick a description");
         } else {
-            mDatabase.pushNewPlace(createNewPlace(), Constants.PLACES);
-            mDatabase.setPushListener(key -> {
-                mGeoFire.pushLocation(Constants.PLACES_LOCATION, key, mLatLng);
-                mGeoFire.seLocationListener(key1 -> dismiss());
-            });
+            pushNewPlace(createNewPlace(), Constants.PLACES);
+            handleSave();
         }
+    }
+    private void handleSave() {
+        Observable.interval(1, TimeUnit.SECONDS)
+                .take(2)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> {
+                    progress_add_new.setVisibility(View.VISIBLE);
+                    getCompositeDisposable().add(disposable);
+                })
+                .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
+                .doOnComplete(() -> {
+                    mGeoFire.pushLocation(Constants.PLACES_LOCATION, getPushedKey(), mLatLng);
+                    mGeoFire.seLocationListener(key1 -> {
+                        progress_add_new.setVisibility(View.GONE);
+                        dismiss();
+                        dispose();
+                    });
+                })
+                .subscribe();
     }
 
     private NewPlace createNewPlace() {
@@ -149,5 +169,16 @@ public class AddNewActivity extends AuthenticationActivity {
         mTitleDisposable.dispose();
         mDescriptionDisposable.dispose();
         finish();
+    }
+    private CompositeDisposable getCompositeDisposable() {
+        if (compositeDisposable == null || compositeDisposable.isDisposed())
+            compositeDisposable = new CompositeDisposable();
+        return compositeDisposable;
+    }
+
+    private void dispose() {
+        if (compositeDisposable != null && !compositeDisposable.isDisposed())
+            compositeDisposable.clear();
+        progress_add_new.setVisibility(View.GONE);
     }
 }
