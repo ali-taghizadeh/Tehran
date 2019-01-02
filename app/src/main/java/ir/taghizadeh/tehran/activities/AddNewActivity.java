@@ -116,7 +116,7 @@ public class AddNewActivity extends DatabaseModuleActivity {
         if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
             mStorage.putFile(selectedImageUri, Constants.PLACES);
-            mStorage.setonFileUploadedSuccessfully(uri -> {
+            mStorage.setPutListener(uri -> {
                 mPhotoUri = uri.toString();
                 loadImage(mPhotoUri, image_add_new_add_photo);
                 image_add_new_icon_add_photo.setVisibility(View.GONE);

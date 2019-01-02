@@ -11,28 +11,37 @@ public class StorageImpl implements Storage{
 
     private FirebaseStorage mFirebaseStorage;
     private Activity activity;
-    private FileUploadListener mFileUploadListener;
+    private PutListener mPutListener;
 
+    // region CONSTRUCTOR
     public StorageImpl(Activity activity) {
         this.activity = activity;
         mFirebaseStorage = FirebaseStorage.getInstance();
     }
+    // endregion
 
+    // region PUT FILE
     @Override
     public void putFile(Uri uri, String location) {
-        StorageReference mStorageReference = mFirebaseStorage.getReference().child(location);
-        StorageReference mUserPhoto = mStorageReference.child(uri.getLastPathSegment());
+        StorageReference mUserPhoto = mFirebaseStorage.getReference().child(location).child(uri.getLastPathSegment());
         mUserPhoto.putFile(uri).addOnSuccessListener(activity, taskSnapshot -> {
             Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
             while (!urlTask.isSuccessful()) ;
             Uri mDownloadUri = urlTask.getResult();
-            if (mFileUploadListener != null)
-                mFileUploadListener.onPhotoURLReady(mDownloadUri);
+            if (mPutListener != null)
+                mPutListener.onPhotoURLReady(mDownloadUri);
         });
     }
 
     @Override
-    public void setonFileUploadedSuccessfully(FileUploadListener fileUploadedListener) {
-        this.mFileUploadListener = fileUploadedListener;
+    public void setPutListener(PutListener fileUploadedListener) {
+        this.mPutListener = fileUploadedListener;
     }
+
+    @Override
+    public void removePutListener() {
+        mPutListener = null;
+    }
+    // endregion
+
 }

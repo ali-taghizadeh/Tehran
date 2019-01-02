@@ -1,5 +1,6 @@
 package ir.taghizadeh.tehran.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,15 +29,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
-import ir.taghizadeh.tehran.activities.modules.DatabaseModuleActivity;
+import ir.taghizadeh.tehran.activities.modules.StorageModuleActivity;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
-import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class MainActivity extends DatabaseModuleActivity {
+public class MainActivity extends StorageModuleActivity {
 
     @BindView(R.id.text_main_username)
     TextView text_main_username;
@@ -48,8 +48,9 @@ public class MainActivity extends DatabaseModuleActivity {
     RecyclerView recyclerView_main;
     @BindView(R.id.progress_main)
     ProgressBar progress_main;
+    @BindView(R.id.progress_main_image)
+    ProgressBar progress_main_image;
 
-    private Storage mStorage;
     private Map mMap;
     private GeoFire mGeoFire;
     private List<String> mKeys = new ArrayList<>();
@@ -64,9 +65,8 @@ public class MainActivity extends DatabaseModuleActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Storage storage, Map map, GeoFire geoFire) {
+    public void configureWith(Map map, GeoFire geoFire) {
         this.mMap = map;
-        this.mStorage = storage;
         this.mGeoFire = geoFire;
         setUpUI();
     }
@@ -89,6 +89,7 @@ public class MainActivity extends DatabaseModuleActivity {
         recyclerView_main.setAdapter(adapter);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -97,8 +98,21 @@ public class MainActivity extends DatabaseModuleActivity {
             finish();
         } else if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
-            mStorage.putFile(selectedImageUri, Constants.USER_AVATAR);
-            mStorage.setonFileUploadedSuccessfully(this::updatePhotoURL);
+            putFile(selectedImageUri, Constants.USER_AVATAR);
+            getPutFileSubject()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .skip(1)
+                    .doOnSubscribe(disposable -> {
+                        getCompositeDisposable().add(disposable);
+                        progress_main_image.setVisibility(View.VISIBLE);
+                    })
+                    .doOnError(throwable -> Log.e("pushError : ", throwable.getMessage()))
+                    .doOnNext(uri -> {
+                        updatePhotoURL(uri);
+                        progress_main_image.setVisibility(View.GONE);
+                        dispose();
+                    })
+                    .subscribe();
         }
     }
 
@@ -111,11 +125,11 @@ public class MainActivity extends DatabaseModuleActivity {
             mKeys.clear();
             mGeoLocations.clear();
             if (!locationMap.isEmpty()) {
-                Iterator it = locationMap.entrySet().iterator();
+                Iterator<java.util.Map.Entry<String, GeoLocation>> it = locationMap.entrySet().iterator();
                 while (it.hasNext()) {
-                    java.util.Map.Entry pair = (java.util.Map.Entry) it.next();
+                    java.util.Map.Entry<String, GeoLocation> pair = it.next();
                     mKeys.add(pair.getKey().toString());
-                    mGeoLocations.add((GeoLocation) pair.getValue());
+                    mGeoLocations.add(pair.getValue());
                     query(Constants.PLACES, pair.getKey().toString());
                     it.remove();
                 }

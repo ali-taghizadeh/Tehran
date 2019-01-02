@@ -116,5 +116,18 @@
         app:layout_constraintTop_toTopOf="@+id/image_main_add_place"
         tools:targetApi="lollipop" />
 
+    <ProgressBar
+        android:id="@+id/progress_main_image"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/image_main_add_photo"
+        app:layout_constraintEnd_toEndOf="@+id/image_main_add_photo"
+        app:layout_constraintStart_toStartOf="@+id/image_main_add_photo"
+        app:layout_constraintTop_toTopOf="@+id/image_main_add_photo"
+        android:indeterminateTint="@color/white"
+        android:visibility="gone"
+        tools:targetApi="lollipop" />
+
 
 </android.support.constraint.ConstraintLayout>
