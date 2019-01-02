@@ -31,15 +31,13 @@ public class DependencyRegistry {
 
     private Glide glidePresenter;
     private Map mapPresenter;
-    private Storage storagePresenter;
     private GeoFire geoFirePresenter;
 
     public void inject(BaseConfigsModuleActivity activity) {
-        BaseConfigsModuleActivity mActivity = activity;
-        WindowConfig windowConfigPresenter = new WindowConfigImpl(mActivity);
-        RootCoordinator rootCoordinatorPresenter = new RootCoordinatorImpl(mActivity);
-        glidePresenter = new GlideImpl(mActivity);
-        mActivity.configureWith(windowConfigPresenter, rootCoordinatorPresenter, glidePresenter);
+        WindowConfig windowConfigPresenter = new WindowConfigImpl(activity);
+        RootCoordinator rootCoordinatorPresenter = new RootCoordinatorImpl(activity);
+        glidePresenter = new GlideImpl(activity);
+        activity.configureWith(windowConfigPresenter, rootCoordinatorPresenter, glidePresenter);
     }
 
     public void inject(AuthenticationModuleActivity activity) {
@@ -53,7 +51,7 @@ public class DependencyRegistry {
     }
 
     public void inject(StorageModuleActivity activity) {
-        storagePresenter = new StorageImpl(activity);
+        Storage storagePresenter = new StorageImpl(activity);
         activity.configureWith(storagePresenter);
     }
 
@@ -65,9 +63,8 @@ public class DependencyRegistry {
 
     public void inject(AddNewActivity activity) {
         mapPresenter = new MapImpl(activity);
-        storagePresenter = new StorageImpl(activity);
         geoFirePresenter = new GeoFireImpl();
-        activity.configureWith(mapPresenter, storagePresenter, geoFirePresenter);
+        activity.configureWith(mapPresenter, geoFirePresenter);
     }
 
     public void inject(PlacesAdapter placesAdapter){

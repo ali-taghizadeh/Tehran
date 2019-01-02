@@ -24,15 +24,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import ir.taghizadeh.tehran.R;
-import ir.taghizadeh.tehran.activities.modules.DatabaseModuleActivity;
+import ir.taghizadeh.tehran.activities.modules.StorageModuleActivity;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.dependencies.map.Map;
-import ir.taghizadeh.tehran.dependencies.storage.Storage;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class AddNewActivity extends DatabaseModuleActivity {
+public class AddNewActivity extends StorageModuleActivity {
 
     @BindView(R.id.image_add_new_add_photo)
     ShapedImageView image_add_new_add_photo;
@@ -47,14 +46,11 @@ public class AddNewActivity extends DatabaseModuleActivity {
     @BindView(R.id.button_add_new_save)
     Button button_add_new_save;
     private Map mMap;
-    private Storage mStorage;
     private GeoFire mGeoFire;
     private LatLng mLatLng;
     private String mTitle;
     private String mDescription;
     private String mPhotoUri = "";
-    private Disposable mTitleDisposable;
-    private Disposable mDescriptionDisposable;
     private CompositeDisposable compositeDisposable;
 
     @Override
@@ -65,9 +61,8 @@ public class AddNewActivity extends DatabaseModuleActivity {
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Map map, Storage storage, GeoFire geoFire) {
+    public void configureWith(Map map, GeoFire geoFire) {
         this.mMap = map;
-        this.mStorage = storage;
         this.mGeoFire = geoFire;
         setUpUI();
     }
@@ -76,8 +71,8 @@ public class AddNewActivity extends DatabaseModuleActivity {
         setFullScreen();
         getLatLng();
         attachMap(mLatLng, mTitle, mDescription);
-        mTitleDisposable = updateMarker(edittext_add_new_title);
-        mDescriptionDisposable = updateMarker(edittext_add_new_description);
+        getCompositeDisposable().add(updateMarker(edittext_add_new_title));
+        getCompositeDisposable().add(updateMarker(edittext_add_new_description));
     }
 
     private void attachMap(LatLng latLng, String title, String description) {
@@ -100,6 +95,7 @@ public class AddNewActivity extends DatabaseModuleActivity {
                     return true;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(throwable -> Log.e("textChangeError : ", throwable.getMessage()))
                 .subscribe(character -> {
                     if (editText == edittext_add_new_title)
                         mTitle = character.toString();
@@ -115,12 +111,18 @@ public class AddNewActivity extends DatabaseModuleActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
-            mStorage.putFile(selectedImageUri, Constants.PLACES);
-            mStorage.setPutListener(uri -> {
-                mPhotoUri = uri.toString();
-                loadImage(mPhotoUri, image_add_new_add_photo);
-                image_add_new_icon_add_photo.setVisibility(View.GONE);
-            });
+            putFile(selectedImageUri, Constants.PLACES);
+            getPutFileSubject()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .skip(1)
+                    .doOnSubscribe(disposable -> getCompositeDisposable().add(disposable))
+                    .doOnError(throwable -> Log.e("pushError : ", throwable.getMessage()))
+                    .doOnNext(uri -> {
+                        mPhotoUri = uri.toString();
+                        loadImage(uri.toString(), image_add_new_add_photo);
+                        image_add_new_icon_add_photo.setVisibility(View.GONE);
+                    })
+                    .subscribe();
         }
     }
 
@@ -177,15 +179,11 @@ public class AddNewActivity extends DatabaseModuleActivity {
     private void dispose() {
         if (compositeDisposable != null && !compositeDisposable.isDisposed())
             compositeDisposable.clear();
-        if (mTitleDisposable != null && !mTitleDisposable.isDisposed()) mTitleDisposable.dispose();
-        if (mDescriptionDisposable != null && !mDescriptionDisposable.isDisposed())
-            mDescriptionDisposable.dispose();
         progress_add_new.setVisibility(View.GONE);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        dispose();
     }
 }

@@ -77,7 +77,7 @@ public class MainActivity extends StorageModuleActivity {
         attachUserPhoto(image_main_add_photo, image_main_icon_add_photo);
         initializeList();
         mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
-        mMap.setOnCameraMoveListener(() -> queryLocations(Constants.PLACES_LOCATION, mMap.getCenterLocation(), Constants.DEFAULT_DISTANCE));
+        mMap.setOnCameraMoveListener(() -> queryLocations(mMap.getCenterLocation()));
     }
 
     private void initializeList() {
@@ -89,7 +89,6 @@ public class MainActivity extends StorageModuleActivity {
         recyclerView_main.setAdapter(adapter);
     }
 
-    @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -116,8 +115,8 @@ public class MainActivity extends StorageModuleActivity {
         }
     }
 
-    private void queryLocations(String dbLocation, LatLng centerLocation, int distance) {
-        mGeoFire.queryLocations(dbLocation, centerLocation, distance);
+    private void queryLocations(LatLng centerLocation) {
+        mGeoFire.queryLocations(Constants.PLACES_LOCATION, centerLocation, Constants.DEFAULT_DISTANCE);
         mGeoFire.setOnGeoQueryReady(locationMap -> {
             dispose();
             mMap.clearMap();
@@ -128,9 +127,9 @@ public class MainActivity extends StorageModuleActivity {
                 Iterator<java.util.Map.Entry<String, GeoLocation>> it = locationMap.entrySet().iterator();
                 while (it.hasNext()) {
                     java.util.Map.Entry<String, GeoLocation> pair = it.next();
-                    mKeys.add(pair.getKey().toString());
+                    mKeys.add(pair.getKey());
                     mGeoLocations.add(pair.getValue());
-                    query(Constants.PLACES, pair.getKey().toString());
+                    query(Constants.PLACES, pair.getKey());
                     it.remove();
                 }
             }
