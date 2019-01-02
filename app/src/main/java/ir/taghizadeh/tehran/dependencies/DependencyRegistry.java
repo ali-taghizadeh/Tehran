@@ -1,11 +1,10 @@
 package ir.taghizadeh.tehran.dependencies;
 
-import ir.taghizadeh.tehran.activities.AuthenticationActivity;
+import ir.taghizadeh.tehran.activities.modules.AuthenticationModuleActivity;
 import ir.taghizadeh.tehran.activities.AddNewActivity;
-import ir.taghizadeh.tehran.activities.BaseConfigsActivity;
-import ir.taghizadeh.tehran.activities.DatabaseActivity;
+import ir.taghizadeh.tehran.activities.modules.BaseConfigsModuleActivity;
+import ir.taghizadeh.tehran.activities.modules.DatabaseModuleActivity;
 import ir.taghizadeh.tehran.activities.MainActivity;
-import ir.taghizadeh.tehran.activities.PlaceDetailsActivity;
 import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
@@ -30,27 +29,25 @@ public class DependencyRegistry {
     public static DependencyRegistry register = new DependencyRegistry();
 
     private Glide glidePresenter;
-    Map mapPresenter;
-    Storage storagePresenter;
-    Database databasePresenter;
-    GeoFire geoFirePresenter;
-    BaseConfigsActivity mActivity;
+    private Map mapPresenter;
+    private Storage storagePresenter;
+    private GeoFire geoFirePresenter;
 
-    public void inject(BaseConfigsActivity activity) {
-        this.mActivity = activity;
+    public void inject(BaseConfigsModuleActivity activity) {
+        BaseConfigsModuleActivity mActivity = activity;
         WindowConfig windowConfigPresenter = new WindowConfigImpl(mActivity);
         RootCoordinator rootCoordinatorPresenter = new RootCoordinatorImpl(mActivity);
         glidePresenter = new GlideImpl(mActivity);
         mActivity.configureWith(windowConfigPresenter, rootCoordinatorPresenter, glidePresenter);
     }
 
-    public void inject(AuthenticationActivity activity) {
+    public void inject(AuthenticationModuleActivity activity) {
         Authentication authenticationPresenter = new AuthenticationImpl(activity);
         activity.configureWith(authenticationPresenter);
     }
 
-    public void inject(DatabaseActivity activity) {
-        databasePresenter = new DatabaseImpl();
+    public void inject(DatabaseModuleActivity activity) {
+        Database databasePresenter = new DatabaseImpl();
         activity.configureWith(databasePresenter);
     }
 

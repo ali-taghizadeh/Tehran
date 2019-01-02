@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.activities;
+package ir.taghizadeh.tehran.activities.modules;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -12,7 +12,7 @@ import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 
 @SuppressLint("Registered")
-public class AuthenticationActivity extends BaseConfigsActivity {
+public class AuthenticationModuleActivity extends BaseConfigsModuleActivity {
 
     private Authentication mAuthentication;
 

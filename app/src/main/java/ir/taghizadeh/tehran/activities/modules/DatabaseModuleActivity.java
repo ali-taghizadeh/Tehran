@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.activities;
+package ir.taghizadeh.tehran.activities.modules;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
 @SuppressLint("Registered")
-public class DatabaseActivity extends AuthenticationActivity{
+public class DatabaseModuleActivity extends AuthenticationModuleActivity {
 
     private Database mDatabase;
     private String mPushedKey;

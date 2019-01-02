@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -24,11 +23,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
+import ir.taghizadeh.tehran.activities.modules.DatabaseModuleActivity;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class PlaceDetailsActivity extends DatabaseActivity {
+public class PlaceDetailsActivity extends DatabaseModuleActivity {
 
     @BindView(R.id.text_place_details_title)
     TextView text_place_details_title;

@@ -1,4 +1,4 @@
-package ir.taghizadeh.tehran.activities;
+package ir.taghizadeh.tehran.activities.modules;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfig;
 import ir.taghizadeh.tehran.models.NewPlace;
 
 @SuppressLint("Registered")
-public class BaseConfigsActivity extends AppCompatActivity {
+public class BaseConfigsModuleActivity extends AppCompatActivity {
 
     private Glide mGlide;
     private RootCoordinator mRootCoordinator;
@@ -46,7 +46,7 @@ public class BaseConfigsActivity extends AppCompatActivity {
         mGlide.loadFromResources(imageView, resid);
     }
 
-    boolean isInputValid(String input, EditText editText, String error){
+    public boolean isInputValid(String input, EditText editText, String error){
         return mWindowConfig.isInputValid(input, editText, error);
     }
 
