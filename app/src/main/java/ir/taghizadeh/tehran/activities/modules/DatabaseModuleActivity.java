@@ -81,9 +81,7 @@ public class DatabaseModuleActivity extends AuthenticationModuleActivity {
     }
 
     public void addPlacesDataSnapshotListener() {
-        mDatabase.setPlacesDataSnapshotListener(newPlace -> {
-            mNewPlacesList.add(newPlace);
-        });
+        mDatabase.setPlacesDataSnapshotListener(newPlace -> mNewPlacesList.add(newPlace));
     }
 
     public void addCommentsDataSnapshotListener() {
