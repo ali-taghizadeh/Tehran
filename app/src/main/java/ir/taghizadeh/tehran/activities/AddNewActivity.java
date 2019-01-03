@@ -25,14 +25,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import ir.taghizadeh.tehran.R;
-import ir.taghizadeh.tehran.activities.modules.StorageModuleActivity;
+import ir.taghizadeh.tehran.activities.modules.MapModuleActivity;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
-import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class AddNewActivity extends StorageModuleActivity {
+public class AddNewActivity extends MapModuleActivity {
 
     @BindView(R.id.image_add_new_add_photo)
     ShapedImageView image_add_new_add_photo;
@@ -46,7 +45,6 @@ public class AddNewActivity extends StorageModuleActivity {
     ProgressBar progress_add_new;
     @BindView(R.id.button_add_new_save)
     Button button_add_new_save;
-    private Map mMap;
     private GeoFire mGeoFire;
     private LatLng mLatLng;
     private String mTitle = "";
@@ -60,12 +58,11 @@ public class AddNewActivity extends StorageModuleActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new);
         ButterKnife.bind(this);
-        DependencyRegistry.register.inject(this);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Map map, GeoFire geoFire) {
-        this.mMap = map;
+    public void configureWith(GeoFire geoFire) {
         this.mGeoFire = geoFire;
         setUpUI();
     }
@@ -79,10 +76,9 @@ public class AddNewActivity extends StorageModuleActivity {
     }
 
     private void attachMap(LatLng latLng, String title, String description) {
-//        mMap.setOnMapListener(() -> {
-//            mMap.addMarker(latLng, title, description, R.drawable.ic_location);
-//            mMap.startCamera(latLng, 15);
-//        });
+        setOnMapListener(mapFragment, latLng);
+        addMarker(latLng, title, description, R.drawable.ic_location);
+        startCamera(latLng, 15);
     }
 
     private void getLatLng() {
@@ -104,8 +100,8 @@ public class AddNewActivity extends StorageModuleActivity {
                         mTitle = character.toString();
                     else
                         mDescription = character.toString();
-                    mMap.clearMap();
-                    mMap.addMarker(mLatLng, mTitle, mDescription, R.drawable.ic_location);
+                    clearMap();
+                    addMarker(mLatLng, mTitle, mDescription, R.drawable.ic_location);
                 });
     }
 

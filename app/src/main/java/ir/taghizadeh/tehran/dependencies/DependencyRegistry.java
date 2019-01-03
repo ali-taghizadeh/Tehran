@@ -31,7 +31,6 @@ public class DependencyRegistry {
     public static DependencyRegistry register = new DependencyRegistry();
 
     private Glide glidePresenter;
-    private Map mapPresenter;
     private GeoFire geoFirePresenter;
 
     public void inject(BaseConfigsModuleActivity activity) {
@@ -57,7 +56,7 @@ public class DependencyRegistry {
     }
 
     public void inject(MapModuleActivity activity) {
-        mapPresenter = new MapImpl(activity);
+        Map mapPresenter = new MapImpl(activity);
         activity.configureWith(mapPresenter);
     }
 
@@ -67,9 +66,8 @@ public class DependencyRegistry {
     }
 
     public void inject(AddNewActivity activity) {
-        mapPresenter = new MapImpl(activity);
         geoFirePresenter = new GeoFireImpl();
-        activity.configureWith(mapPresenter, geoFirePresenter);
+        activity.configureWith(geoFirePresenter);
     }
 
     public void inject(PlacesAdapter placesAdapter){

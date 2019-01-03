@@ -27,7 +27,6 @@ public class MapModuleActivity extends StorageModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setOnCameraMoveListener();
     }
 
     @Override
@@ -45,8 +44,8 @@ public class MapModuleActivity extends StorageModuleActivity {
     // endregion
 
     // region MAP
-    public void setOnMapListener(SupportMapFragment mapFragment) {
-        mMap.setOnMapListener(mapFragment, () -> startCamera(Constants.DOWNTOWN, 17));
+    public void setOnMapListener(SupportMapFragment mapFragment, LatLng location) {
+        mMap.setOnMapListener(mapFragment, () -> startCamera(location, 17));
     }
 
     public void removeMapListener() {
@@ -70,9 +69,7 @@ public class MapModuleActivity extends StorageModuleActivity {
     }
 
     public void setOnCameraMoveListener() {
-        mMap.setOnCameraMoveListener(() -> {
-            mCameraSubject.onNext(getCenterLocation());
-        });
+        mMap.setOnCameraMoveListener(() -> mCameraSubject.onNext(getCenterLocation()));
     }
 
     public void removeCameraMoveListener() {

@@ -78,7 +78,7 @@ public class MainActivity extends MapModuleActivity {
         attachUsername(text_main_username);
         attachUserPhoto(image_main_add_photo, image_main_icon_add_photo);
         initializeList();
-        setOnMapListener(mapFragment);
+        setOnMapListener(mapFragment, getCenterLocation());
     }
 
     private void initializeList() {
@@ -208,6 +208,7 @@ public class MainActivity extends MapModuleActivity {
     @Override
     protected void onResume(){
         super.onResume();
+        setOnCameraMoveListener();
         getCameraSubject()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> cameraDisposable = new CompositeDisposable(disposable))
