@@ -5,11 +5,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,6 +31,7 @@ public class MapImpl implements OnMapReadyCallback, Map {
     private MapListener mapListener;
     private CameraListener cameraListener;
 
+    // region CONSTRUCTOR
     public MapImpl(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentActivity.getSupportFragmentManager().findFragmentById(R.id.map);
@@ -40,6 +39,7 @@ public class MapImpl implements OnMapReadyCallback, Map {
             mapFragment.getMapAsync(this);
         }
     }
+    //endregion
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -50,32 +50,21 @@ public class MapImpl implements OnMapReadyCallback, Map {
     }
 
     @Override
-    public void addMarker(LatLng position, String title, String snippet) {
+    public void addMarker(LatLng position, String title, String snippet, int markerResId) {
         if (googleMap != null) {
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(position)
                     .title(title)
                     .snippet(snippet)
-                    .icon(bitmapDescriptorFromVector(fragmentActivity)));
+                    .icon(bitmapDescriptorFromVector(markerResId)));
             marker.showInfoWindow();
-        }
-    }
-
-    @Override
-    public void addMarker(GeoLocation position) {
-        if (googleMap != null) {
-            Marker marker = googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(position.latitude, position.longitude))
-                    .icon(bitmapDescriptorFromVector(fragmentActivity)));
-            ObjectAnimator.ofFloat(marker, "alpha", 0f, 1f).setDuration(200).start();
+            if (title.equals("")) ObjectAnimator.ofFloat(marker, "alpha", 0f, 1f).setDuration(200).start();
         }
     }
 
     @Override
     public void startCamera(LatLng position, int zoom) {
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(position)
-                .zoom(zoom).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(zoom).build();
         if (googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             googleMap.setOnCameraMoveStartedListener(i -> {
@@ -83,7 +72,6 @@ public class MapImpl implements OnMapReadyCallback, Map {
                     cameraListener.onCameraMoved();
                 }
             });
-
         }
     }
 
@@ -108,8 +96,8 @@ public class MapImpl implements OnMapReadyCallback, Map {
         this.cameraListener = cameraListener;
     }
 
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context) {
-        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_location);
+    private BitmapDescriptor bitmapDescriptorFromVector(int resId) {
+        Drawable background = ContextCompat.getDrawable(fragmentActivity, resId);
         assert background != null;
         background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);

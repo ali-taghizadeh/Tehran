@@ -48,8 +48,8 @@ public class AddNewActivity extends StorageModuleActivity {
     private Map mMap;
     private GeoFire mGeoFire;
     private LatLng mLatLng;
-    private String mTitle;
-    private String mDescription;
+    private String mTitle = "";
+    private String mDescription = "";
     private String mPhotoUri = "";
     private CompositeDisposable compositeDisposable;
 
@@ -77,7 +77,7 @@ public class AddNewActivity extends StorageModuleActivity {
 
     private void attachMap(LatLng latLng, String title, String description) {
         mMap.setOnMapListener(() -> {
-            mMap.addMarker(latLng, title, description);
+            mMap.addMarker(latLng, title, description, R.drawable.ic_location);
             mMap.startCamera(latLng, 15);
         });
     }
@@ -102,7 +102,7 @@ public class AddNewActivity extends StorageModuleActivity {
                     else
                         mDescription = character.toString();
                     mMap.clearMap();
-                    mMap.addMarker(mLatLng, mTitle, mDescription);
+                    mMap.addMarker(mLatLng, mTitle, mDescription, R.drawable.ic_location);
                 });
     }
 

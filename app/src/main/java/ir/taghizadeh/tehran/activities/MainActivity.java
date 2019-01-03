@@ -1,6 +1,5 @@
 package ir.taghizadeh.tehran.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +26,7 @@ import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.activities.modules.StorageModuleActivity;
@@ -163,7 +163,8 @@ public class MainActivity extends StorageModuleActivity {
                 .doOnComplete(() -> progress_main.setVisibility(View.GONE))
                 .delay(mGeoLocations.size() * 200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(input -> mMap.addMarker(mGeoLocations.get(input.intValue())))
+                .doOnNext(input -> mMap.addMarker(new LatLng(mGeoLocations.get(input.intValue()).latitude, mGeoLocations.get(input.intValue()).longitude)
+                        , "", "", R.drawable.ic_location))
                 .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
                 .doOnSubscribe(disposable -> {
                     updateList(new ArrayList<>());
