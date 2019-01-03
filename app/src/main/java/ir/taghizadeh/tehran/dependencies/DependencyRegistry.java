@@ -62,9 +62,8 @@ public class DependencyRegistry {
     }
 
     public void inject(MainActivity activity) {
-        mapPresenter = new MapImpl(activity);
         geoFirePresenter = new GeoFireImpl();
-        activity.configureWith(mapPresenter, geoFirePresenter);
+        activity.configureWith(geoFirePresenter);
     }
 
     public void inject(AddNewActivity activity) {

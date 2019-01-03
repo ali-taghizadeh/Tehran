@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -26,17 +27,17 @@ import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
-import ir.taghizadeh.tehran.activities.modules.StorageModuleActivity;
+import ir.taghizadeh.tehran.activities.modules.MapModuleActivity;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
-import ir.taghizadeh.tehran.dependencies.map.Map;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class MainActivity extends StorageModuleActivity {
+public class MainActivity extends MapModuleActivity {
 
     @BindView(R.id.text_main_username)
     TextView text_main_username;
@@ -51,22 +52,23 @@ public class MainActivity extends StorageModuleActivity {
     @BindView(R.id.progress_main_image)
     ProgressBar progress_main_image;
 
-    private Map mMap;
     private GeoFire mGeoFire;
     private List<String> mKeys = new ArrayList<>();
     private List<GeoLocation> mGeoLocations = new ArrayList<>();
     private CompositeDisposable compositeDisposable;
+    private CompositeDisposable cameraDisposable;
+    SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         DependencyRegistry.register.inject(this);
     }
 
-    public void configureWith(Map map, GeoFire geoFire) {
-        this.mMap = map;
+    public void configureWith(GeoFire geoFire) {
         this.mGeoFire = geoFire;
         setUpUI();
     }
@@ -76,8 +78,7 @@ public class MainActivity extends StorageModuleActivity {
         attachUsername(text_main_username);
         attachUserPhoto(image_main_add_photo, image_main_icon_add_photo);
         initializeList();
-        mMap.setOnMapListener(() -> mMap.startCamera(Constants.DOWNTOWN, 17));
-        mMap.setOnCameraMoveListener(() -> queryLocations(mMap.getCenterLocation()));
+        setOnMapListener(mapFragment);
     }
 
     private void initializeList() {
@@ -119,7 +120,7 @@ public class MainActivity extends StorageModuleActivity {
         mGeoFire.queryLocations(Constants.PLACES_LOCATION, centerLocation, Constants.DEFAULT_DISTANCE);
         mGeoFire.setOnGeoQueryReady(locationMap -> {
             dispose();
-            mMap.clearMap();
+            clearMap();
             clearNewPlacesList();
             mKeys.clear();
             mGeoLocations.clear();
@@ -149,7 +150,7 @@ public class MainActivity extends StorageModuleActivity {
 
     @OnClick(R.id.image_main_add_place)
     void addLocation() {
-        handleAddPlace(mMap.getCenterLocation());
+        handleAddPlace(getCenterLocation());
     }
 
     private void refreshPage() {
@@ -163,7 +164,7 @@ public class MainActivity extends StorageModuleActivity {
                 .doOnComplete(() -> progress_main.setVisibility(View.GONE))
                 .delay(mGeoLocations.size() * 200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(input -> mMap.addMarker(new LatLng(mGeoLocations.get(input.intValue()).latitude, mGeoLocations.get(input.intValue()).longitude)
+                .doOnNext(input -> addMarker(new LatLng(mGeoLocations.get(input.intValue()).latitude, mGeoLocations.get(input.intValue()).longitude)
                         , "", "", R.drawable.ic_location))
                 .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
                 .doOnSubscribe(disposable -> {
@@ -201,5 +202,17 @@ public class MainActivity extends StorageModuleActivity {
     protected void onPause() {
         super.onPause();
         dispose();
+        cameraDisposable.dispose();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        getCameraSubject()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> cameraDisposable = new CompositeDisposable(disposable))
+                .doOnError(throwable -> Log.e("cameraError : ", throwable.getMessage()))
+                .doOnNext(this::queryLocations)
+                .subscribe();
     }
 }

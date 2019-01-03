@@ -11,7 +11,7 @@ import ir.taghizadeh.tehran.dependencies.storage.Storage;
 @SuppressLint("Registered")
 public class StorageModuleActivity extends DatabaseModuleActivity{
 
-    private Storage mStoragePresenter;
+    private Storage mStorage;
     private Uri mUri = Uri.EMPTY;
     private BehaviorSubject<Uri> mPutFileSubject;
 
@@ -37,24 +37,24 @@ public class StorageModuleActivity extends DatabaseModuleActivity{
 
     // region DEPENDENCY INJECTION
     public void configureWith(Storage storagePresenter) {
-        this.mStoragePresenter = storagePresenter;
+        this.mStorage = storagePresenter;
     }
     // endregion
 
     // region PUT FILE
     public void putFile(Uri uri, String location){
-        mStoragePresenter.putFile(uri, location);
+        mStorage.putFile(uri, location);
     }
 
     public void setPutListener() {
-        mStoragePresenter.setPutListener(uri -> {
+        mStorage.setPutListener(uri -> {
             mUri = uri;
             mPutFileSubject.onNext(mUri);
         });
     }
 
     public void removePutListener(){
-        mStoragePresenter.removePutListener();
+        mStorage.removePutListener();
     }
     // endregion
 

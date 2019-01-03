@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
@@ -52,6 +53,7 @@ public class AddNewActivity extends StorageModuleActivity {
     private String mDescription = "";
     private String mPhotoUri = "";
     private CompositeDisposable compositeDisposable;
+    SupportMapFragment mapFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class AddNewActivity extends StorageModuleActivity {
         setContentView(R.layout.activity_add_new);
         ButterKnife.bind(this);
         DependencyRegistry.register.inject(this);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
     }
 
     public void configureWith(Map map, GeoFire geoFire) {
@@ -76,10 +79,10 @@ public class AddNewActivity extends StorageModuleActivity {
     }
 
     private void attachMap(LatLng latLng, String title, String description) {
-        mMap.setOnMapListener(() -> {
-            mMap.addMarker(latLng, title, description, R.drawable.ic_location);
-            mMap.startCamera(latLng, 15);
-        });
+//        mMap.setOnMapListener(() -> {
+//            mMap.addMarker(latLng, title, description, R.drawable.ic_location);
+//            mMap.startCamera(latLng, 15);
+//        });
     }
 
     private void getLatLng() {

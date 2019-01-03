@@ -1,7 +1,6 @@
 package ir.taghizadeh.tehran.dependencies.map;
 
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -21,6 +20,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import ir.taghizadeh.tehran.R;
+import ir.taghizadeh.tehran.helpers.Constants;
 
 public class MapImpl implements OnMapReadyCallback, Map {
 
@@ -34,13 +34,10 @@ public class MapImpl implements OnMapReadyCallback, Map {
     // region CONSTRUCTOR
     public MapImpl(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
-        SupportMapFragment mapFragment = (SupportMapFragment) fragmentActivity.getSupportFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
     }
     //endregion
 
+    // region MAP
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -49,6 +46,19 @@ public class MapImpl implements OnMapReadyCallback, Map {
             mapListener.onMapReady();
     }
 
+    @Override
+    public void setOnMapListener(SupportMapFragment mapFragment, MapListener mapListener) {
+        if (mapFragment != null) mapFragment.getMapAsync(this);
+        this.mapListener = mapListener;
+    }
+
+    @Override
+    public void removeMapListener() {
+        this.mapListener = null;
+    }
+    // endregion
+
+    // region MARKER
     @Override
     public void addMarker(LatLng position, String title, String snippet, int markerResId) {
         if (googleMap != null) {
@@ -63,6 +73,14 @@ public class MapImpl implements OnMapReadyCallback, Map {
     }
 
     @Override
+    public void clearMap() {
+        if (googleMap != null)
+            googleMap.clear();
+    }
+    // endregion
+
+    // region CAMERA
+    @Override
     public void startCamera(LatLng position, int zoom) {
         CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(zoom).build();
         if (googleMap != null) {
@@ -76,24 +94,20 @@ public class MapImpl implements OnMapReadyCallback, Map {
     }
 
     @Override
-    public void clearMap() {
-        if (googleMap != null)
-            googleMap.clear();
-    }
-
-    @Override
-    public LatLng getCenterLocation() {
-        return googleMap.getCameraPosition().target;
-    }
-
-    @Override
-    public void setOnMapListener(MapListener mapListener) {
-        this.mapListener = mapListener;
-    }
-
-    @Override
     public void setOnCameraMoveListener(CameraListener cameraListener) {
         this.cameraListener = cameraListener;
+    }
+
+    @Override
+    public void removeCameraMoveListener() {
+        this.cameraListener = null;
+    }
+    // endregion
+
+    // region GETTERS
+    @Override
+    public LatLng getCenterLocation() {
+        return ((googleMap == null) ? Constants.DOWNTOWN : googleMap.getCameraPosition().target);
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector(int resId) {
@@ -105,5 +119,6 @@ public class MapImpl implements OnMapReadyCallback, Map {
         background.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+    // endregion
 
 }

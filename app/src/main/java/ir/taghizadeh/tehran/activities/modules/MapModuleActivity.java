@@ -3,15 +3,19 @@ package ir.taghizadeh.tehran.activities.modules;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import io.reactivex.subjects.BehaviorSubject;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.map.Map;
+import ir.taghizadeh.tehran.helpers.Constants;
 
 @SuppressLint("Registered")
-public class MapModuleActivity extends DatabaseModuleActivity {
+public class MapModuleActivity extends StorageModuleActivity {
 
     private Map mMap;
+    private BehaviorSubject<LatLng> mCameraSubject;
 
     // region LIFECYCLE
     @Override
@@ -23,11 +27,14 @@ public class MapModuleActivity extends DatabaseModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        setOnCameraMoveListener();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        removeMapListener();
+        removeCameraMoveListener();
     }
     // endregion
 
@@ -37,27 +44,51 @@ public class MapModuleActivity extends DatabaseModuleActivity {
     }
     // endregion
 
-    public void addMarker(LatLng position, String title, String snippet, int markerResId){
+    // region MAP
+    public void setOnMapListener(SupportMapFragment mapFragment) {
+        mMap.setOnMapListener(mapFragment, () -> startCamera(Constants.DOWNTOWN, 17));
+    }
+
+    public void removeMapListener() {
+        mMap.removeMapListener();
+    }
+    // endregion
+
+    // region MARKER
+    public void addMarker(LatLng position, String title, String snippet, int markerResId) {
         mMap.addMarker(position, title, snippet, markerResId);
     }
 
-    public void startCamera(LatLng position, int zoom){
+    public void clearMap() {
+        mMap.clearMap();
+    }
+    // endregion
+
+    // region CAMERA
+    public void startCamera(LatLng position, int zoom) {
         mMap.startCamera(position, zoom);
     }
 
-    public void clearMap(){
-        mMap.clearMap();
+    public void setOnCameraMoveListener() {
+        mMap.setOnCameraMoveListener(() -> {
+            mCameraSubject.onNext(getCenterLocation());
+        });
     }
 
-    public LatLng getCenterLocation(){
+    public void removeCameraMoveListener() {
+        mMap.removeCameraMoveListener();
+    }
+    // endregion
+
+    // region GETTERS
+    public BehaviorSubject<LatLng> getCameraSubject() {
+        mCameraSubject = BehaviorSubject.createDefault(getCenterLocation());
+        return mCameraSubject;
+    }
+
+    public LatLng getCenterLocation() {
         return mMap.getCenterLocation();
     }
+    // endregion
 
-    public void setOnMapListener(){
-        mMap.setOnMapListener(() -> {});
-    }
-
-    public void setOnCameraMoveListener(){
-        mMap.setOnCameraMoveListener(() -> {});
-    }
 }
