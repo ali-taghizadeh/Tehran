@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -65,45 +66,50 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
     private String mKey;
     private double mLatitude;
     private double mLongitude;
+
     private CompositeDisposable compositeDisposable;
 
+    // region HANDLE LIFECYCLE
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_details);
         ButterKnife.bind(this);
-        configureWith();
+        setupUI();
     }
 
-    private void configureWith() {
-        mNewPlace = (NewPlace) getIntent().getSerializableExtra("newPlace");
-        mKey = getIntent().getExtras().getString("key");
-        mLatitude = getIntent().getExtras().getDouble("latitude");
-        mLongitude = getIntent().getExtras().getDouble("longitude");
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dispose();
+    }
+    // endregion
+
+    // region MANAGE UI
+    private void setupUI() {
         setFullScreen();
-        attachUI();
         initializeList();
         attachComments();
-    }
-
-    private void attachUI() {
+        mNewPlace = (NewPlace) getIntent().getSerializableExtra("newPlace");
+        mKey = Objects.requireNonNull(getIntent().getExtras()).getString("key");
+        mLatitude = getIntent().getExtras().getDouble("latitude");
+        mLongitude = getIntent().getExtras().getDouble("longitude");
         text_place_details_title.setText(mNewPlace.getTitle().toUpperCase());
         text_place_details_description.setText(mNewPlace.getDescription());
         text_place_details_author.setText(mNewPlace.getUsername().toUpperCase());
         text_place_details_likes.setText(String.valueOf(mNewPlace.getLikes()));
         text_place_details_dislikes.setText(String.valueOf(mNewPlace.getDislikes()));
-        if (!mNewPlace.getPhotoUrl().equals(""))
-            loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
-        if (!mNewPlace.getUserPhotoUrl().equals(""))
-        loadImage(mNewPlace.getUserPhotoUrl(), image_place_details_user_photo);
+        if (!mNewPlace.getPhotoUrl().equals("")) loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
+        if (!mNewPlace.getUserPhotoUrl().equals("")) loadImage(mNewPlace.getUserPhotoUrl(), image_place_details_user_photo);
     }
 
     private void initializeList() {
         handleVerticalList(recyclerView_place_details);
-        CommentsAdapter adapter = new CommentsAdapter(new ArrayList<>());
-        recyclerView_place_details.setAdapter(adapter);
+        recyclerView_place_details.setAdapter(new CommentsAdapter(new ArrayList<>()));
     }
+    // endregion
 
+    // region QUERY ON COMMENTS
     private void attachComments() {
         query(Constants.PLACES_COMMENTS, mKey);
         Observable.interval(1, TimeUnit.SECONDS)
@@ -131,7 +137,9 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
                 })
                 .subscribe();
     }
+    // endregion
 
+    // region WHEN QUERY IS DONE, UPDATE COMMENTS LIST
     private void updateList() {
         recyclerView_place_details.scheduleLayoutAnimation();
         CommentsAdapter adapter = (CommentsAdapter) recyclerView_place_details.getAdapter();
@@ -140,10 +148,12 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
         adapter.comments = getCommentsList();
         adapter.notifyDataSetChanged();
     }
+    // endregion
 
+    // region HANDLE CLICK EVENTS
     @OnClick(R.id.image_place_details_send)
     void addComment() {
-        if (isInputValid(edittext_place_details_comment.getText().toString(), edittext_place_details_comment, "Write your comment first")){
+        if (isInputValid(Objects.requireNonNull(edittext_place_details_comment.getText()).toString(), edittext_place_details_comment, "Write your comment first")){
             Comments comments = new Comments(getUsername(), getUserPhoto(), edittext_place_details_comment.getText().toString());
             pushComment(comments, Constants.PLACES_COMMENTS, mKey);
             attachComments();
@@ -168,7 +178,9 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
     void getDirection(){
         handleGetDirection(mLatitude, mLongitude);
     }
+    // endregion
 
+    // region CREATE AND CLEAR DISPOSABLES
     private CompositeDisposable getCompositeDisposable() {
         if (compositeDisposable == null || compositeDisposable.isDisposed())
             compositeDisposable = new CompositeDisposable();
@@ -179,10 +191,5 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
         if (compositeDisposable != null && !compositeDisposable.isDisposed())
             compositeDisposable.clear();
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        dispose();
-    }
+    // endregion
 }

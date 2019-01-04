@@ -7,6 +7,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Objects;
+
 public class StorageImpl implements Storage{
 
     private FirebaseStorage mFirebaseStorage;
@@ -23,7 +25,7 @@ public class StorageImpl implements Storage{
     // region PUT FILE
     @Override
     public void putFile(Uri uri, String location) {
-        StorageReference mUserPhoto = mFirebaseStorage.getReference().child(location).child(uri.getLastPathSegment());
+        StorageReference mUserPhoto = mFirebaseStorage.getReference().child(location).child(Objects.requireNonNull(uri.getLastPathSegment()));
         mUserPhoto.putFile(uri).addOnSuccessListener(activity, taskSnapshot -> {
             Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
             while (!urlTask.isSuccessful()) ;

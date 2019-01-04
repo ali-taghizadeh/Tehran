@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -28,7 +27,6 @@ import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.activities.modules.GeoFireModuleActivity;
@@ -49,27 +47,52 @@ public class MainActivity extends GeoFireModuleActivity {
     ProgressBar progress_main;
     @BindView(R.id.progress_main_image)
     ProgressBar progress_main_image;
-    SupportMapFragment mapFragment;
+
     private List<String> mKeys = new ArrayList<>();
     private List<GeoLocation> mGeoLocations = new ArrayList<>();
-    private CompositeDisposable compositeDisposable;
-    private CompositeDisposable cameraDisposable;
 
+    private CompositeDisposable generalDisposable;
+    private CompositeDisposable cameraDisposable;
+    private CompositeDisposable geoQueryDisposable;
+
+    // region HANDLE LIFECYCLE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        setOnMapListener((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map), getCenterLocation());
         setUpUI();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setOnGeoQueryReady();
+        setOnCameraMoveListener();
+        getCameraSubject()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> cameraDisposable = new CompositeDisposable(disposable))
+                .doOnError(throwable -> Log.e("cameraError : ", throwable.getMessage()))
+                .doOnNext(this::queryLocations)
+                .subscribe();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        disposeGeneral();
+        cameraDisposable.dispose();
+        geoQueryDisposable.dispose();
+    }
+    // endregion
+
+    // region MANAGE UI
     private void setUpUI() {
         setFullScreen();
         attachUsername(text_main_username);
         attachUserPhoto(image_main_add_photo, image_main_icon_add_photo);
         initializeList();
-        setOnMapListener(mapFragment, getCenterLocation());
     }
 
     private void initializeList() {
@@ -80,40 +103,49 @@ public class MainActivity extends GeoFireModuleActivity {
         });
         recyclerView_main.setAdapter(adapter);
     }
+    // endregion
 
+    // region HANDLE ACTIVITY RESULTS
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_SIGN_IN && resultCode == RESULT_CANCELED) {
-            Toast.makeText(this, "Signed in canceled", Toast.LENGTH_SHORT).show();
             finish();
         } else if (requestCode == Constants.RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-            Uri selectedImageUri = data.getData();
-            putFile(selectedImageUri, Constants.USER_AVATAR);
-            getPutFileSubject()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .skip(1)
-                    .doOnSubscribe(disposable -> {
-                        getCompositeDisposable().add(disposable);
-                        progress_main_image.setVisibility(View.VISIBLE);
-                    })
-                    .doOnError(throwable -> Log.e("pushError : ", throwable.getMessage()))
-                    .doOnNext(uri -> {
-                        updatePhotoURL(uri);
-                        progress_main_image.setVisibility(View.GONE);
-                        dispose();
-                    })
-                    .subscribe();
+            updateUserPhoto(data.getData());
         }
     }
+    // endregion
 
+    // region UPDATE USER PHOTO
+    private void updateUserPhoto(Uri selectedImageUri) {
+        putFile(selectedImageUri, Constants.USER_AVATAR);
+        getPutFileSubject()
+                .observeOn(AndroidSchedulers.mainThread())
+                .skip(1)
+                .doOnSubscribe(disposable -> {
+                    getGeneralDisposable().add(disposable);
+                    progress_main_image.setVisibility(View.VISIBLE);
+                })
+                .doOnError(throwable -> Log.e("putError : ", throwable.getMessage()))
+                .doOnNext(uri -> {
+                    updatePhotoURL(uri);
+                    progress_main_image.setVisibility(View.GONE);
+                    disposeGeneral();
+                })
+                .subscribe();
+    }
+    // endregion
+
+    // region QUERY ON LOCATIONS AND FOR EACH LOCATION QUERY ON DATABASE
     private void queryLocations(LatLng centerLocation) {
         queryLocations(Constants.PLACES_LOCATION, centerLocation, Constants.DEFAULT_DISTANCE);
         getGeoQuerySubject()
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> geoQueryDisposable = new CompositeDisposable(disposable))
                 .doOnError(throwable -> Log.e("queryLocationError : ", throwable.getMessage()))
                 .doOnNext(locationMap -> {
-                    dispose();
+                    disposeGeneral();
                     clearMap();
                     clearNewPlacesList();
                     mKeys.clear();
@@ -132,7 +164,46 @@ public class MainActivity extends GeoFireModuleActivity {
                 })
                 .subscribe();
     }
+    // endregion
 
+    // region WHEN QUERY IS DONE, REFRESH THE PAGE BY ADDING NEW MARKERS
+    private void refreshPage() {
+        Observable.interval(200, TimeUnit.MILLISECONDS)
+                .take(mGeoLocations.size())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> {
+                    progress_main.setVisibility(View.VISIBLE);
+                    getGeneralDisposable().add(disposable);
+                })
+                .doOnComplete(() -> progress_main.setVisibility(View.GONE))
+                .delay(mGeoLocations.size() * 200, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(input -> addMarker(new LatLng(mGeoLocations.get(input.intValue()).latitude, mGeoLocations.get(input.intValue()).longitude)
+                        , "", "", R.drawable.ic_location))
+                .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
+                .doOnSubscribe(disposable -> {
+                    updateList(new ArrayList<>());
+                    getGeneralDisposable().add(disposable);
+                })
+                .doOnComplete(() -> {
+                    updateList(getNewPlacesList());
+                    disposeGeneral();
+                })
+                .subscribe();
+    }
+    // endregion
+
+    // region WHEN MARKERS ARE ADDED, UPDATE THE LIST
+    private void updateList(List<NewPlace> newPlaces) {
+        recyclerView_main.scheduleLayoutAnimation();
+        PlacesAdapter adapter = (PlacesAdapter) recyclerView_main.getAdapter();
+        assert adapter != null;
+        adapter.newPlaces = newPlaces;
+        adapter.notifyDataSetChanged();
+    }
+    // endregion
+
+    // region HANDLE CLICK EVENTS
     @OnClick(R.id.image_main_logout)
     void logOut() {
         signOut();
@@ -147,69 +218,20 @@ public class MainActivity extends GeoFireModuleActivity {
     void addLocation() {
         handleAddPlace(getCenterLocation());
     }
+    // endregion
 
-    private void refreshPage() {
-        Observable.interval(200, TimeUnit.MILLISECONDS)
-                .take(mGeoLocations.size())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> {
-                    progress_main.setVisibility(View.VISIBLE);
-                    getCompositeDisposable().add(disposable);
-                })
-                .doOnComplete(() -> progress_main.setVisibility(View.GONE))
-                .delay(mGeoLocations.size() * 200, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(input -> addMarker(new LatLng(mGeoLocations.get(input.intValue()).latitude, mGeoLocations.get(input.intValue()).longitude)
-                        , "", "", R.drawable.ic_location))
-                .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
-                .doOnSubscribe(disposable -> {
-                    updateList(new ArrayList<>());
-                    getCompositeDisposable().add(disposable);
-                })
-                .doOnComplete(() -> {
-                    updateList(getNewPlacesList());
-                    dispose();
-                })
-                .subscribe();
+    // region CREATE AND CLEAR DISPOSABLES
+    private CompositeDisposable getGeneralDisposable() {
+        if (generalDisposable == null || generalDisposable.isDisposed())
+            generalDisposable = new CompositeDisposable();
+        return generalDisposable;
     }
 
-    private void updateList(List<NewPlace> newPlaces) {
-        recyclerView_main.scheduleLayoutAnimation();
-        PlacesAdapter adapter = (PlacesAdapter) recyclerView_main.getAdapter();
-        assert adapter != null;
-        adapter.newPlaces = newPlaces;
-        adapter.notifyDataSetChanged();
-    }
-
-    private CompositeDisposable getCompositeDisposable() {
-        if (compositeDisposable == null || compositeDisposable.isDisposed())
-            compositeDisposable = new CompositeDisposable();
-        return compositeDisposable;
-    }
-
-    private void dispose() {
-        if (compositeDisposable != null && !compositeDisposable.isDisposed())
-            compositeDisposable.clear();
+    private void disposeGeneral() {
+        if (generalDisposable != null && !generalDisposable.isDisposed())
+            generalDisposable.clear();
         progress_main.setVisibility(View.GONE);
     }
+    // endregion
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        dispose();
-        cameraDisposable.dispose();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setOnGeoQueryReady();
-        setOnCameraMoveListener();
-        getCameraSubject()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> cameraDisposable = new CompositeDisposable(disposable))
-                .doOnError(throwable -> Log.e("cameraError : ", throwable.getMessage()))
-                .doOnNext(this::queryLocations)
-                .subscribe();
-    }
 }
