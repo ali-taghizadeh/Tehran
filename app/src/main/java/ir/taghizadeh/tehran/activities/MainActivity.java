@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -27,17 +28,14 @@ import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
-import ir.taghizadeh.tehran.activities.modules.MapModuleActivity;
-import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
-import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
+import ir.taghizadeh.tehran.activities.modules.GeoFireModuleActivity;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class MainActivity extends MapModuleActivity {
+public class MainActivity extends GeoFireModuleActivity {
 
     @BindView(R.id.text_main_username)
     TextView text_main_username;
@@ -51,13 +49,11 @@ public class MainActivity extends MapModuleActivity {
     ProgressBar progress_main;
     @BindView(R.id.progress_main_image)
     ProgressBar progress_main_image;
-
-    private GeoFire mGeoFire;
+    SupportMapFragment mapFragment;
     private List<String> mKeys = new ArrayList<>();
     private List<GeoLocation> mGeoLocations = new ArrayList<>();
     private CompositeDisposable compositeDisposable;
     private CompositeDisposable cameraDisposable;
-    SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +61,6 @@ public class MainActivity extends MapModuleActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        DependencyRegistry.register.inject(this);
-    }
-
-    public void configureWith(GeoFire geoFire) {
-        this.mGeoFire = geoFire;
         setUpUI();
     }
 
@@ -117,25 +108,29 @@ public class MainActivity extends MapModuleActivity {
     }
 
     private void queryLocations(LatLng centerLocation) {
-        mGeoFire.queryLocations(Constants.PLACES_LOCATION, centerLocation, Constants.DEFAULT_DISTANCE);
-        mGeoFire.setOnGeoQueryReady(locationMap -> {
-            dispose();
-            clearMap();
-            clearNewPlacesList();
-            mKeys.clear();
-            mGeoLocations.clear();
-            if (!locationMap.isEmpty()) {
-                Iterator<java.util.Map.Entry<String, GeoLocation>> it = locationMap.entrySet().iterator();
-                while (it.hasNext()) {
-                    java.util.Map.Entry<String, GeoLocation> pair = it.next();
-                    mKeys.add(pair.getKey());
-                    mGeoLocations.add(pair.getValue());
-                    query(Constants.PLACES, pair.getKey());
-                    it.remove();
-                }
-            }
-            refreshPage();
-        });
+        queryLocations(Constants.PLACES_LOCATION, centerLocation, Constants.DEFAULT_DISTANCE);
+        getGeoQuerySubject()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(throwable -> Log.e("queryLocationError : ", throwable.getMessage()))
+                .doOnNext(locationMap -> {
+                    dispose();
+                    clearMap();
+                    clearNewPlacesList();
+                    mKeys.clear();
+                    mGeoLocations.clear();
+                    if (!locationMap.isEmpty()) {
+                        Iterator<Map.Entry<String, GeoLocation>> it = locationMap.entrySet().iterator();
+                        while (it.hasNext()) {
+                            Map.Entry<String, GeoLocation> pair = it.next();
+                            mKeys.add(pair.getKey());
+                            mGeoLocations.add(pair.getValue());
+                            query(Constants.PLACES, pair.getKey());
+                            it.remove();
+                        }
+                    }
+                    refreshPage();
+                })
+                .subscribe();
     }
 
     @OnClick(R.id.image_main_logout)
@@ -206,7 +201,7 @@ public class MainActivity extends MapModuleActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         setOnCameraMoveListener();
         getCameraSubject()

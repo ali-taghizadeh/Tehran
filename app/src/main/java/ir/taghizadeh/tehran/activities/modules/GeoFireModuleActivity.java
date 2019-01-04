@@ -6,8 +6,10 @@ import android.os.Bundle;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import io.reactivex.subjects.BehaviorSubject;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 
@@ -15,6 +17,8 @@ import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 public class GeoFireModuleActivity extends MapModuleActivity {
 
     private GeoFire mGeoFire;
+    Map<String, GeoLocation> mLocationMap = new LinkedHashMap<>();
+    private BehaviorSubject<Map<String, GeoLocation>> mGeoQuerySubject;
 
     // region LIFECYCLE
     @Override
@@ -26,11 +30,15 @@ public class GeoFireModuleActivity extends MapModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        seLocationListener();
+        setOnGeoQueryReady();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        removeLocationListener();
+        removeGeoQueryListener();
     }
     // endregion
 
@@ -65,11 +73,9 @@ public class GeoFireModuleActivity extends MapModuleActivity {
     }
 
     public void setOnGeoQueryReady(){
-        mGeoFire.setOnGeoQueryReady(new GeoFire.GeoQueryListener() {
-            @Override
-            public void OnGeoQueryReady(Map<String, GeoLocation> locationMap) {
-
-            }
+        mGeoFire.setOnGeoQueryReady(locationMap -> {
+            mLocationMap = locationMap;
+            mGeoQuerySubject.onNext(locationMap);
         });
     }
 
@@ -78,4 +84,10 @@ public class GeoFireModuleActivity extends MapModuleActivity {
     }
     // endregion
 
+    // region GETTERS
+    public BehaviorSubject<Map<String, GeoLocation>> getGeoQuerySubject() {
+        mGeoQuerySubject = BehaviorSubject.createDefault(mLocationMap);
+        return mGeoQuerySubject;
+    }
+    // endregion
 }

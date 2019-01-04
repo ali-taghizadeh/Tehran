@@ -4,7 +4,6 @@ import ir.taghizadeh.tehran.activities.modules.AuthenticationModuleActivity;
 import ir.taghizadeh.tehran.activities.AddNewActivity;
 import ir.taghizadeh.tehran.activities.modules.BaseConfigsModuleActivity;
 import ir.taghizadeh.tehran.activities.modules.DatabaseModuleActivity;
-import ir.taghizadeh.tehran.activities.MainActivity;
 import ir.taghizadeh.tehran.activities.lists.comments.CommentsAdapter;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.activities.modules.GeoFireModuleActivity;
@@ -62,11 +61,6 @@ public class DependencyRegistry {
     }
 
     public void inject(GeoFireModuleActivity activity) {
-        geoFirePresenter = new GeoFireImpl();
-        activity.configureWith(geoFirePresenter);
-    }
-
-    public void inject(MainActivity activity) {
         geoFirePresenter = new GeoFireImpl();
         activity.configureWith(geoFirePresenter);
     }
