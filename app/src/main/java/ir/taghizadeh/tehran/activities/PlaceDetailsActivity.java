@@ -89,7 +89,6 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
     private void setupUI() {
         setFullScreen();
         initializeList();
-        attachComments();
         mNewPlace = (NewPlace) getIntent().getSerializableExtra("newPlace");
         mKey = Objects.requireNonNull(getIntent().getExtras()).getString("key");
         mLatitude = getIntent().getExtras().getDouble("latitude");
@@ -101,6 +100,7 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
         text_place_details_dislikes.setText(String.valueOf(mNewPlace.getDislikes()));
         if (!mNewPlace.getPhotoUrl().equals("")) loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
         if (!mNewPlace.getUserPhotoUrl().equals("")) loadImage(mNewPlace.getUserPhotoUrl(), image_place_details_user_photo);
+        attachComments();
     }
 
     private void initializeList() {
