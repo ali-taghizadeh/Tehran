@@ -203,6 +203,7 @@ public class MainActivity extends GeoFireModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        setOnGeoQueryReady();
         setOnCameraMoveListener();
         getCameraSubject()
                 .observeOn(AndroidSchedulers.mainThread())

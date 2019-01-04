@@ -24,14 +24,16 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import ir.taghizadeh.tehran.R;
+import ir.taghizadeh.tehran.activities.modules.GeoFireModuleActivity;
 import ir.taghizadeh.tehran.activities.modules.MapModuleActivity;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class AddNewActivity extends MapModuleActivity {
+public class AddNewActivity extends GeoFireModuleActivity {
 
     @BindView(R.id.image_add_new_add_photo)
     ShapedImageView image_add_new_add_photo;
@@ -45,13 +47,12 @@ public class AddNewActivity extends MapModuleActivity {
     ProgressBar progress_add_new;
     @BindView(R.id.button_add_new_save)
     Button button_add_new_save;
-    private GeoFire mGeoFire;
+    SupportMapFragment mapFragment;
     private LatLng mLatLng;
     private String mTitle = "";
     private String mDescription = "";
     private String mPhotoUri = "";
     private CompositeDisposable compositeDisposable;
-    SupportMapFragment mapFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,11 +60,6 @@ public class AddNewActivity extends MapModuleActivity {
         setContentView(R.layout.activity_add_new);
         ButterKnife.bind(this);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        DependencyRegistry.register.inject(this);
-    }
-
-    public void configureWith(GeoFire geoFire) {
-        this.mGeoFire = geoFire;
         setUpUI();
     }
 
@@ -150,12 +146,17 @@ public class AddNewActivity extends MapModuleActivity {
                 })
                 .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
                 .doOnComplete(() -> {
-                    mGeoFire.pushLocation(Constants.PLACES_LOCATION, getPushedKey(), mLatLng);
-                    mGeoFire.seLocationListener(key1 -> {
-                        progress_add_new.setVisibility(View.GONE);
-                        dismiss();
-                        dispose();
-                    });
+                    pushLocation(Constants.PLACES_LOCATION, getPushedKey(), mLatLng);
+                    getLocationKeySubject()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSubscribe(disposable -> getCompositeDisposable().add(disposable))
+                            .doOnError(throwable -> Log.e("LocationKeyError : ", throwable.getMessage()))
+                            .doOnNext(s -> {
+                                progress_add_new.setVisibility(View.GONE);
+                                dismiss();
+                                dispose();
+                            })
+                            .subscribe();
                 })
                 .subscribe();
     }
@@ -184,5 +185,12 @@ public class AddNewActivity extends MapModuleActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        dispose();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        seLocationListener();
     }
 }

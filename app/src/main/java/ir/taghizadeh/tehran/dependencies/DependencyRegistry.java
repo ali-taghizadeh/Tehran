@@ -31,7 +31,6 @@ public class DependencyRegistry {
     public static DependencyRegistry register = new DependencyRegistry();
 
     private Glide glidePresenter;
-    private GeoFire geoFirePresenter;
 
     public void inject(BaseConfigsModuleActivity activity) {
         WindowConfig windowConfigPresenter = new WindowConfigImpl(activity);
@@ -61,12 +60,7 @@ public class DependencyRegistry {
     }
 
     public void inject(GeoFireModuleActivity activity) {
-        geoFirePresenter = new GeoFireImpl();
-        activity.configureWith(geoFirePresenter);
-    }
-
-    public void inject(AddNewActivity activity) {
-        geoFirePresenter = new GeoFireImpl();
+        GeoFire geoFirePresenter = new GeoFireImpl();
         activity.configureWith(geoFirePresenter);
     }
 

@@ -18,7 +18,9 @@ public class GeoFireModuleActivity extends MapModuleActivity {
 
     private GeoFire mGeoFire;
     Map<String, GeoLocation> mLocationMap = new LinkedHashMap<>();
+    String mKey = "";
     private BehaviorSubject<Map<String, GeoLocation>> mGeoQuerySubject;
+    private BehaviorSubject<String> mLocationKeySubject;
 
     // region LIFECYCLE
     @Override
@@ -30,15 +32,13 @@ public class GeoFireModuleActivity extends MapModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        seLocationListener();
-        setOnGeoQueryReady();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        removeLocationListener();
         removeGeoQueryListener();
+        removeLocationListener();
     }
     // endregion
 
@@ -54,11 +54,9 @@ public class GeoFireModuleActivity extends MapModuleActivity {
     }
 
     public void seLocationListener(){
-        mGeoFire.seLocationListener(new GeoFire.LocationListener() {
-            @Override
-            public void onSetLocationSuccessfully(String key) {
-
-            }
+        mGeoFire.seLocationListener(key -> {
+            mKey = key;
+            mLocationKeySubject.onNext(key);
         });
     }
 
@@ -88,6 +86,10 @@ public class GeoFireModuleActivity extends MapModuleActivity {
     public BehaviorSubject<Map<String, GeoLocation>> getGeoQuerySubject() {
         mGeoQuerySubject = BehaviorSubject.createDefault(mLocationMap);
         return mGeoQuerySubject;
+    }
+    public BehaviorSubject<String> getLocationKeySubject() {
+        mLocationKeySubject = BehaviorSubject.createDefault(mKey);
+        return mLocationKeySubject;
     }
     // endregion
 }
