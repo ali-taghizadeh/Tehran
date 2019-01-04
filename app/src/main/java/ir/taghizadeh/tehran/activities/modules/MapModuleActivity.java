@@ -26,6 +26,7 @@ public class MapModuleActivity extends StorageModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        attachCurve();
     }
 
     @Override
@@ -33,6 +34,7 @@ public class MapModuleActivity extends StorageModuleActivity {
         super.onPause();
         removeMapListener();
         removeCameraMoveListener();
+        removeCurve();
     }
     // endregion
 
@@ -62,6 +64,20 @@ public class MapModuleActivity extends StorageModuleActivity {
     }
     // endregion
 
+    // region CURVE
+    public void attachCurve(){
+        mMap.attachCurve();
+    }
+
+    public void drawCurve(LatLng from, LatLng to){
+        mMap.drawCurve(from, to);
+    }
+
+    public void removeCurve(){
+        mMap.removeCurve();
+    }
+    // endregion
+
     // region CAMERA
     public void startCamera(LatLng position, int zoom) {
         mMap.startCamera(position, zoom);
@@ -86,5 +102,7 @@ public class MapModuleActivity extends StorageModuleActivity {
         return mMap.getCenterLocation();
     }
     // endregion
+
+
 
 }

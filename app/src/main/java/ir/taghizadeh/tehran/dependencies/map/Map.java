@@ -18,6 +18,12 @@ public interface Map {
     void clearMap();
     // endregion
 
+    // region CURVE
+    void attachCurve();
+    void drawCurve(LatLng from, LatLng to);
+    void removeCurve();
+    // endregion
+
     // region CAMERA
     void startCamera(LatLng position, int zoom);
     void setOnCameraMoveListener(CameraListener cameraListener);
@@ -29,6 +35,7 @@ public interface Map {
 
     // region GETTERS
     LatLng getCenterLocation();
+
     // endregion
 
 }

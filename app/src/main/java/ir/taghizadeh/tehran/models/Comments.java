@@ -16,27 +16,27 @@ public class Comments implements Serializable {
         this.mComment = comment;
     }
 
-    public String getmUsername() {
+    public String getUsername() {
         return mUsername;
     }
 
-    public void setmUsername(String mUsername) {
+    public void setUsername(String mUsername) {
         this.mUsername = mUsername;
     }
 
-    public String getmUserPhotoUrl() {
+    public String getUserPhotoUrl() {
         return mUserPhotoUrl;
     }
 
-    public void setmUserPhotoUrl(String mUserPhotoUrl) {
+    public void setUserPhotoUrl(String mUserPhotoUrl) {
         this.mUserPhotoUrl = mUserPhotoUrl;
     }
 
-    public String getmComment() {
+    public String getComment() {
         return mComment;
     }
 
-    public void setmComment(String mComment) {
+    public void setComment(String mComment) {
         this.mComment = mComment;
     }
 }

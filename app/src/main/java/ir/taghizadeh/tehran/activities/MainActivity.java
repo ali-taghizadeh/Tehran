@@ -27,6 +27,9 @@ import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.activities.modules.GeoFireModuleActivity;
@@ -50,10 +53,12 @@ public class MainActivity extends GeoFireModuleActivity {
 
     private List<String> mKeys = new ArrayList<>();
     private List<GeoLocation> mGeoLocations = new ArrayList<>();
+    private LatLng mLatLng;
 
     private CompositeDisposable generalDisposable;
-    private CompositeDisposable cameraDisposable;
-    private CompositeDisposable geoQueryDisposable;
+    private Disposable cameraDisposable;
+    private Disposable geoQueryDisposable;
+    private Disposable mPutFileDisposable;
 
     // region HANDLE LIFECYCLE
     @Override
@@ -68,14 +73,23 @@ public class MainActivity extends GeoFireModuleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setOnGeoQueryReady();
-        setOnCameraMoveListener();
-        getCameraSubject()
+        Observable.interval(1, TimeUnit.SECONDS)
+                .take(2)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> cameraDisposable = new CompositeDisposable(disposable))
-                .doOnError(throwable -> Log.e("cameraError : ", throwable.getMessage()))
-                .doOnNext(this::queryLocations)
+                .doOnSubscribe(disposable -> getGeneralDisposable().add(disposable))
+                .doOnComplete(() -> {
+                    setOnGeoQueryReady();
+                    setOnCameraMoveListener();
+                    getCameraSubject()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSubscribe(disposable -> cameraDisposable = new CompositeDisposable(disposable))
+                            .doOnError(throwable -> Log.e("cameraError : ", throwable.getMessage()))
+                            .doOnNext(this::queryLocations)
+                            .subscribe();
+                })
                 .subscribe();
+
+
     }
 
     @Override
@@ -124,14 +138,14 @@ public class MainActivity extends GeoFireModuleActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .skip(1)
                 .doOnSubscribe(disposable -> {
-                    getGeneralDisposable().add(disposable);
+                    mPutFileDisposable = new CompositeDisposable(disposable);
                     progress_main_image.setVisibility(View.VISIBLE);
                 })
                 .doOnError(throwable -> Log.e("putError : ", throwable.getMessage()))
                 .doOnNext(uri -> {
                     updatePhotoURL(uri);
                     progress_main_image.setVisibility(View.GONE);
-                    disposeGeneral();
+                    mPutFileDisposable.dispose();
                 })
                 .subscribe();
     }
@@ -178,8 +192,11 @@ public class MainActivity extends GeoFireModuleActivity {
                 .doOnComplete(() -> progress_main.setVisibility(View.GONE))
                 .delay(mGeoLocations.size() * 200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(input -> addMarker(new LatLng(mGeoLocations.get(input.intValue()).latitude, mGeoLocations.get(input.intValue()).longitude)
-                        , "", "", R.drawable.ic_location))
+                .doOnNext(input -> {
+                    mLatLng = new LatLng(mGeoLocations.get(input.intValue()).latitude, mGeoLocations.get(input.intValue()).longitude);
+                    drawCurve(getCenterLocation(), mLatLng);
+                    addMarker(mLatLng, "", "", R.drawable.ic_location);
+                })
                 .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
                 .doOnSubscribe(disposable -> {
                     updateList(new ArrayList<>());

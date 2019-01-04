@@ -14,19 +14,30 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
+import com.makesense.labs.curvefit.Curve;
+import com.makesense.labs.curvefit.CurveOptions;
+import com.makesense.labs.curvefit.impl.CurveManager;
+import com.makesense.labs.curvefit.interfaces.OnCurveDrawnCallback;
+
+import java.util.Arrays;
+import java.util.List;
 
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.helpers.Constants;
 
-public class MapImpl implements OnMapReadyCallback, Map {
+public class MapImpl implements OnMapReadyCallback, Map, OnCurveDrawnCallback {
 
 
     private GoogleMap googleMap;
     private FragmentActivity fragmentActivity;
+    private CurveManager curveManager;
 
     private MapListener mapListener;
     private CameraListener cameraListener;
@@ -42,6 +53,7 @@ public class MapImpl implements OnMapReadyCallback, Map {
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(fragmentActivity, R.raw.style_json));
+        attachCurve();
         if (mapListener != null)
             mapListener.onMapReady();
     }
@@ -68,7 +80,6 @@ public class MapImpl implements OnMapReadyCallback, Map {
                     .snippet(snippet)
                     .icon(bitmapDescriptorFromVector(markerResId)));
             marker.showInfoWindow();
-            if (title.equals("")) ObjectAnimator.ofFloat(marker, "alpha", 0f, 1f).setDuration(200).start();
         }
     }
 
@@ -79,17 +90,58 @@ public class MapImpl implements OnMapReadyCallback, Map {
     }
     // endregion
 
+    // region CURVE
+    @Override
+    public void attachCurve() {
+        if (googleMap != null){
+            curveManager = new CurveManager(googleMap);
+            curveManager.setOnCurveDrawnCallback(this);
+        }
+    }
+
+    @Override
+    public void drawCurve(LatLng from, LatLng to) {
+        if (googleMap != null) {
+            CurveOptions curveOptions = new CurveOptions();
+            curveOptions.add(from);
+            curveOptions.add(to);
+            curveOptions.color(ContextCompat.getColor(fragmentActivity, R.color.colorPrimaryTransparent));
+            curveOptions.setAlpha(0.5f);
+            curveOptions.width(3);
+            List<PatternItem> pattern = Arrays.asList(new Dash(10), new Gap(8));
+            curveOptions.pattern(pattern);
+            curveOptions.geodesic(false);
+            curveManager.drawCurveAsync(curveOptions);
+        }
+    }
+
+    @Override
+    public void onCurveDrawn(Curve curve) {
+
+    }
+
+    @Override
+    public void removeCurve() {
+        if (curveManager != null) {
+            curveManager.unregister();
+            curveManager.setOnCurveDrawnCallback(null);
+            curveManager = null;
+        }
+    }
+    // endregion
+
     // region CAMERA
     @Override
     public void startCamera(LatLng position, int zoom) {
         CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(zoom).build();
         if (googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            googleMap.setOnCameraMoveStartedListener(i -> {
+            googleMap.setOnCameraIdleListener(() -> {
                 if (cameraListener != null) {
                     cameraListener.onCameraMoved();
                 }
             });
+            googleMap.setOnCameraMoveStartedListener(i -> clearMap());
         }
     }
 

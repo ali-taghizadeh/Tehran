@@ -26,9 +26,9 @@ class CommentsListViewHolder extends RecyclerView.ViewHolder {
     }
 
     void configureWith(Comments comments, Glide mGlide) {
-        text_item_comment_username.setText(comments.getmUsername());
-        text_item_comment.setText(comments.getmComment());
-        mGlide.loadImage(comments.getmUserPhotoUrl(), image_item_comment_user_photo);
+        text_item_comment_username.setText(comments.getUsername());
+        text_item_comment.setText(comments.getComment());
+        mGlide.loadImage(comments.getUserPhotoUrl(), image_item_comment_user_photo);
     }
 
 }
