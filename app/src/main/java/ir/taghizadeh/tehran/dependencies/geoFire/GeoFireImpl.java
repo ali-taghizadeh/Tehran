@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class GeoFireImpl implements GeoFire {
 
@@ -19,19 +20,20 @@ public class GeoFireImpl implements GeoFire {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
     private com.firebase.geofire.GeoFire mGeoFire;
-    private GeoQuery mGeoQuery;
 
     private LocationListener mLocationListener;
     private GeoQueryListener mGeoQueryListener;
 
     private Map<String, GeoLocation> mLocations;
 
-
+    // region CONSTRUCTOR
     public GeoFireImpl() {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mLocations = new LinkedHashMap<>();
     }
+    // endregion
 
+    // region PUSH LOCATION
     @Override
     public void pushLocation(String location, String key, LatLng latLng) {
         mDatabaseReference = mFirebaseDatabase.getReference().child(location);
@@ -43,15 +45,27 @@ public class GeoFireImpl implements GeoFire {
     }
 
     @Override
+    public void seLocationListener(LocationListener locationListener) {
+        this.mLocationListener = locationListener;
+    }
+
+    @Override
+    public void removeLocationListener() {
+        this.mLocationListener = null;
+    }
+    // endregion
+
+    // region QUERY LOCATION
+    @Override
     public void queryLocations(String location, LatLng latLng, double distance) {
         mDatabaseReference = mFirebaseDatabase.getReference().child(location);
         mGeoFire = new com.firebase.geofire.GeoFire(mDatabaseReference);
-        mGeoQuery = mGeoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), distance);
+        GeoQuery mGeoQuery = mGeoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), distance);
         mLocations.clear();
         mGeoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
             @Override
             public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
-                mLocations.put(dataSnapshot.getKey(), location);
+                mLocations.put(Objects.requireNonNull(dataSnapshot.getKey()), location);
             }
 
             @Override
@@ -87,7 +101,8 @@ public class GeoFireImpl implements GeoFire {
     }
 
     @Override
-    public void seLocationListener(LocationListener locationListener) {
-        this.mLocationListener = locationListener;
+    public void removeGeoQueryListener() {
+        this.mGeoQueryListener = null;
     }
+    // endregion
 }

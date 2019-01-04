@@ -9,7 +9,6 @@ import com.google.android.gms.maps.model.LatLng;
 import io.reactivex.subjects.BehaviorSubject;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.map.Map;
-import ir.taghizadeh.tehran.helpers.Constants;
 
 @SuppressLint("Registered")
 public class MapModuleActivity extends StorageModuleActivity {

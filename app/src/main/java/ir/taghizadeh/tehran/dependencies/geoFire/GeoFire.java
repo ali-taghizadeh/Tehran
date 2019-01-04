@@ -7,15 +7,22 @@ import java.util.Map;
 
 public interface GeoFire {
 
+    // region PUSH LOCATION
     void pushLocation(String location, String key, LatLng latLng);
-    void queryLocations(String location, LatLng latLng, double distance);
-
     void seLocationListener(LocationListener locationListener);
     interface LocationListener {
         void onSetLocationSuccessfully(String key);
     }
+    void removeLocationListener();
+    // endregion
+
+    // region QUERY LOCATION
+    void queryLocations(String location, LatLng latLng, double distance);
     void setOnGeoQueryReady(GeoQueryListener geoQueryListener);
     interface GeoQueryListener {
         void OnGeoQueryReady(Map<String, GeoLocation> locationMap);
     }
+    void removeGeoQueryListener();
+    // endregion
+
 }
