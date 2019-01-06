@@ -84,4 +84,5 @@ public class DependencyRegistry {
     public void inject(CommentsAdapter commentsAdapter){
         commentsAdapter.configureWith(glidePresenter);
     }
+
 }

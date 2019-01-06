@@ -143,8 +143,8 @@ public class MainActivity extends GeoFireModuleActivity {
     protected void onPause() {
         super.onPause();
         disposeGeneral();
-        cameraDisposable.dispose();
-        geoQueryDisposable.dispose();
+        if (cameraDisposable != null && !cameraDisposable.isDisposed()) cameraDisposable.dispose();
+        if (geoQueryDisposable != null && !geoQueryDisposable.isDisposed())geoQueryDisposable.dispose();
     }
     // endregion
 

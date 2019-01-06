@@ -12,13 +12,17 @@ import ir.taghizadeh.tehran.activities.PlaceDetailsActivity;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
-public class RootCoordinatorImpl implements RootCoordinator{
+public class RootCoordinatorImpl implements RootCoordinator {
+
     private Activity activity;
 
+    //region CONSTRUCTOR
     public RootCoordinatorImpl(Activity activity) {
         this.activity = activity;
     }
+    // endregion
 
+    // region HANDLE INTENT
     @Override
     public void handleAddPhoto() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -52,4 +56,6 @@ public class RootCoordinatorImpl implements RootCoordinator{
         mapIntent.setPackage("com.google.android.apps.maps");
         activity.startActivity(mapIntent);
     }
+    // endregion
+
 }

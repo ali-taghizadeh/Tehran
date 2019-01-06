@@ -11,10 +11,13 @@ public class WindowConfigImpl implements WindowConfig {
 
     private Activity activity;
 
+    // region CONSTRUCTOR
     public WindowConfigImpl(Activity activity) {
         this.activity = activity;
     }
+    // endregion
 
+    // region UI
     @Override
     public void setFullScreen() {
         activity.getWindow().setFlags(
@@ -36,7 +39,9 @@ public class WindowConfigImpl implements WindowConfig {
         LinearLayoutManager manager = new LinearLayoutManager(activity);
         recyclerView.setLayoutManager(manager);
     }
+    // endregion
 
+    // region VALIDATION
     @Override
     public boolean isInputValid(String input, EditText editText, String error) {
         if (input.equals("")) {
@@ -45,4 +50,6 @@ public class WindowConfigImpl implements WindowConfig {
         }
         return true;
     }
+    // endregion
+
 }
