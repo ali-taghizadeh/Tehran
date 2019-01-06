@@ -29,6 +29,21 @@ import ir.taghizadeh.tehran.activities.modules.GeoFireModuleActivity;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
+/**
+ * <h1>AddNewActivity</h1>
+ *
+ * When user clicks green location button in the center of screen, this
+ * activity pops up.
+ * To create a new place, writing a title and a brief description is necessary, but
+ * adding a photo is an option.
+ * Just like MainActivity, this Activity needs all dependencies.
+ * As a result, it extends GeoFireModuleActivity.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
+
 public class AddNewActivity extends GeoFireModuleActivity {
 
     @BindView(R.id.image_add_new_add_photo)
@@ -60,18 +75,24 @@ public class AddNewActivity extends GeoFireModuleActivity {
         setUpUI();
     }
 
+    /**
+     * When onResume is called, 2 disposables related to our 2 textInputs add to a compositeDisposable
+     */
     @Override
     protected void onResume() {
         super.onResume();
         seLocationListener();
-        getCompositeDisposable().add(updateMarker(edittext_add_new_title));
-        getCompositeDisposable().add(updateMarker(edittext_add_new_description));
+        getGeneralDisposable().add(updateMarker(edittext_add_new_title));
+        getGeneralDisposable().add(updateMarker(edittext_add_new_description));
     }
 
+    /**
+     * Any disposable get disposed when this method is called
+     */
     @Override
     protected void onPause() {
         super.onPause();
-        dispose();
+        disposeGeneral();
     }
     // endregion
 
@@ -95,6 +116,13 @@ public class AddNewActivity extends GeoFireModuleActivity {
     // endregion
 
     // region TRIGGER ANY CHANGES IN TITLE OR DESCRIPTION
+
+    /**
+     * When user tries to write a title or a description, this method helps us to collect
+     * characters as user is writing, and when he/she stops writing it emits the text.
+     * Then using the emitted string, it redraws the marker.
+     * @return Two disposables mentioned above which are added to compositeDisposable in onResume().
+     */
     private Disposable updateMarker(TextInputEditText editText) {
         return RxTextView.textChanges(editText)
                 .debounce(600, TimeUnit.MILLISECONDS)
@@ -116,6 +144,11 @@ public class AddNewActivity extends GeoFireModuleActivity {
     // endregion
 
     // region HANDLE ACTIVITY RESULTS
+
+    /**
+     * The only scenario for calling this method is when user tries to add a photo
+     * @param data This intent includes the URI to the selected photo from device storage
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -126,12 +159,19 @@ public class AddNewActivity extends GeoFireModuleActivity {
     // endregion
 
     // region UPDATE PLACE PHOTO
+
+    /**
+     * This method acts just like updating user avatar in MainActivity.
+     * The only difference is that here our BehaviorSubject is added to a compositeDisposable
+     * and it gets disposed when onPause is called
+     * @param selectedImageUri This is the URI of the selected photo received from onActivityResult.
+     */
     private void updatePlacePhoto(Uri selectedImageUri) {
         putFile(selectedImageUri, Constants.PLACES);
         getPutFileSubject()
                 .observeOn(AndroidSchedulers.mainThread())
                 .skip(1)
-                .doOnSubscribe(disposable -> getCompositeDisposable().add(disposable))
+                .doOnSubscribe(disposable -> getGeneralDisposable().add(disposable))
                 .doOnError(throwable -> Log.e("putError : ", throwable.getMessage()))
                 .doOnNext(uri -> {
                     mPhotoUri = uri.toString();
@@ -148,6 +188,17 @@ public class AddNewActivity extends GeoFireModuleActivity {
         handleAddPhoto();
     }
 
+    /**
+     * When user taps save button, first it validates textInputs, if it was ok, then
+     * it tries to create a new object of a place and pushes it to Firebase database.
+     * Then it waits for 2 secs and after that pushes the location to another node
+     * of Firebase database using the exact key of our pushed newPlace object.
+     * In this way we have a same key in 2 different nodes about a same place,
+     * and as a result, executing queries will become much easier.
+     * Then a Rx BehaviorSubject gets subscribed and waits for the task to get finished,
+     * and when it receives the pulse, it simply finishes the activity
+     * <b>Note:</b> Before finishing the activity, onPause is called and it disposes any disposable.
+     */
     @OnClick(R.id.button_add_new_save)
     void save() {
         if (isInputValid(mTitle, edittext_add_new_title, "Pick a title") &&
@@ -157,7 +208,7 @@ public class AddNewActivity extends GeoFireModuleActivity {
                     .take(2)
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(disposable -> {
-                        getCompositeDisposable().add(disposable);
+                        getGeneralDisposable().add(disposable);
                         button_add_new_save.setText("");
                         progress_add_new.setVisibility(View.VISIBLE);
                     })
@@ -166,7 +217,7 @@ public class AddNewActivity extends GeoFireModuleActivity {
                         pushLocation(Constants.PLACES_LOCATION, getPushedKey(), mLatLng);
                         getLocationKeySubject()
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .doOnSubscribe(disposable -> getCompositeDisposable().add(disposable))
+                                .doOnSubscribe(disposable -> getGeneralDisposable().add(disposable))
                                 .doOnError(throwable -> Log.e("LocationKeyError : ", throwable.getMessage()))
                                 .doOnNext(s -> dismiss())
                                 .subscribe();
@@ -177,19 +228,18 @@ public class AddNewActivity extends GeoFireModuleActivity {
 
     @OnClick(R.id.button_add_new_discard)
     void dismiss() {
-        dispose();
         finish();
     }
     // endregion
 
     // region CREATE AND CLEAR DISPOSABLES
-    private CompositeDisposable getCompositeDisposable() {
+    private CompositeDisposable getGeneralDisposable() {
         if (compositeDisposable == null || compositeDisposable.isDisposed())
             compositeDisposable = new CompositeDisposable();
         return compositeDisposable;
     }
 
-    private void dispose() {
+    private void disposeGeneral() {
         if (compositeDisposable != null && !compositeDisposable.isDisposed())
             compositeDisposable.clear();
         progress_add_new.setVisibility(View.GONE);
