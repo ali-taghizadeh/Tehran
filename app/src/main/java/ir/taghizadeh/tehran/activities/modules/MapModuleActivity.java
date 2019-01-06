@@ -115,6 +115,4 @@ public class MapModuleActivity extends StorageModuleActivity {
     }
     // endregion
 
-
-
 }

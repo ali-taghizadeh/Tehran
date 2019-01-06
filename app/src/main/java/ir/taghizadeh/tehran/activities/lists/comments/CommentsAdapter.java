@@ -13,6 +13,18 @@ import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.glide.Glide;
 import ir.taghizadeh.tehran.models.Comments;
 
+/**
+ * <h1>CommentsAdapter</h1>
+ *
+ * This class is a simple Adapter that passes injected {@link Glide} to its viewHolder to load images.
+ * No item click listener is implemented.
+ * <b>Note:</b> setHasStableIds() true and override getItemId() with position to
+ * make sure that your recyclerView does its best performance.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsListViewHolder> {
 
@@ -22,6 +34,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsListViewHolder
     public CommentsAdapter(List<Comments> comments) {
         this.comments = comments;
         DependencyRegistry.register.inject(this);
+        setHasStableIds(true);
     }
 
     @NonNull
@@ -40,6 +53,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsListViewHolder
     @Override
     public int getItemCount() {
         return comments.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     public void configureWith(Glide glidePresenter) {

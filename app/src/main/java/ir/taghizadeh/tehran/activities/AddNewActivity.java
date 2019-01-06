@@ -245,4 +245,5 @@ public class AddNewActivity extends GeoFireModuleActivity {
         progress_add_new.setVisibility(View.GONE);
     }
     //endregion
+
 }

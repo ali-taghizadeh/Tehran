@@ -13,6 +13,18 @@ import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.glide.Glide;
 import ir.taghizadeh.tehran.models.NewPlace;
 
+/**
+ * <h1>PlacesAdapter</h1>
+ *
+ * This class is a simple Adapter that passes injected {@link Glide} to its viewHolder to load images.
+ * {@link OnPlaceItemClickListener} is used to handle item click events.
+ * <b>Note:</b> setHasStableIds() true and override getItemId() with position to
+ * make sure that your recyclerView does its best performance.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
 
 public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
 
@@ -31,8 +43,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesListViewHolder> {
     @Override
     public PlacesListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_place, parent, false);
-        final PlacesListViewHolder viewHolder = new PlacesListViewHolder(view);
-        return viewHolder;
+        return new PlacesListViewHolder(view);
     }
 
     @Override
