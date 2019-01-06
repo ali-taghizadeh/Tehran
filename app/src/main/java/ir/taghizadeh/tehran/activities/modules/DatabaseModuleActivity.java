@@ -11,6 +11,19 @@ import ir.taghizadeh.tehran.dependencies.database.Database;
 import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
+/**
+ * <h1>DatabaseModuleActivity</h1>
+ * In the order of ModuleActivities, this one is the third module which it handles Firebase database.
+ * It uses {@link Database} as an interface and the main job will be done in DatabaseImpl class. But
+ * there are some simple usages about this class beside being an interface. For instance when
+ * we execute a query on places or comments, here it collects their snapshots when each of them get ready,
+ * and in the end we can get those lists from the activities that extend this module.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
+
 @SuppressLint("Registered")
 public class DatabaseModuleActivity extends AuthenticationModuleActivity {
 
