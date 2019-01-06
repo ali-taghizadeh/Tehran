@@ -12,6 +12,17 @@ import java.util.Arrays;
 
 import ir.taghizadeh.tehran.helpers.Constants;
 
+/**
+ * <h1>AuthenticationImpl</h1>
+ * <p>
+ * The main logic about Firebase authentication is done here and we can have access to
+ * these methods with {@link Authentication} interface which is injected into AuthenticationModuleActivity.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
+
 public class AuthenticationImpl implements Authentication {
 
     private FirebaseAuth mFirebaseAuth;
@@ -35,6 +46,13 @@ public class AuthenticationImpl implements Authentication {
     // endregion
 
     //  region USER PHOTO
+
+    /**
+     * By calling this method Firebase Auth, updates the user profile with a UserProfileChangeRequest
+     * instance. When it's done, our listener will notify that the update is done successfully.
+     *
+     * @param photoURL This is the URL of the uploaded avatar in FireBase storage
+     */
     @Override
     public void updatePhotoURL(Uri photoURL) {
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -73,6 +91,15 @@ public class AuthenticationImpl implements Authentication {
 //  endregion
 
     //  region AUTHENTICATION
+
+    /**
+     * This method is called in the constructor.
+     * First it checks authentication state. if user is valid it passes its username and
+     * photoURL to our predefined interfaces to attach them to UI.
+     * But if user is invalid, Firebase Auth UI comes in and starts an activity
+     * and asks the user to register with email or Google account.
+     * By extending AuthenticationModuleActivity this method will be called.
+     */
     @Override
     public void attachAuthListener() {
         mAuthStateListener = firebaseAuth -> {
@@ -99,17 +126,27 @@ public class AuthenticationImpl implements Authentication {
         };
     }
 
+    /**
+     * This method is called in onResume() within AuthenticationModuleActivity
+     */
     @Override
     public void addAuthStateListener() {
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        if (mAuthStateListener != null)
+            mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
+    /**
+     * This method is called in onPause() within AuthenticationModuleActivity
+     */
     @Override
     public void removeAuthStateListener() {
         if (mAuthStateListener != null)
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
     }
 
+    /**
+     * Auth UI helps to sign out the user with just a line of code.
+     */
     @Override
     public void signOut() {
         AuthUI.getInstance().signOut(activity);

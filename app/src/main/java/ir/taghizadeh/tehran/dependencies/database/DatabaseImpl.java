@@ -16,6 +16,17 @@ import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.Comments;
 import ir.taghizadeh.tehran.models.NewPlace;
 
+/**
+ * <h1>DatabaseImpl</h1>
+ * <p>
+ * The main logic about Firebase realtime database is done here and we can have access to
+ * these methods with {@link Database} interface which is injected into DatabaseModuleActivity.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
+
 public class DatabaseImpl implements Database {
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -35,6 +46,13 @@ public class DatabaseImpl implements Database {
     // endregion
 
     // region PUSH
+
+    /**
+     * Firebase database helps to push an object and when it's done we pass its key
+     * to our listener to use it in the future.
+     * @param newPlace This is a {@link NewPlace} object which it includes some data like title, description and ... .
+     * @param dbLocation This is the name of the node in database where we want to push data.
+     */
     @Override
     public void pushNewPlace(NewPlace newPlace, String dbLocation) {
         mFirebaseDatabase.getReference().child(dbLocation).push().setValue(newPlace, (databaseError, databaseReference) -> {
@@ -42,6 +60,13 @@ public class DatabaseImpl implements Database {
         });
     }
 
+    /**
+     * Just like what we did in pushing a new place, here we wait for a pulse that push was successfully
+     * done and then we get the key again.
+     * @param comments This is a {@link Comments} object which includes username, photoURL and the comment.
+     * @param dbLocation This is the name of the node in database where we want to push data.
+     * @param key This is the key to the right object to finally push the comments.
+     */
     @Override
     public void pushComment(Comments comments, String dbLocation, String key) {
         mFirebaseDatabase.getReference().child(dbLocation).child(key).push().setValue(comments, (databaseError, databaseReference) -> {
@@ -49,11 +74,24 @@ public class DatabaseImpl implements Database {
         });
     }
 
+    /**
+     * Unlike pushing a comment or a new place, here we don't listen for any response. We
+     * just update the UI statically.
+     * @param like The number of likes that will be updated.
+     * @param dbLocation This is the name of the node in database where we want to push data.
+     * @param key This is the key to the right object to finally push the number of likes.
+     */
     @Override
     public void pushLike(int like, String dbLocation, String key) {
         mFirebaseDatabase.getReference().child(dbLocation).child(key).child(Constants.LIKES).setValue(like);
     }
 
+    /**
+     * This method acts just like pushLike() method.
+     * @param dislike The number of dislikes that will be updated.
+     * @param dbLocation This is the name of the node in database where we want to push data.
+     * @param key This is the key to the right object to finally push the number of dislikes.
+     */
     @Override
     public void pushDislike(int dislike, String dbLocation, String key) {
         mFirebaseDatabase.getReference().child(dbLocation).child(key).child(Constants.DISLIKES).setValue(dislike);
@@ -71,6 +109,15 @@ public class DatabaseImpl implements Database {
     // endregion
 
     // region QUERY
+
+    /**
+     * First it executes a query using the dbLocation and the key.
+     * Then it listens for response. By arriving a snapshot first it checks
+     * whether it's a query on places or comments and for each scenario it delivers
+     * the response to our listeners and they will be used it in the future to populate a list.
+     * @param dbLocation This is the name of the node in database where we want to execute a query
+     * @param key This is the key to the right object to finally execute that query.
+     */
     @Override
     public void query(String dbLocation, String key) {
         Query query = mDatabaseReference.child(dbLocation).child(key);

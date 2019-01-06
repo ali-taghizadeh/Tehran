@@ -38,7 +38,7 @@ import ir.taghizadeh.tehran.models.NewPlace;
  * <h1>MainActivity - the only entry point to the application</h1>
  * External dependencies :
  * Firebase Authentication
- * Firebase UI
+ * Firebase Auth UI
  * Firebase Realtime database
  * Firebase Storage
  * GeoFire
