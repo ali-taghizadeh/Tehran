@@ -11,6 +11,18 @@ import cn.gavinliu.android.lib.shapedimageview.ShapedImageView;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.authentication.Authentication;
 
+/**
+ * <h1>AuthenticationModuleActivity</h1>
+ * In the order of ModuleActivities, this one is the second module which it handles authentication.
+ * It uses {@link Authentication} as an interface and the main job will be done in AuthenticationImpl class.
+ * Handling value changes like username or userPhotoUrl is done in the old way and no Rx observable
+ * is involved
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
+
 @SuppressLint("Registered")
 public class AuthenticationModuleActivity extends BaseConfigsModuleActivity {
 

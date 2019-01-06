@@ -26,6 +26,19 @@ import ir.taghizadeh.tehran.dependencies.storage.StorageImpl;
 import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfig;
 import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfigImpl;
 
+/**
+ * <h1>DependencyRegistry</h1>
+ * Most of the work about dependency management happens here.
+ * I could have used a code generator (Dependency injection) library like Dagger2, but
+ * I decided to manage dependencies in this way.
+ * Any implementation of each module happens just once and this class injects them to their
+ * related moduleActivity
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
+
 public class DependencyRegistry {
 
     public static DependencyRegistry register = new DependencyRegistry();
