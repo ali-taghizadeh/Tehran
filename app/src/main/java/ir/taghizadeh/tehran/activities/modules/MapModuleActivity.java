@@ -10,6 +10,18 @@ import io.reactivex.subjects.BehaviorSubject;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.map.Map;
 
+/**
+ * <h1>MapModuleActivity</h1>
+ * In the order of ModuleActivities, this one is the fifth module which it handles GoogleMap.
+ * It uses {@link Map} as an interface and the main job will be done in MapImpl class.
+ * Just like StorageModuleActivity this module tries to notify any changes using Rx BehaviorSubject.
+ * This time this subject is the LatLng of the center of the screen while camera is in idle state
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
+
 @SuppressLint("Registered")
 public class MapModuleActivity extends StorageModuleActivity {
 

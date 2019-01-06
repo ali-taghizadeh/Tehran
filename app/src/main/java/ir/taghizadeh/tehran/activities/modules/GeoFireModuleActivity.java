@@ -13,14 +13,27 @@ import io.reactivex.subjects.BehaviorSubject;
 import ir.taghizadeh.tehran.dependencies.DependencyRegistry;
 import ir.taghizadeh.tehran.dependencies.geoFire.GeoFire;
 
+/**
+ * <h1>GeoFireModuleActivity</h1>
+ * In the order of ModuleActivities, this one is the sixth module (the last one) which it handles GeoFire.
+ * It uses {@link GeoFire} as an interface and the main job will be done in GeoFireImpl class.
+ * Here we have 2 BehaviorSubjects :
+ * 1 - A subject that delivers the key of the pushed location
+ * 2 - A subject that delivers a LinkedHashMap of keys and GeoLocations when we execute a query on locations.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-06
+ */
+
 @SuppressLint("Registered")
 public class GeoFireModuleActivity extends MapModuleActivity {
 
     private GeoFire mGeoFire;
-    Map<String, GeoLocation> mLocationMap = new LinkedHashMap<>();
+    private Map<String, GeoLocation> mLocationMap = new LinkedHashMap<>();
     String mKey = "";
-    private BehaviorSubject<Map<String, GeoLocation>> mGeoQuerySubject;
     private BehaviorSubject<String> mLocationKeySubject;
+    private BehaviorSubject<Map<String, GeoLocation>> mGeoQuerySubject;
 
     // region LIFECYCLE
     @Override
