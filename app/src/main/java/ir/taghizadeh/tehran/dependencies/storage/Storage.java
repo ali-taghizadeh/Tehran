@@ -5,7 +5,7 @@ import android.net.Uri;
 public interface Storage {
 
     // region PUT FILE
-    void putFile(Uri uri, String location);
+    void putFile(Uri uri, String dbLocation);
     void setPutListener(PutListener fileUploadedListener);
     interface PutListener {
         void onPhotoURLReady(Uri uri);

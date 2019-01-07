@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -60,6 +61,10 @@ public class BaseConfigsModuleActivity extends AppCompatActivity {
 
     public void handleVerticalList(RecyclerView recyclerView){
         mWindowConfig.handleVerticalList(recyclerView);
+    }
+
+    public void hideKeyboard(View view){
+        mWindowConfig.hideKeyboard(view);
     }
     // endregion
 

@@ -31,7 +31,7 @@ import ir.taghizadeh.tehran.dependencies.windowConfig.WindowConfigImpl;
  * I could have used a code generator (Dependency injection) library like Dagger2, but
  * I decided to manage dependencies in this way.
  * Any implementation of each module happens just once and this class injects them to their
- * related moduleActivity
+ * related moduleActivity or adapter.
  *
  * @author Ali Taghizadeh Gevari
  * @version 1.0

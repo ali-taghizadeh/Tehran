@@ -3,6 +3,17 @@ package ir.taghizadeh.tehran.dependencies.glide;
 import android.app.Activity;
 import android.widget.ImageView;
 
+/**
+ * <h1>GlideImpl</h1>
+ * <p>
+ * The main logic about Glide is done here. It's done so simple and there's no
+ * catching strategy or any other complexity.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-07
+ */
+
 public class GlideImpl implements Glide {
     private Activity activity;
 

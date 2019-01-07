@@ -160,6 +160,7 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
                     image_place_details_empty_list.setVisibility(View.GONE);
                     text_place_details_empty_list.setVisibility(View.GONE);
                     edittext_place_details_comment.setText("");
+                    hideKeyboard(edittext_place_details_comment);
                 })
                 .doOnError(throwable -> Log.e("updatePageError : ", throwable.getMessage()))
                 .doOnComplete(() -> {

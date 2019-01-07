@@ -12,6 +12,17 @@ import ir.taghizadeh.tehran.activities.PlaceDetailsActivity;
 import ir.taghizadeh.tehran.helpers.Constants;
 import ir.taghizadeh.tehran.models.NewPlace;
 
+/**
+ * <h1>RootCoordinatorImpl</h1>
+ * <p>
+ * The main logic about handling intents is done here and we can have access to these methods with
+ * {@link RootCoordinator} interface which is injected into BaseConfigsModuleActivity.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-07
+ */
+
 public class RootCoordinatorImpl implements RootCoordinator {
 
     private Activity activity;

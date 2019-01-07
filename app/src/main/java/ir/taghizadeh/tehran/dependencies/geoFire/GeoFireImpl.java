@@ -27,7 +27,6 @@ import java.util.Objects;
 
 public class GeoFireImpl implements GeoFire {
 
-
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
     private com.firebase.geofire.GeoFire mGeoFire;

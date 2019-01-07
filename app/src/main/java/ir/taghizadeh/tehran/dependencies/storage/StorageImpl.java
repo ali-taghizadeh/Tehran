@@ -9,6 +9,17 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
 
+/**
+ * <h1>StorageImpl</h1>
+ * <p>
+ * The main logic about Firebase storage is done here and we can have access to these methods with
+ * {@link Storage} interface which is injected into StorageModuleActivity.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-07
+ */
+
 public class StorageImpl implements Storage{
 
     private FirebaseStorage mFirebaseStorage;
@@ -23,9 +34,17 @@ public class StorageImpl implements Storage{
     // endregion
 
     // region PUT FILE
+
+    /**
+     * First it uploads the file to Firebase storage. Then it waits for the job to be done.
+     * As it finishes its task, using our interfaces it sends a pulse that notifies that the
+     * task is done. Also it passes the downloadUrl of the file through that listener.
+     * @param uri The Uri of the file which we want to upload.
+     * @param dbLocation The name of the node in database where we want upload our file.
+     */
     @Override
-    public void putFile(Uri uri, String location) {
-        StorageReference mUserPhoto = mFirebaseStorage.getReference().child(location).child(Objects.requireNonNull(uri.getLastPathSegment()));
+    public void putFile(Uri uri, String dbLocation) {
+        StorageReference mUserPhoto = mFirebaseStorage.getReference().child(dbLocation).child(Objects.requireNonNull(uri.getLastPathSegment()));
         mUserPhoto.putFile(uri).addOnSuccessListener(activity, taskSnapshot -> {
             Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
             while (!urlTask.isSuccessful()) ;
