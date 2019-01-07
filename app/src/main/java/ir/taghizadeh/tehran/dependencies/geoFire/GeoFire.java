@@ -8,7 +8,7 @@ import java.util.Map;
 public interface GeoFire {
 
     // region PUSH LOCATION
-    void pushLocation(String location, String key, LatLng latLng);
+    void pushLocation(String dbLocation, String key, LatLng latLng);
     void seLocationListener(LocationListener locationListener);
     interface LocationListener {
         void onSetLocationSuccessfully(String key);
@@ -17,7 +17,7 @@ public interface GeoFire {
     // endregion
 
     // region QUERY LOCATION
-    void queryLocations(String location, LatLng latLng, double distance);
+    void queryLocations(String dbLocation, LatLng latLng, double distance);
     void setOnGeoQueryReady(GeoQueryListener geoQueryListener);
     interface GeoQueryListener {
         void OnGeoQueryReady(Map<String, GeoLocation> locationMap);

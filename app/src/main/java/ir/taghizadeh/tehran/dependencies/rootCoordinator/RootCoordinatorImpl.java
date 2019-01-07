@@ -39,6 +39,7 @@ public class RootCoordinatorImpl implements RootCoordinator {
         intent.putExtra("bundle", args);
         activity.startActivity(intent);
     }
+
     @Override
     public void handlePlaceDetails(NewPlace newPlace, String key, double latitude, double longitude) {
         Intent intent = new Intent(activity, PlaceDetailsActivity.class);
@@ -51,8 +52,8 @@ public class RootCoordinatorImpl implements RootCoordinator {
 
     @Override
     public void handleGetDirection(double latitude, double longitude) {
-        Uri gmmIntentUri = Uri.parse(String.format("google.navigation:q=%s, %s", latitude, longitude));
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        Uri uri = Uri.parse(String.format("google.navigation:q=%s, %s", latitude, longitude));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
         mapIntent.setPackage("com.google.android.apps.maps");
         activity.startActivity(mapIntent);
     }

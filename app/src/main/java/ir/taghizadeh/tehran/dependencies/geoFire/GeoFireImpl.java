@@ -14,6 +14,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * <h1>GeoFireImpl</h1>
+ * <p>
+ * The main logic about GeoFire is done here and we can have access to these methods with
+ * {@link GeoFire} interface which is injected into GeoFireModuleActivity.
+ *
+ * @author Ali Taghizadeh Gevari
+ * @version 1.0
+ * @since 2019-01-07
+ */
+
 public class GeoFireImpl implements GeoFire {
 
 
@@ -34,9 +45,17 @@ public class GeoFireImpl implements GeoFire {
     // endregion
 
     // region PUSH LOCATION
+
+    /**
+     * It pushes LatLng up into Firebase database and when it's done it passes the key of that node
+     * to our listener.
+     * @param dbLocation This is the name of the node in database where we want to push data.
+     * @param key This is the key to the right object to finally push that LatLng.
+     * @param latLng This is the LatLng of a particular place that we want to push.
+     */
     @Override
-    public void pushLocation(String location, String key, LatLng latLng) {
-        mDatabaseReference = mFirebaseDatabase.getReference().child(location);
+    public void pushLocation(String dbLocation, String key, LatLng latLng) {
+        mDatabaseReference = mFirebaseDatabase.getReference().child(dbLocation);
         mGeoFire = new com.firebase.geofire.GeoFire(mDatabaseReference);
         mGeoFire.setLocation(key, new GeoLocation(latLng.latitude, latLng.longitude), (key1, error) -> {
             if (mLocationListener != null)
@@ -56,9 +75,18 @@ public class GeoFireImpl implements GeoFire {
     // endregion
 
     // region QUERY LOCATION
+
+    /**
+     * First it executes a query at the location that it gets.
+     * Then it waits for data to get ready and when it's done, it passes the content
+     * of the received snapshot as a LinkedHashMap of keys and GeoLocations to our listener.
+     * @param dbLocation This is the name of the node in database where we want to execute a query
+     * @param latLng This is a certain LatLng that we want to find nearest locations around it.
+     * @param distance This indicates the radius around our LatLng where we want to search for locations.
+     */
     @Override
-    public void queryLocations(String location, LatLng latLng, double distance) {
-        mDatabaseReference = mFirebaseDatabase.getReference().child(location);
+    public void queryLocations(String dbLocation, LatLng latLng, double distance) {
+        mDatabaseReference = mFirebaseDatabase.getReference().child(dbLocation);
         mGeoFire = new com.firebase.geofire.GeoFire(mDatabaseReference);
         GeoQuery mGeoQuery = mGeoFire.queryAtLocation(new GeoLocation(latLng.latitude, latLng.longitude), distance);
         mLocations.clear();
@@ -105,4 +133,5 @@ public class GeoFireImpl implements GeoFire {
         this.mGeoQueryListener = null;
     }
     // endregion
+
 }

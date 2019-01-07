@@ -62,8 +62,8 @@ public class GeoFireModuleActivity extends MapModuleActivity {
     // endregion
 
     // region PUSH LOCATION
-    public void pushLocation(String location, String key, LatLng latLng){
-        mGeoFire.pushLocation(location, key, latLng);
+    public void pushLocation(String dbLocation, String key, LatLng latLng){
+        mGeoFire.pushLocation(dbLocation, key, latLng);
     }
 
     public void seLocationListener(){
@@ -79,8 +79,8 @@ public class GeoFireModuleActivity extends MapModuleActivity {
     // endregion
 
     // region QUERY LOCATION
-    public void queryLocations(String location, LatLng latLng, double distance){
-        mGeoFire.queryLocations(location, latLng, distance);
+    public void queryLocations(String dbLocation, LatLng latLng, double distance){
+        mGeoFire.queryLocations(dbLocation, latLng, distance);
     }
 
     public void setOnGeoQueryReady(){
