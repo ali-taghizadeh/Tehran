@@ -1,0 +1,15 @@
+ir.taghizadeh.tehran.activities
+ir.taghizadeh.tehran.activities.lists.comments
+ir.taghizadeh.tehran.activities.lists.places
+ir.taghizadeh.tehran.activities.modules
+ir.taghizadeh.tehran.dependencies
+ir.taghizadeh.tehran.dependencies.authentication
+ir.taghizadeh.tehran.dependencies.database
+ir.taghizadeh.tehran.dependencies.geoFire
+ir.taghizadeh.tehran.dependencies.glide
+ir.taghizadeh.tehran.dependencies.map
+ir.taghizadeh.tehran.dependencies.rootCoordinator
+ir.taghizadeh.tehran.dependencies.storage
+ir.taghizadeh.tehran.dependencies.windowConfig
+ir.taghizadeh.tehran.helpers
+ir.taghizadeh.tehran.models

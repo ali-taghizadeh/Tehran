@@ -130,8 +130,8 @@ public class PlaceDetailsActivity extends DatabaseModuleActivity {
         text_place_details_author.setText(mNewPlace.getUsername().toUpperCase());
         text_place_details_likes.setText(String.valueOf(mNewPlace.getLikes()));
         text_place_details_dislikes.setText(String.valueOf(mNewPlace.getDislikes()));
-        if (!mNewPlace.getPhotoUrl().equals("")) loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
-        if (!mNewPlace.getUserPhotoUrl().equals("")) loadImage(mNewPlace.getUserPhotoUrl(), image_place_details_user_photo);
+        if (mNewPlace.getPhotoUrl() != null && !mNewPlace.getPhotoUrl().equals("")) loadImage(mNewPlace.getPhotoUrl(), image_place_details_photo);
+        if (mNewPlace.getUserPhotoUrl() != null && !mNewPlace.getUserPhotoUrl().equals("")) loadImage(mNewPlace.getUserPhotoUrl(), image_place_details_user_photo);
         attachComments();
     }
 

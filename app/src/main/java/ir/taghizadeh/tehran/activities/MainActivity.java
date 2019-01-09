@@ -28,6 +28,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import ir.taghizadeh.tehran.R;
 import ir.taghizadeh.tehran.activities.lists.places.PlacesAdapter;
 import ir.taghizadeh.tehran.activities.modules.GeoFireModuleActivity;
@@ -121,7 +122,14 @@ public class MainActivity extends GeoFireModuleActivity {
         Observable.interval(1, TimeUnit.SECONDS)
                 .take(2)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> getGeneralDisposable().add(disposable))
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        MainActivity.this.getGeneralDisposable().add(disposable);
+                        clearMap();
+                        updateList(new ArrayList<>());
+                    }
+                })
                 .doOnComplete(() -> {
                     disposeGeneral();
                     setOnGeoQueryReady();
