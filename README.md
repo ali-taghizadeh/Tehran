@@ -8,9 +8,9 @@ The main idea of this repo is about building a sample Android application with t
 * RxJava : To manage above mentioned features work simultaneously.
 
 ### Demo
-<p align="center">
-  <a href="https://youtu.be/lYfpYX-GnRk"><img src="http://img.youtube.com/vi/lYfpYX-GnRk/0.jpg" width="50%" /></a>
-</p>
+Exploring map             |  Browsing locations          |  Creating locations
+:-------------------------:|:-------------------------:|:-------------------------:
+![](https://github.com/ali-taghizadeh/Tehran/blob/master/images/01.gif)  |  ![](https://github.com/ali-taghizadeh/Tehran/blob/master/images/02.gif) |  ![](https://github.com/ali-taghizadeh/Tehran/blob/master/images/03.gif)
 
 ### Usage
   - Clone the project.
